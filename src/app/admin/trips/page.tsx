@@ -5,6 +5,7 @@ import {
   MapPin, ArrowRight, Filter, Edit3, Trash2, 
   FileText, Table as TableIcon, CheckCircle, Clock
 } from "lucide-react";
+import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
 
 const demoTrips = [
   { id: 1, date: "13 May 2026", driver: "Rajesh Patil", vehicle: "MH-12-AB-1234", from: "Mumbai", to: "Pune", type: "Round Trip", amount: 8500, received: 8500, locked: true },
@@ -18,6 +19,19 @@ export default function TravelTripsPage() {
   const [search, setSearch] = useState("");
   const [period, setPeriod] = useState("today");
 
+  const handleExportPDF = () => {
+    const headers = [["ID", "Date", "Driver", "Vehicle", "Route", "Amount", "Status"]];
+    const data = trips.map(t => [t.id, t.date, t.driver, t.vehicle, `${t.from} - ${t.to}`, t.received, t.locked ? "Locked" : "Open"]);
+    exportToPDF("RK Travel Trips Report", headers, data, "travel_trips");
+  };
+
+  const handleExportExcel = () => {
+    const data = trips.map(({ id, date, driver, vehicle, from, to, type, amount, received, locked }) => ({
+      ID: id, Date: date, Driver: driver, Vehicle: vehicle, From: from, To: to, Type: type, Total_Amount: amount, Received: received, Status: locked ? "Locked" : "Open"
+    }));
+    exportToExcel(data, "travel_trips");
+  };
+
   const toggleLock = (id: number) => {
     setTrips(trips.map(t => t.id === id ? { ...t, locked: !t.locked } : t));
   };
@@ -30,10 +44,10 @@ export default function TravelTripsPage() {
           <p className="text-sm text-text-secondary font-medium">Full control over travel logs and fleet movements</p>
         </div>
         <div className="flex items-center gap-2">
-          <button className="btn-primary py-2.5 flex items-center gap-2 text-xs">
+          <button onClick={handleExportPDF} className="btn-primary py-2.5 flex items-center gap-2 text-xs">
             <FileText className="w-4 h-4" /> PDF Export
           </button>
-          <button className="px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
+          <button onClick={handleExportExcel} className="px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
             <TableIcon className="w-4 h-4" /> Excel Export
           </button>
         </div>

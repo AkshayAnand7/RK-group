@@ -5,6 +5,7 @@ import {
   ArrowUp, ArrowDown, Filter, Edit3, Trash2, 
   FileText, Table as TableIcon, CheckCircle, XCircle
 } from "lucide-react";
+import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
 
 const demoEntries = [
   { id: 1, date: "13 May 2026", shop: "VAKAD", collection: 45000, expense: 3200, advance: 2000, prize: 5000, balance: 34800, staff: "Staff-01", locked: true },
@@ -19,6 +20,19 @@ export default function LotteryEntriesPage() {
   const [entries, setEntries] = useState(demoEntries);
   const [search, setSearch] = useState("");
   const [period, setPeriod] = useState("today");
+
+  const handleExportPDF = () => {
+    const headers = [["ID", "Date", "Shop", "Collection", "Expense", "Balance", "Staff"]];
+    const data = entries.map(e => [e.id, e.date, e.shop, e.collection, e.expense, e.balance, e.staff]);
+    exportToPDF("RK Lottery Collections Report", headers, data, "lottery_collections");
+  };
+
+  const handleExportExcel = () => {
+    const data = entries.map(({ id, date, shop, collection, expense, advance, prize, balance, staff }) => ({
+      ID: id, Date: date, Shop: shop, Collection: collection, Expense: expense, Advance: advance, Prize: prize, Balance: balance, Staff: staff
+    }));
+    exportToExcel(data, "lottery_collections");
+  };
 
   const toggleLock = (id: number) => {
     setEntries(entries.map(e => e.id === id ? { ...e, locked: !e.locked } : e));
@@ -39,10 +53,10 @@ export default function LotteryEntriesPage() {
           <p className="text-sm text-text-secondary font-medium">Manage and audit all shop collections</p>
         </div>
         <div className="flex items-center gap-2">
-          <button className="btn-primary py-2.5 flex items-center gap-2 text-xs">
+          <button onClick={handleExportPDF} className="btn-primary py-2.5 flex items-center gap-2 text-xs">
             <FileText className="w-4 h-4" /> Export PDF
           </button>
-          <button className="px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
+          <button onClick={handleExportExcel} className="px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
             <TableIcon className="w-4 h-4" /> Export Excel
           </button>
         </div>
