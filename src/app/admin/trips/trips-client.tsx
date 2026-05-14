@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { 
   Search, FileText, Table as TableIcon, 
-  ArrowRight, Lock, Unlock, Edit3, Trash2, Clock, Loader2
+  ArrowRight, Lock, Unlock, Edit3, Trash2, Clock, Loader2, XCircle
 } from "lucide-react";
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
 import { toggleTripLock, updateTrip, deleteTrip } from "./actions";
@@ -235,10 +235,6 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
           </div>
         </div>
       )}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   );
 }

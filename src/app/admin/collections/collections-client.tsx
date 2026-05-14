@@ -206,6 +206,14 @@ export default function CollectionsClient({ initialEntries }: { initialEntries: 
                   </td>
                 </tr>
               ))}
+              
+              {initialEntries.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="py-20 text-center text-text-muted italic">
+                    No records found for this period.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -254,18 +262,6 @@ export default function CollectionsClient({ initialEntries }: { initialEntries: 
           </div>
         </div>
       )}
-              
-              {initialEntries.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="py-20 text-center text-text-muted italic">
-                    No records found for this period.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   );
 }
