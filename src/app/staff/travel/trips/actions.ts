@@ -21,6 +21,14 @@ export async function getTrips() {
   return data
 }
 
+export async function getVehicles() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+  const { data, error } = await supabase.from('vehicles').select('*').order('vehicle_number', { ascending: true })
+  if (error) return []
+  return data
+}
+
 export async function submitTrip(formData: any) {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)

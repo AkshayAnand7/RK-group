@@ -145,5 +145,3 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
     </div>
   );
 }
-
-import { ShieldCheck } from "lucide-react";
