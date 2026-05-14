@@ -63,12 +63,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Logo */}
       <div className="px-5 py-6 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-white font-bold text-sm">RK</span>
+          <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10">
+            <img src="/logo.png?v=2" alt="RK Group" className="w-full h-full object-cover" />
           </div>
           <div>
-            <p className="text-white font-semibold text-sm">RK Group</p>
-            <p className="text-white/40 text-xs">Admin Panel</p>
+            <p className="text-white font-black text-sm tracking-tight uppercase">RK Group</p>
+            <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Admin Panel</p>
           </div>
         </div>
       </div>

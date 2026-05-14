@@ -3,16 +3,16 @@
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 
-export async function getDashboardStats() {
+export async function getDashboardStats(period: string = 'week') {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  // Fetch Lottery Data
-  const { data: collections } = await supabase.from('collections').select('amount')
+  // 1. Fetch Lottery Data
+  const { data: collections } = await supabase.from('collections').select('amount, created_at')
   const { data: lotteryExpenses } = await supabase.from('expenses').select('amount').eq('module', 'lottery')
   
-  // Fetch Travel Data
-  const { data: trips } = await supabase.from('trips').select('total_amount, received_amount')
+  // 2. Fetch Travel Data
+  const { data: trips } = await supabase.from('trips').select('total_amount, received_amount, date')
   const { data: travelExpenses } = await supabase.from('expenses').select('amount').eq('module', 'travel')
 
   // Aggregations
@@ -23,16 +23,22 @@ export async function getDashboardStats() {
   const totalTravelExpense = travelExpenses?.reduce((sum, e) => sum + Number(e.amount), 0) || 0
   const pendingTripAmount = trips?.reduce((sum, t) => sum + (Number(t.total_amount) - Number(t.received_amount)), 0) || 0
 
-  // Mock chart data for now based on actual sums (can be expanded to daily/monthly groups)
-  const revenueData = [
-    { day: "Mon", lottery: totalLotteryCollection * 0.1, travel: totalTripIncome * 0.1 },
-    { day: "Tue", lottery: totalLotteryCollection * 0.15, travel: totalTripIncome * 0.12 },
-    { day: "Wed", lottery: totalLotteryCollection * 0.12, travel: totalTripIncome * 0.18 },
-    { day: "Thu", lottery: totalLotteryCollection * 0.2, travel: totalTripIncome * 0.15 },
-    { day: "Fri", lottery: totalLotteryCollection * 0.18, travel: totalTripIncome * 0.2 },
-    { day: "Sat", lottery: totalLotteryCollection * 0.25, travel: totalTripIncome * 0.25 },
-    { day: "Sun", lottery: totalLotteryCollection * 0.1, travel: totalTripIncome * 0.1 },
-  ]
+  // 3. Generate REAL Daily Chart Data (Last 7 Days)
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const revenueData = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() - (6 - i))
+    const dayName = days[d.getDay()]
+    const dateStr = d.toISOString().split('T')[0]
+
+    const lotteryDay = collections?.filter(c => c.created_at.startsWith(dateStr))
+      .reduce((sum, c) => sum + Number(c.amount), 0) || 0
+    
+    const travelDay = trips?.filter(t => t.date === dateStr)
+      .reduce((sum, t) => sum + Number(t.received_amount), 0) || 0
+
+    return { day: dayName, lottery: lotteryDay, travel: travelDay }
+  })
 
   return {
     lottery: {
