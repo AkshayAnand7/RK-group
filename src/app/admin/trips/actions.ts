@@ -17,6 +17,14 @@ export async function getTrips() {
   return data
 }
 
+export async function getVehicles() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+  const { data, error } = await supabase.from('vehicles').select('*').order('vehicle_number', { ascending: true })
+  if (error) throw error
+  return data
+}
+
 export async function toggleTripLock(id: number, is_locked: boolean) {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)

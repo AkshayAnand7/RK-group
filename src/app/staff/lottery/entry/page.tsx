@@ -9,11 +9,13 @@ import {
 
 import { submitCollection } from "./actions";
 import { getShops } from "@/app/admin/shops/actions";
+import { getUsers } from "@/app/admin/users/actions";
 
 export default function LotteryEntryPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [shops, setShops] = useState<any[]>([]);
+  const [staff, setStaff] = useState<any[]>([]);
   const [selectedShop, setSelectedShop] = useState<any>(null);
   const [formData, setFormData] = useState({
     staffName: "",
@@ -26,12 +28,16 @@ export default function LotteryEntryPage() {
   const [balance, setBalance] = useState(0);
 
   useEffect(() => {
-    async function fetchShops() {
-      const data = await getShops();
-      setShops(data);
-      if (data.length > 0) setSelectedShop(data[0]);
+    async function fetchData() {
+      const [shopsData, staffData] = await Promise.all([
+        getShops(),
+        getUsers()
+      ]);
+      setShops(shopsData);
+      setStaff(staffData);
+      if (shopsData.length > 0) setSelectedShop(shopsData[0]);
     }
-    fetchShops();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -97,7 +103,9 @@ export default function LotteryEntryPage() {
         <div className="flex items-center justify-between bg-surface p-4 rounded-2xl border border-border">
           <div>
             <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">Entry For</p>
-            <p className="text-sm font-bold text-text-primary">Wednesday, 13 May 2026</p>
+            <p className="text-sm font-bold text-text-primary">
+              {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            </p>
           </div>
           <div className="text-right">
             <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">Status</p>
@@ -146,14 +154,17 @@ export default function LotteryEntryPage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Staff Name</label>
-              <input 
-                type="text" 
+              <select 
                 required 
-                placeholder="Enter your name"
                 value={formData.staffName}
                 onChange={e => setFormData({ ...formData, staffName: e.target.value })}
-                className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"
-              />
+                className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all cursor-pointer"
+              >
+                <option value="">Select Staff...</option>
+                {staff.map(s => (
+                  <option key={s.id} value={s.full_name}>{s.full_name}</option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-1.5">

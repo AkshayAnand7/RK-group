@@ -7,7 +7,8 @@ import {
   Calendar, CheckCircle, Loader2, Save, X,
   FileText, Plus, ChevronRight, History
 } from "lucide-react";
-import { getTrips } from "./actions";
+import { getTrips, submitTrip, getVehicles } from "./actions";
+import { getUsers } from "@/app/admin/users/actions";
 import { useEffect } from "react";
 
 export default function TravelTripPage() {
@@ -15,9 +16,11 @@ export default function TravelTripPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [trips, setTrips] = useState<any[]>([]);
+  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [staff, setStaff] = useState<any[]>([]);
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
-    driver: "Rajesh Patil",
+    driver: "",
     vehicle: "",
     from: "",
     to: "",
@@ -27,12 +30,18 @@ export default function TravelTripPage() {
   });
 
   useEffect(() => {
-    fetchTrips();
+    fetchData();
   }, []);
 
-  async function fetchTrips() {
-    const data = await getTrips();
-    setTrips(data || []);
+  async function fetchData() {
+    const [tripsData, vehiclesData, staffData] = await Promise.all([
+      getTrips(),
+      getVehicles(),
+      getUsers()
+    ]);
+    setTrips(tripsData || []);
+    setVehicles(vehiclesData || []);
+    setStaff(staffData || []);
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -134,12 +143,17 @@ export default function TravelTripPage() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Staff Name</label>
-                  <input 
-                    type="text" 
+                  <select 
                     required 
-                    placeholder="Reporting staff name" 
-                    className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel transition-all"
-                  />
+                    value={form.driver}
+                    onChange={e => setForm({ ...form, driver: e.target.value })}
+                    className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel cursor-pointer transition-all"
+                  >
+                    <option value="">Select Staff...</option>
+                    {staff.map(s => (
+                      <option key={s.id} value={s.full_name}>{s.full_name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
@@ -185,8 +199,9 @@ export default function TravelTripPage() {
                     className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel cursor-pointer"
                   >
                     <option value="">Select vehicle...</option>
-                    <option>Tata Winger 1</option>
-                    <option>Tata Winger 2</option>
+                    {vehicles.map(v => (
+                      <option key={v.id} value={v.vehicle_number}>{v.vehicle_number} ({v.model || 'Winger'})</option>
+                    ))}
                   </select>
                 </div>
 

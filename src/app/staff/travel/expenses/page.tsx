@@ -7,34 +7,54 @@ import {
   History, Bus, Wallet
 } from "lucide-react";
 
-const previousExpenses = [
-  { id: 1, date: "13 May 2026", vehicle: "MH-12-AB-1234", category: "Fuel", amount: 2500, status: "Locked" },
-  { id: 2, date: "12 May 2026", vehicle: "MH-14-CD-5678", category: "Maintenance", amount: 1200, status: "Locked" },
-  { id: 3, date: "10 May 2026", vehicle: "MH-12-AB-1234", category: "Salary", amount: 5000, status: "Locked" },
-];
+import { getExpenses, submitExpense } from "./actions";
+import { getVehicles } from "../trips/actions";
+import { useEffect } from "react";
 
 export default function VehicleExpensePage() {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [expenses, setExpenses] = useState<any[]>([]);
+  const [vehicles, setVehicles] = useState<any[]>([]);
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
+    staffName: "",
     vehicle: "",
     category: "Fuel",
     amount: "",
     description: ""
   });
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    const [expData, vData] = await Promise.all([
+      getExpenses(),
+      getVehicles()
+    ]);
+    setExpenses(expData || []);
+    setVehicles(vData || []);
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1500));
+    const result = await submitExpense(form);
     setLoading(false);
-    setSuccess(true);
-    setTimeout(() => {
-      setSuccess(false);
-      setShowForm(false);
-    }, 2000);
+    
+    if (result.success) {
+      setSuccess(true);
+      fetchData();
+      setTimeout(() => {
+        setSuccess(false);
+        setShowForm(false);
+      }, 2000);
+    } else {
+      alert(result.error);
+    }
   };
 
   return (
@@ -52,21 +72,24 @@ export default function VehicleExpensePage() {
             </div>
 
             <div className="space-y-3">
-              {previousExpenses.map((exp) => (
-                <div key={exp.id} className="bg-surface p-4 rounded-2xl border border-border flex items-center justify-between">
+              {expenses.map((exp) => (
+                <div key={exp.id} className="bg-surface p-4 rounded-2xl border border-border flex items-center justify-between animate-fade-in">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs font-black text-text-primary uppercase">{exp.category}</span>
                       <span className="px-2 py-0.5 bg-page text-travel text-[8px] font-black rounded-full border border-travel/10 uppercase">{exp.vehicle}</span>
                     </div>
-                    <p className="text-[10px] font-bold text-text-muted">{exp.date} • RK Travel</p>
+                    <p className="text-[10px] font-bold text-text-muted">{new Date(exp.date).toLocaleDateString()} • {exp.staff_name || 'Staff'}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-black text-danger font-mono-nums">₹{exp.amount.toLocaleString()}</p>
+                    <p className="text-sm font-black text-danger font-mono-nums">₹{Number(exp.amount).toLocaleString()}</p>
                     <span className="text-[8px] font-black text-text-muted uppercase tracking-widest bg-page px-1.5 py-0.5 rounded border border-border italic">Verified</span>
                   </div>
                 </div>
               ))}
+              {expenses.length === 0 && (
+                <div className="py-10 text-center text-text-muted text-xs italic">No expense records found.</div>
+              )}
             </div>
 
             {/* 2. Add New Expense Option (Below/Before Records) */}
@@ -99,6 +122,8 @@ export default function VehicleExpensePage() {
                     type="text" 
                     required 
                     placeholder="Reporting staff name" 
+                    value={form.staffName}
+                    onChange={e => setForm({ ...form, staffName: e.target.value })}
                     className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel transition-all"
                   />
                 </div>
@@ -111,8 +136,9 @@ export default function VehicleExpensePage() {
                     className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel cursor-pointer"
                   >
                     <option value="">Select vehicle...</option>
-                    <option>Tata Winger 1</option>
-                    <option>Tata Winger 2</option>
+                    {vehicles.map(v => (
+                      <option key={v.id} value={v.vehicle_number}>{v.vehicle_number} ({v.model || 'Winger'})</option>
+                    ))}
                   </select>
                 </div>
 

@@ -8,11 +8,15 @@ import {
   Clock, Check, X as Close, IndianRupee
 } from "lucide-react";
 import { submitBooking, getBookings, updateBookingStatus } from "./actions";
+import { getVehicles } from "../trips/actions";
+import { getUsers } from "@/app/admin/users/actions";
 
 export default function TravelBookingPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [upcomingRides, setUpcomingRides] = useState<any[]>([]);
+  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [staff, setStaff] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     staffName: "",
@@ -27,12 +31,18 @@ export default function TravelBookingPage() {
   });
 
   useEffect(() => {
-    fetchRides();
+    fetchData();
   }, []);
 
-  async function fetchRides() {
-    const data = await getBookings();
-    setUpcomingRides(data || []);
+  async function fetchData() {
+    const [ridesData, vehiclesData, staffData] = await Promise.all([
+      getBookings(),
+      getVehicles(),
+      getUsers()
+    ]);
+    setUpcomingRides(ridesData || []);
+    setVehicles(vehiclesData || []);
+    setStaff(staffData || []);
   }
 
   async function handleStatusUpdate(id: number, status: string) {
@@ -98,7 +108,17 @@ export default function TravelBookingPage() {
               <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Staff Name</label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
-                <input type="text" required placeholder="Name" value={formData.staffName} onChange={e => setFormData({...formData, staffName: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+                <select 
+                  required 
+                  value={formData.staffName} 
+                  onChange={e => setFormData({...formData, staffName: e.target.value})} 
+                  className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold appearance-none focus:border-primary outline-none transition-all cursor-pointer"
+                >
+                  <option value="">Select Staff</option>
+                  {staff.map(s => (
+                    <option key={s.id} value={s.full_name}>{s.full_name}</option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -141,11 +161,12 @@ export default function TravelBookingPage() {
                   required 
                   value={formData.vehicle} 
                   onChange={e => setFormData({...formData, vehicle: e.target.value})} 
-                  className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold appearance-none focus:border-primary outline-none transition-all"
+                  className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold appearance-none focus:border-primary outline-none transition-all cursor-pointer"
                 >
                   <option value="">Select Vehicle</option>
-                  <option value="Tata Winger 1">Tata Winger 1</option>
-                  <option value="Tata Winger 2">Tata Winger 2</option>
+                  {vehicles.map(v => (
+                    <option key={v.id} value={v.vehicle_number}>{v.vehicle_number} ({v.model || 'Winger'})</option>
+                  ))}
                 </select>
               </div>
             </div>
