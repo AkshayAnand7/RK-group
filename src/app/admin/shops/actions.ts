@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
@@ -13,8 +14,7 @@ export async function getShops() {
 }
 
 export async function addShop(formData: FormData) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const shop_id = formData.get('shop_id') as string
   const name = formData.get('name') as string
@@ -36,8 +36,7 @@ export async function addShop(formData: FormData) {
 }
 
 export async function updateShop(shop_id: string, formData: FormData) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const name = formData.get('name') as string
   const location = formData.get('location') as string
@@ -54,8 +53,7 @@ export async function updateShop(shop_id: string, formData: FormData) {
 }
 
 export async function deleteShop(shop_id: string) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { error } = await supabase.from('shops').delete().eq('shop_id', shop_id)
   

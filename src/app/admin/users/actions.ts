@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
@@ -18,8 +19,7 @@ export async function getUsers() {
 }
 
 export async function updateUserRole(id: string, role: string) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { error } = await supabase
     .from('profiles')
@@ -33,11 +33,8 @@ export async function updateUserRole(id: string, role: string) {
 }
 
 export async function deleteUser(id: string) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
-  // Note: This only deletes the profile, not the auth user.
-  // In production, you'd usually use a service role to delete the auth user too.
   const { error } = await supabase.from('profiles').delete().eq('id', id)
   
   if (error) return { error: error.message }

@@ -1,13 +1,13 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { sendWhatsAppMessage } from '@/lib/twilio'
 
 export async function submitCollection(formData: any, shopName: string, shopId: string) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   // 1. Insert the collection record
   const { error: collectionError } = await supabase.from('collections').insert({

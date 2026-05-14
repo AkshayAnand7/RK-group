@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
@@ -26,8 +27,7 @@ export async function getVehicles() {
 }
 
 export async function addExpense(formData: FormData) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const date = formData.get('date') as string
   const category = formData.get('category') as string
@@ -53,8 +53,7 @@ export async function addExpense(formData: FormData) {
 }
 
 export async function deleteExpense(id: number) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { error } = await supabase.from('expenses').delete().eq('id', id)
   

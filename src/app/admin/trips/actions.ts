@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
@@ -26,8 +27,7 @@ export async function getVehicles() {
 }
 
 export async function toggleTripLock(id: number, is_locked: boolean) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { error } = await supabase.from('trips').update({ is_locked }).eq('id', id)
   
@@ -38,8 +38,7 @@ export async function toggleTripLock(id: number, is_locked: boolean) {
 }
 
 export async function updateTrip(id: number, formData: FormData) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const from_location = formData.get('from') as string
   const to_location = formData.get('to') as string
@@ -57,8 +56,7 @@ export async function updateTrip(id: number, formData: FormData) {
 }
 
 export async function deleteTrip(id: number) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { error } = await supabase.from('trips').delete().eq('id', id)
   
