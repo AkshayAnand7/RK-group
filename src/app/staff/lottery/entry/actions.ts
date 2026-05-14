@@ -33,7 +33,7 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
     `🏪 *Shop:* ${shopName}\n` +
     `💻 *Software Sale:* ₹${formData.collection}\n` +
     `💎 *Net Balance:* ₹${Number(formData.collection) - Number(formData.expense) - Number(formData.advance) - Number(formData.prize) - Number(formData.pending)}\n\n` +
-    `✅ _Submitted by Staff_`
+    `✅ _Submitted by: ${formData.staffName}_`
 
   await sendWhatsAppMessage(adminPhone, whatsappMessage)
 

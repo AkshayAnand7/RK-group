@@ -13,6 +13,7 @@ export default function LotteryEntryPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
+    staffName: "",
     collection: "",
     expense: "",
     advance: "",
@@ -34,8 +35,8 @@ export default function LotteryEntryPage() {
     e.preventDefault();
     setLoading(true);
     
-    // Using hardcoded shop for now, normally would come from auth/context
-    const result = await submitCollection(formData, "RK Shop 1", "001");
+    // Using the name from the form and a shop name (e.g. VAKAD)
+    const result = await submitCollection(formData, "VAKAD", "001");
     
     setLoading(false);
     if (result.success) {
@@ -121,7 +122,8 @@ export default function LotteryEntryPage() {
               <input 
                 type="text" 
                 required 
-                placeholder="Enter your name" 
+                value={formData.staffName}
+                onChange={e => setFormData({ ...formData, staffName: e.target.value })}
                 className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"
               />
             </div>
