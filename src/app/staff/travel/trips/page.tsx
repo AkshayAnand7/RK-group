@@ -72,13 +72,22 @@ export default function TravelTripPage() {
               ))}
             </div>
 
-            {/* 2. Add New Trip Option (Below Reports) */}
-            <button 
-              onClick={() => setShowForm(true)}
-              className="w-full h-16 bg-travel text-white rounded-2xl font-black text-sm shadow-xl shadow-travel/20 flex items-center justify-center gap-3 transition-all active:scale-[0.98] cursor-pointer"
-            >
-              <Plus className="w-5 h-5" /> Add New Trip Details
-            </button>
+            {/* 2. Options (Below Reports) */}
+            <div className="space-y-3">
+              <Link 
+                href="/staff/travel/booking"
+                className="w-full h-16 bg-surface text-travel border-2 border-travel/20 rounded-2xl font-black text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <Calendar className="w-5 h-5" /> Schedule New Booking
+              </Link>
+
+              <button 
+                onClick={() => setShowForm(true)}
+                className="w-full h-16 bg-travel text-white rounded-2xl font-black text-sm shadow-xl shadow-travel/20 flex items-center justify-center gap-3 transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <Plus className="w-5 h-5" /> Add New Trip Details
+              </button>
+            </div>
           </div>
         )}
 

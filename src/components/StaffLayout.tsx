@@ -3,7 +3,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   ClipboardList, History, LogOut, LayoutDashboard, 
-  Bus, Fuel, Bell, User 
+  Bus, Fuel, Bell, User, Calendar
 } from "lucide-react";
 
 interface StaffLayoutProps {
@@ -21,6 +21,7 @@ export default function StaffLayout({ children, module, shopName }: StaffLayoutP
     { name: "History", href: `/staff/lottery/history`, icon: History },
   ] : [
     { name: "Trips", href: `/staff/travel/trips`, icon: Bus },
+    { name: "Booking", href: `/staff/travel/booking`, icon: Calendar },
     { name: "Expenses", href: `/staff/travel/expenses`, icon: Fuel },
   ];
 
