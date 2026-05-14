@@ -12,12 +12,13 @@ export async function getDashboardStats(period: string = 'week') {
 
   if (period === 'today') {
     startDate.setHours(0, 0, 0, 0)
+    // Adjust for common timezone offsets to be safe (e.g. IST is +5:30)
+    startDate.setMinutes(startDate.getMinutes() - 330)
   } else if (period === 'week') {
     startDate.setDate(now.getDate() - 7)
   } else if (period === 'month') {
     startDate.setMonth(now.getMonth() - 1)
-  } else {
-    // Default to all time or a large window if period is 'custom' or 'all'
+  } else if (period === 'all') {
     startDate = new Date(2000, 0, 1)
   }
 
@@ -26,7 +27,7 @@ export async function getDashboardStats(period: string = 'week') {
   // 1. Fetch Lottery Data
   const { data: collections } = await supabase
     .from('collections')
-    .select('amount, created_at, date')
+    .select('amount, expense, advance, prize, created_at, date')
     .gte('created_at', startDateIso)
 
   const { data: lotteryExpenses } = await supabase
@@ -48,12 +49,14 @@ export async function getDashboardStats(period: string = 'week') {
     .gte('created_at', startDateIso)
 
   // Aggregations
-  const totalLotteryCollection = collections?.reduce((sum, c) => sum + Number(c.amount), 0) || 0
-  const totalLotteryExpense = lotteryExpenses?.reduce((sum, e) => sum + Number(e.amount), 0) || 0
+  const totalLotteryCollection = collections?.reduce((sum, c) => sum + Number(c.amount || 0), 0) || 0
+  const totalLotteryDeductions = collections?.reduce((sum, c) => 
+    sum + Number(c.expense || 0) + Number(c.advance || 0) + Number(c.prize || 0), 0) || 0
+  const totalExternalLotteryExpense = lotteryExpenses?.reduce((sum, e) => sum + Number(e.amount || 0), 0) || 0
   
-  const totalTripIncome = trips?.reduce((sum, t) => sum + Number(t.received_amount), 0) || 0
-  const totalTravelExpense = travelExpenses?.reduce((sum, e) => sum + Number(e.amount), 0) || 0
-  const pendingTripAmount = trips?.reduce((sum, t) => sum + (Number(t.total_amount) - Number(t.received_amount)), 0) || 0
+  const totalTripIncome = trips?.reduce((sum, t) => sum + Number(t.received_amount || 0), 0) || 0
+  const totalTravelExpense = travelExpenses?.reduce((sum, e) => sum + Number(e.amount || 0), 0) || 0
+  const pendingTripAmount = trips?.reduce((sum, t) => sum + (Number(t.total_amount || 0) - Number(t.received_amount || 0)), 0) || 0
 
   // 3. Generate Daily Chart Data (Last 7 Days)
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -64,10 +67,10 @@ export async function getDashboardStats(period: string = 'week') {
     const dateStr = d.toISOString().split('T')[0]
 
     const lotteryDay = collections?.filter(c => (c.date === dateStr || (c.created_at && c.created_at.startsWith(dateStr))))
-      .reduce((sum, c) => sum + Number(c.amount), 0) || 0
+      .reduce((sum, c) => sum + Number(c.amount || 0), 0) || 0
     
     const travelDay = trips?.filter(t => t.date === dateStr)
-      .reduce((sum, t) => sum + Number(t.received_amount), 0) || 0
+      .reduce((sum, t) => sum + Number(t.received_amount || 0), 0) || 0
 
     return { day: dayName, lottery: lotteryDay, travel: travelDay }
   })
@@ -75,8 +78,8 @@ export async function getDashboardStats(period: string = 'week') {
   return {
     lottery: {
       totalCollection: totalLotteryCollection,
-      totalExpense: totalLotteryExpense,
-      netBalance: totalLotteryCollection - totalLotteryExpense
+      totalExpense: totalLotteryDeductions + totalExternalLotteryExpense,
+      netBalance: totalLotteryCollection - (totalLotteryDeductions + totalExternalLotteryExpense)
     },
     travel: {
       totalIncome: totalTripIncome,
