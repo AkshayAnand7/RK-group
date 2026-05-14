@@ -1,6 +1,8 @@
 import { getNotifications } from "./actions";
 import NotificationsClient from "./notifications-client";
 
+export const dynamic = 'force-dynamic';
+
 export default async function NotificationsPage() {
   const notifications = await getNotifications();
 

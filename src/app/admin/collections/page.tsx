@@ -1,6 +1,8 @@
 import { getLotteryEntries } from "./actions";
 import CollectionsClient from "./collections-client";
 
+export const dynamic = 'force-dynamic';
+
 export default async function LotteryEntriesPage({
   searchParams,
 }: {

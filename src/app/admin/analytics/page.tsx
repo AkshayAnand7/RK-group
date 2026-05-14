@@ -2,6 +2,8 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import AnalyticsClient from './analytics-client'
 
+export const dynamic = 'force-dynamic';
+
 export default async function AnalyticsPage() {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
