@@ -7,12 +7,13 @@ import {
   FileText, Table as TableIcon, CheckCircle, XCircle, Loader2
 } from "lucide-react";
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
-import { toggleCollectionLock, deleteCollection } from "./actions";
+import { toggleCollectionLock, updateCollection, deleteCollection } from "./actions";
 
 export default function CollectionsClient({ initialEntries }: { initialEntries: any[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [editingEntry, setEditingEntry] = useState<any>(null);
   
   const currentSearch = searchParams.get('search') || "";
   const currentPeriod = searchParams.get('period') || "today";
@@ -64,6 +65,19 @@ export default function CollectionsClient({ initialEntries }: { initialEntries: 
       if (!result.success) alert(result.error);
     });
   }
+
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    startTransition(async () => {
+      const formData = new FormData(e.currentTarget);
+      const result = await updateCollection(editingEntry.id, formData);
+      if (result.success) {
+        setEditingEntry(null);
+      } else {
+        alert(result.error);
+      }
+    });
+  };
 
   async function handleDelete(id: number) {
     if (confirm("Are you sure you want to delete this record?")) {
@@ -169,23 +183,77 @@ export default function CollectionsClient({ initialEntries }: { initialEntries: 
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <button 
                         onClick={() => handleToggleLock(entry.id, entry.is_locked)}
                         className={`p-2 rounded-xl transition-all cursor-pointer ${entry.is_locked ? "bg-page text-text-muted hover:text-primary" : "bg-primary text-white"}`}
                       >
-                        {entry.is_locked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                        {entry.is_locked ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                      </button>
+                      <button 
+                        onClick={() => setEditingEntry(entry)}
+                        className="p-2 bg-page text-text-muted hover:text-primary hover:bg-primary-subtle rounded-xl transition-all cursor-pointer"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
                       </button>
                       <button 
                         onClick={() => handleDelete(entry.id)}
                         className="p-2 bg-page text-text-muted hover:text-danger hover:bg-danger-subtle rounded-xl transition-all cursor-pointer"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Edit Modal */}
+      {editingEntry && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setEditingEntry(null)} />
+          <div className="relative w-full max-w-md glass p-8 rounded-4xl border-white shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Edit Collection</h2>
+                <p className="text-[10px] font-black text-lottery uppercase tracking-widest">{editingEntry.shop_name} • {new Date(editingEntry.created_at).toLocaleDateString()}</p>
+              </div>
+              <button onClick={() => setEditingEntry(null)} className="p-2 hover:bg-page rounded-xl transition-colors cursor-pointer">
+                <XCircle className="w-5 h-5 text-text-muted" />
+              </button>
+            </div>
+            <form onSubmit={handleUpdate} className="space-y-5">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Total Collection (₹)</label>
+                <input name="amount" type="number" required defaultValue={editingEntry.amount} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all" />
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1 text-[8px]">Expense</label>
+                  <input name="expense" type="number" defaultValue={editingEntry.expense} className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1 text-[8px]">Advance</label>
+                  <input name="advance" type="number" defaultValue={editingEntry.advance} className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1 text-[8px]">Prize</label>
+                  <input name="prize" type="number" defaultValue={editingEntry.prize} className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all" />
+                </div>
+              </div>
+              <div className="flex gap-4 pt-4">
+                <button type="button" onClick={() => setEditingEntry(null)} className="flex-1 h-12 bg-page text-text-secondary rounded-2xl font-black text-xs uppercase tracking-widest border border-border hover:bg-slate-100 transition-all cursor-pointer">Cancel</button>
+                <button type="submit" disabled={isPending} className="flex-1 h-12 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center">
+                  {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
               
               {initialEntries.length === 0 && (
                 <tr>

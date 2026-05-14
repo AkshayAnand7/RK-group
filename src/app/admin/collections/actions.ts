@@ -53,6 +53,25 @@ export async function toggleCollectionLock(id: number, locked: boolean) {
   return { success: true }
 }
 
+export async function updateCollection(id: number, formData: FormData) {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  const amount = Number(formData.get('amount'))
+  const expense = Number(formData.get('expense'))
+  const advance = Number(formData.get('advance'))
+  const prize = Number(formData.get('prize'))
+
+  const { error } = await supabase.from('collections')
+    .update({ amount, expense, advance, prize })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+  
+  revalidatePath('/admin/collections')
+  return { success: true }
+}
+
 export async function deleteCollection(id: number) {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)

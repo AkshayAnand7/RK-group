@@ -6,12 +6,13 @@ import {
   ArrowRight, Lock, Unlock, Edit3, Trash2, Clock, Loader2
 } from "lucide-react";
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
-import { toggleTripLock, deleteTrip } from "./actions";
+import { toggleTripLock, updateTrip, deleteTrip } from "./actions";
 
 export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
   const [trips, setTrips] = useState(initialTrips);
   const [search, setSearch] = useState("");
   const [period, setPeriod] = useState("today");
+  const [editingTrip, setEditingTrip] = useState<any>(null);
   const [isPending, startTransition] = useTransition();
 
   const filteredTrips = trips.filter(trip => 
@@ -44,6 +45,20 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
       }
     });
   }
+
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    startTransition(async () => {
+      const formData = new FormData(e.currentTarget);
+      const result = await updateTrip(editingTrip.id, formData);
+      if (result.success) {
+        setEditingTrip(null);
+        window.location.reload();
+      } else {
+        alert(result.error);
+      }
+    });
+  };
 
   async function handleDelete(id: number) {
     if (confirm("Delete this trip record?")) {
@@ -154,7 +169,10 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
                       >
                         {trip.is_locked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                       </button>
-                      <button className="p-2 bg-page text-text-muted hover:text-travel hover:bg-travel-subtle rounded-xl transition-all cursor-pointer">
+                      <button 
+                        onClick={() => setEditingTrip(trip)}
+                        className="p-2 bg-page text-text-muted hover:text-travel hover:bg-travel-subtle rounded-xl transition-all cursor-pointer"
+                      >
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button 
@@ -167,6 +185,56 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
                   </td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Edit Modal */}
+      {editingTrip && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setEditingTrip(null)} />
+          <div className="relative w-full max-w-md glass p-8 rounded-4xl border-white shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Edit Trip Log</h2>
+                <p className="text-[10px] font-black text-travel uppercase tracking-widest">{editingTrip.driver?.full_name} • {editingTrip.vehicle?.vehicle_number}</p>
+              </div>
+              <button onClick={() => setEditingTrip(null)} className="p-2 hover:bg-page rounded-xl transition-colors cursor-pointer">
+                <XCircle className="w-5 h-5 text-text-muted" />
+              </button>
+            </div>
+            <form onSubmit={handleUpdate} className="space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">From</label>
+                  <input name="from" required defaultValue={editingTrip.from_location} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">To</label>
+                  <input name="to" required defaultValue={editingTrip.to_location} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Total Amount (₹)</label>
+                  <input name="total" type="number" required defaultValue={editingTrip.total_amount} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Received (₹)</label>
+                  <input name="received" type="number" required defaultValue={editingTrip.received_amount} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+              </div>
+              <div className="flex gap-4 pt-4">
+                <button type="button" onClick={() => setEditingTrip(null)} className="flex-1 h-12 bg-page text-text-secondary rounded-2xl font-black text-xs uppercase tracking-widest border border-border hover:bg-slate-100 transition-all cursor-pointer">Cancel</button>
+                <button type="submit" disabled={isPending} className="flex-1 h-12 bg-travel text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-travel/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center">
+                  {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Update Trip"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
             </tbody>
           </table>
         </div>

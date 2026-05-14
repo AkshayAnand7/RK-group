@@ -35,6 +35,24 @@ export async function addShop(formData: FormData) {
   return { success: true }
 }
 
+export async function updateShop(shop_id: string, formData: FormData) {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  const name = formData.get('name') as string
+  const location = formData.get('location') as string
+  const staff_id = formData.get('staff_id') as string || null
+
+  const { error } = await supabase.from('shops')
+    .update({ name, location, staff_id })
+    .eq('shop_id', shop_id)
+
+  if (error) return { error: error.message }
+  
+  revalidatePath('/admin/shops')
+  return { success: true }
+}
+
 export async function deleteShop(shop_id: string) {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
