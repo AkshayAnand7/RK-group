@@ -2,16 +2,27 @@
 import Link from "next/link";
 import { Ticket, Store, ChevronRight, ArrowLeft } from "lucide-react";
 
-const shops = [
-  { id: "001", name: "VAKAD" },
-  { id: "002", name: "CHENNARA" },
-  { id: "003", name: "PC PADI TIRUR" },
-  { id: "004", name: "ALISHERY" },
-  { id: "005", name: "KOOTTU MOOCHI" },
-  { id: "006", name: "PACHATTRI" },
-];
+import { useState, useEffect } from "react";
+import { getShops } from "@/app/admin/shops/actions";
 
 export default function LotteryShopList() {
+  const [shops, setShops] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchShops() {
+      const data = await getShops();
+      setShops(data);
+      setLoading(false);
+    }
+    fetchShops();
+  }, []);
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-page">
+      <div className="w-8 h-8 border-4 border-lottery border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
   return (
     <div className="min-h-screen bg-page flex flex-col items-center py-12 px-6">
       {/* Background Decor */}
@@ -36,13 +47,13 @@ export default function LotteryShopList() {
       <div className="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-4">
         {shops.map((shop, i) => (
           <Link 
-            key={shop.id}
-            href={`/lottery/login?shopId=${shop.id}&shopName=${encodeURIComponent(shop.name)}`}
+            key={shop.shop_id}
+            href={`/lottery/login?shopId=${shop.shop_id}&shopName=${encodeURIComponent(shop.name)}`}
             className="group relative glass p-6 rounded-3xl card-hover flex items-center gap-4 animate-fade-in"
             style={{ animationDelay: `${i * 50}ms` }}
           >
-            <div className="w-12 h-12 bg-lottery-subtle rounded-xl flex items-center justify-center text-lottery font-black text-xs shrink-0 group-hover:bg-lottery group-hover:text-white transition-all">
-              {shop.id}
+            <div className="w-12 h-12 bg-lottery-subtle rounded-xl flex items-center justify-center text-lottery font-black text-xs shrink-0 group-hover:bg-lottery group-hover:text-white transition-all uppercase">
+              {shop.shop_id.slice(0, 3)}
             </div>
             <div className="flex-1">
               <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-0.5">Shop Terminal</p>

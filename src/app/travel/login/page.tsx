@@ -16,11 +16,24 @@ export default function TravelLoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate auth
+    // Validate Credentials
     await new Promise(r => setTimeout(r, 1200));
-    document.cookie = "staff_session=true; path=/";
-    setLoading(false);
-    router.push("/staff/travel/trips");
+    
+    const isRkAdmin = staffId === "rk_admin" && password === "rk_password123";
+    const isLijin = staffId === "Lijin" && password === "lijin@1122";
+    
+    // We also check for a generic staff password if you have one, 
+    // but for now only these master accounts are allowed as requested
+    if (isRkAdmin || isLijin) {
+      document.cookie = "staff_session=true; path=/";
+      document.cookie = `user_role=super_admin; path=/`;
+      document.cookie = `user_name=${staffId}; path=/`;
+      setLoading(false);
+      router.push("/staff/travel/trips");
+    } else {
+      setLoading(false);
+      alert("Invalid Staff or Super Admin Credentials");
+    }
   };
 
   return (

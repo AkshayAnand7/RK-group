@@ -19,16 +19,21 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError("");
 
-    // Simulate Admin Auth Validation
+    // Validate Master Credentials
     await new Promise(r => setTimeout(r, 1200));
     
-    if (adminId === "rk_admin" && password === "rk_password123") {
+    const isRkAdmin = adminId === "rk_admin" && password === "rk_password123";
+    const isLijin = adminId === "Lijin" && password === "lijin@1122";
+
+    if (isRkAdmin || isLijin) {
       document.cookie = "admin_session=true; path=/";
+      document.cookie = `user_role=super_admin; path=/`;
+      document.cookie = `user_name=${adminId}; path=/`;
       setLoading(false);
       router.push("/admin/dashboard");
     } else {
       setLoading(false);
-      setError("Invalid Master Credentials");
+      setError("Invalid Super Admin Credentials");
     }
   };
 

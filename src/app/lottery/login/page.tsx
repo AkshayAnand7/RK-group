@@ -20,11 +20,23 @@ function LoginContent() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate auth
+    
+    // Validate Credentials
     await new Promise(r => setTimeout(r, 1200));
-    document.cookie = "staff_session=true; path=/";
-    setLoading(false);
-    router.push("/staff/lottery/entry");
+    
+    const isRkAdmin = authId === "rk_admin" && password === "rk_password123";
+    const isLijin = authId === "Lijin" && password === "lijin@1122";
+
+    if (isRkAdmin || isLijin) {
+      document.cookie = "staff_session=true; path=/";
+      document.cookie = `user_role=super_admin; path=/`;
+      document.cookie = `user_name=${authId}; path=/`;
+      setLoading(false);
+      router.push("/staff/lottery/entry");
+    } else {
+      setLoading(false);
+      alert("Invalid Terminal or Super Admin Credentials");
+    }
   };
 
   return (
