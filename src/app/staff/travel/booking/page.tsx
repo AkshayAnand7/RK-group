@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import StaffLayout from "@/components/StaffLayout";
 import { 
@@ -8,7 +8,6 @@ import {
   Clock, Check, X as Close, IndianRupee
 } from "lucide-react";
 import { submitBooking, getBookings, updateBookingStatus } from "./actions";
-import { useEffect } from "react";
 
 export default function TravelBookingPage() {
   const [loading, setLoading] = useState(false);
@@ -84,7 +83,6 @@ export default function TravelBookingPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* ... (Existing Date & Staff fields remain same) ... */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Date</label>
@@ -236,16 +234,6 @@ export default function TravelBookingPage() {
             )}
           </div>
         </div>
-      </div>
-    </StaffLayout>
-  );
-}
-
-
-          <button type="submit" disabled={loading} className="w-full py-4 bg-primary text-white rounded-2xl font-black shadow-xl shadow-primary/30 flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50">
-            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Confirm Booking"}
-          </button>
-        </form>
       </div>
     </StaffLayout>
   );
