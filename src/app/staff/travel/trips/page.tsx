@@ -7,17 +7,14 @@ import {
   Calendar, CheckCircle, Loader2, Save, X,
   FileText, Plus, ChevronRight, History
 } from "lucide-react";
-
-const previousTrips = [
-  { id: 1, date: "13 May 2026", route: "Mumbai - Pune", vehicle: "MH-12-AB-1234", amount: 8500, status: "Locked" },
-  { id: 2, date: "12 May 2026", route: "Pune - Nashik", vehicle: "MH-14-CD-5678", amount: 4200, status: "Locked" },
-  { id: 3, date: "11 May 2026", route: "Mumbai - Goa", vehicle: "MH-12-EF-9012", amount: 15000, status: "Locked" },
-];
+import { getTrips } from "./actions";
+import { useEffect } from "react";
 
 export default function TravelTripPage() {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [trips, setTrips] = useState<any[]>([]);
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
     driver: "Rajesh Patil",
@@ -29,6 +26,15 @@ export default function TravelTripPage() {
     received: ""
   });
 
+  useEffect(() => {
+    fetchTrips();
+  }, []);
+
+  async function fetchTrips() {
+    const data = await getTrips();
+    setTrips(data || []);
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -38,6 +44,7 @@ export default function TravelTripPage() {
     setTimeout(() => {
       setSuccess(false);
       setShowForm(false);
+      fetchTrips();
     }, 2000);
   };
 
@@ -56,21 +63,27 @@ export default function TravelTripPage() {
             </div>
 
             <div className="space-y-3">
-              {previousTrips.map((trip) => (
-                <div key={trip.id} className="bg-surface p-4 rounded-2xl border border-border flex items-center justify-between">
+              {trips.map((trip) => (
+                <div key={trip.id} className="bg-surface p-4 rounded-2xl border border-border flex items-center justify-between shadow-sm">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-black text-text-primary uppercase">{trip.route}</span>
+                      <span className="text-xs font-black text-text-primary uppercase">{trip.from_location} - {trip.to_location}</span>
                       <span className="px-2 py-0.5 bg-page text-travel text-[8px] font-black rounded-full border border-travel/10 uppercase">{trip.vehicle}</span>
                     </div>
-                    <p className="text-[10px] font-bold text-text-muted">{trip.date} • RK Travel</p>
+                    <p className="text-[10px] font-bold text-text-muted">{new Date(trip.date).toLocaleDateString()} • {trip.staff_name || 'RK Travel'}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-black text-emerald-600 font-mono-nums">₹{trip.amount.toLocaleString()}</p>
-                    <span className="text-[8px] font-black text-text-muted uppercase tracking-widest bg-page px-1.5 py-0.5 rounded border border-border italic">Locked</span>
+                    <p className="text-sm font-black text-emerald-600 font-mono-nums">₹{(trip.total_amount || trip.received_amount || 0).toLocaleString()}</p>
+                    <span className="text-[8px] font-black text-text-muted uppercase tracking-widest bg-page px-1.5 py-0.5 rounded border border-border italic">{trip.status}</span>
                   </div>
                 </div>
               ))}
+              
+              {trips.length === 0 && (
+                <div className="py-12 text-center text-text-muted text-sm italic">
+                  No trips recorded yet. Accept a booking to see it here!
+                </div>
+              )}
             </div>
 
             {/* 2. Options (Below Reports) */}
