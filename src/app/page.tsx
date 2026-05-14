@@ -17,15 +17,16 @@ export default function LandingPage() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-lottery/10 blur-[120px] rounded-full animate-pulse" />
 
       <div className="relative z-10 w-full max-w-4xl px-6 py-12 text-center">
-        {/* Main Logo/Title */}
-        <div className="mb-16 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-primary rounded-3xl shadow-2xl shadow-primary/40 mb-8 mx-auto">
-            <span className="text-white font-black text-4xl">RK</span>
+        {/* Main Logo */}
+        <div className="mb-12 animate-fade-in flex flex-col items-center">
+          <div className="relative w-40 h-40 md:w-56 md:h-56 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/30 border-4 border-white mb-6 transform hover:scale-105 transition-transform duration-500">
+            <img 
+              src="/logo.jpg" 
+              alt="RK Group Logo" 
+              className="w-full h-full object-cover"
+            />
           </div>
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-text-primary uppercase">
-            RK <span className="text-gradient">Group</span>
-          </h1>
-          <p className="mt-4 text-text-secondary font-bold tracking-[0.3em] uppercase text-xs sm:text-sm">
+          <p className="mt-2 text-text-secondary font-black tracking-[0.4em] uppercase text-[10px] sm:text-xs opacity-70">
             Enterprise Management System
           </p>
         </div>
