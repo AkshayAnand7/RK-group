@@ -18,6 +18,7 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
     expense: Number(formData.expense || 0),
     advance: Number(formData.advance || 0),
     prize: Number(formData.prize || 0),
+    pending: Number(formData.pending || 0),
     date: new Date().toISOString().split('T')[0],
     created_at: new Date().toISOString()
   })
@@ -28,7 +29,7 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
   await supabase.from('notifications').insert({
     type: 'collection',
     title: 'Daily Collection Submitted',
-    message: `${shopName} has submitted their daily collection of ₹${formData.collection}.`,
+    message: `${shopName} has submitted their daily collection of ₹${formData.collection}. Pending: ₹${formData.pending || 0}`,
     shop_id: shopId,
     created_at: new Date().toISOString()
   })
@@ -42,6 +43,7 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
     `📉 *Expense:* ₹${formData.expense || 0}\n` +
     `💰 *Advance:* ₹${formData.advance || 0}\n` +
     `🏆 *Prize:* ₹${formData.prize || 0}\n` +
+    `🔴 *Pending:* ₹${formData.pending || 0}\n` +
     `💎 *Net Balance:* ₹${Number(formData.collection) - Number(formData.expense || 0) - Number(formData.advance || 0) - Number(formData.prize || 0) - Number(formData.pending || 0)}\n\n` +
     `✅ _Submitted by: ${formData.staffName}_`
 
@@ -55,5 +57,21 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
   revalidatePath('/admin/collections')
   revalidatePath('/admin/dashboard')
   return { success: true }
+}
+
+export async function getLastPending(shopId: string) {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('collections')
+    .select('pending')
+    .eq('shop_id', shopId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (error || !data) return 0
+  return data.pending || 0
 }
 

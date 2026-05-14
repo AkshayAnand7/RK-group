@@ -7,12 +7,13 @@ import {
   TrendingUp, TrendingDown, IndianRupee, Save
 } from "lucide-react";
 
-import { submitCollection } from "./actions";
+import { submitCollection, getLastPending } from "./actions";
 
 export default function LotteryEntryPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [shopInfo, setShopInfo] = useState({ id: "", name: "Lottery Terminal" });
+  const [lastPending, setLastPending] = useState(0);
   
   const [formData, setFormData] = useState({
     staffName: "",
@@ -33,6 +34,10 @@ export default function LotteryEntryPage() {
     
     setShopInfo({ id: shopId, name: shopName });
     if (userName) setFormData(prev => ({ ...prev, staffName: userName }));
+
+    if (shopId) {
+      getLastPending(shopId).then(setLastPending);
+    }
   }, []);
 
   useEffect(() => {
@@ -91,6 +96,21 @@ export default function LotteryEntryPage() {
             <p className="text-xs font-black text-lottery">{shopInfo.id || 'N/A'}</p>
           </div>
         </div>
+
+        {/* Pending Reminder Alert */}
+        {lastPending > 0 && (
+          <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-4 animate-bounce-subtle">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+              <AlertCircle className="w-6 h-6 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[10px] font-black text-amber-800 uppercase tracking-widest">Previous Pending Reminder</p>
+              <p className="text-sm font-black text-amber-900">
+                You have an outstanding balance of <span className="text-base">₹{lastPending.toLocaleString()}</span> from yesterday.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Live Balance Card */}
         <div className={`p-6 rounded-2xl border-2 transition-all duration-300 ${
