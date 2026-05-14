@@ -22,7 +22,8 @@ export default function TravelBookingPage() {
     fromLocation: "",
     toLocation: "",
     tripType: "one-side",
-    advanceAmount: ""
+    totalAmount: "",
+    receivedAmount: ""
   });
 
   useEffect(() => {
@@ -43,11 +44,12 @@ export default function TravelBookingPage() {
     e.preventDefault();
     setLoading(true);
     const result = await submitBooking(formData);
-    setLoading(false);
+    setLoading(true); // Wait for revalidation
     if (result.success) {
       setSuccess(true);
       fetchRides();
     } else alert(result.error);
+    setLoading(false);
   };
 
   if (success) {
@@ -60,7 +62,7 @@ export default function TravelBookingPage() {
           <h2 className="text-2xl font-bold text-text-primary">Booking Saved!</h2>
           <p className="text-text-secondary mt-2">The trip has been saved as PENDING and admin has been notified via WhatsApp.</p>
           <div className="mt-10 space-y-3">
-            <button onClick={() => { setSuccess(false); setFormData({...formData, customerName: "", customerNumber: "", fromLocation: "", toLocation: "", advanceAmount: ""}) }} className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 cursor-pointer">
+            <button onClick={() => { setSuccess(false); setFormData({...formData, customerName: "", customerNumber: "", fromLocation: "", toLocation: "", totalAmount: "", receivedAmount: ""}) }} className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 cursor-pointer">
               New Booking
             </button>
             <Link href="/staff/travel/trips" className="block w-full py-4 bg-page text-text-secondary border border-border rounded-2xl font-bold text-center">
@@ -116,11 +118,14 @@ export default function TravelBookingPage() {
                   <input type="tel" required placeholder="Number" value={formData.customerNumber} onChange={e => setFormData({...formData, customerNumber: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
                 </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Advance (₹)</label>
-                <div className="relative">
-                  <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
-                  <input type="number" placeholder="0" value={formData.advanceAmount} onChange={e => setFormData({...formData, advanceAmount: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Total (₹)</label>
+                  <input type="number" placeholder="0" value={formData.totalAmount} onChange={e => setFormData({...formData, totalAmount: e.target.value})} className="w-full h-12 px-3 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Recvd (₹)</label>
+                  <input type="number" placeholder="0" value={formData.receivedAmount} onChange={e => setFormData({...formData, receivedAmount: e.target.value})} className="w-full h-12 px-3 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
                 </div>
               </div>
             </div>
@@ -185,7 +190,6 @@ export default function TravelBookingPage() {
           <div className="space-y-4">
             {upcomingRides.map((ride) => (
               <div key={ride.id} className="glass p-5 rounded-3xl border border-border shadow-lg relative overflow-hidden group">
-                {/* Status Badge */}
                 <div className={`absolute top-0 right-0 px-4 py-1 rounded-bl-xl text-[8px] font-black uppercase tracking-tighter ${
                   ride.status === 'accepted' ? 'bg-success text-white' : 
                   ride.status === 'rejected' ? 'bg-danger text-white' : 'bg-primary/20 text-primary'
@@ -211,9 +215,15 @@ export default function TravelBookingPage() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-text-muted font-black uppercase tracking-widest">Advance</span>
-                    <span className="text-emerald-600 font-black">₹{ride.advance_amount || 0}</span>
+                  <div className="flex gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] text-text-muted font-black uppercase tracking-widest">Total</span>
+                      <span className="text-text-primary font-black">₹{ride.total_amount || 0}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] text-text-muted font-black uppercase tracking-widest">Received</span>
+                      <span className="text-emerald-600 font-black">₹{ride.received_amount || 0}</span>
+                    </div>
                   </div>
                   
                   {ride.status === 'pending' && (

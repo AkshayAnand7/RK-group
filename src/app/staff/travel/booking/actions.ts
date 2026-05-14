@@ -18,7 +18,8 @@ export async function submitBooking(formData: any) {
     from_location: formData.fromLocation,
     to_location: formData.toLocation,
     trip_type: formData.tripType,
-    advance_amount: Number(formData.advanceAmount) || 0,
+    total_amount: Number(formData.totalAmount) || 0,
+    received_amount: Number(formData.receivedAmount) || 0,
     status: 'pending',
     date: formData.date || new Date().toISOString().split('T')[0]
   })
@@ -35,7 +36,8 @@ export async function submitBooking(formData: any) {
     `📍 *From:* ${formData.fromLocation}\n` +
     `🏁 *To:* ${formData.toLocation}\n` +
     `🔄 *Type:* ${formData.tripType === 'round' ? 'Round Trip' : 'One Side'}\n` +
-    `💰 *Advance:* ₹${formData.advanceAmount || 0}\n\n` +
+    `💰 *Total:* ₹${formData.totalAmount || 0}\n` +
+    `💵 *Received:* ₹${formData.receivedAmount || 0}\n\n` +
     `✅ _Booking saved as PENDING_`
 
   await sendWhatsAppMessage(adminPhone, whatsappMessage)
@@ -88,7 +90,8 @@ export async function updateBookingStatus(id: number, status: string) {
         from_location: booking.from_location,
         to_location: booking.to_location,
         trip_type: booking.trip_type,
-        received_amount: booking.advance_amount || 0,
+        total_amount: booking.total_amount || 0,
+        received_amount: booking.received_amount || 0,
         status: 'active'
       })
 

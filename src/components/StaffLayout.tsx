@@ -32,8 +32,8 @@ export default function StaffLayout({ children, module, shopName }: StaffLayoutP
       {/* Top Header */}
       <header className="sticky top-0 z-30 h-14 bg-surface border-b border-border flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${module === "lottery" ? "bg-lottery text-white" : "bg-travel text-white"}`}>
-            {module === "lottery" ? <ClipboardList className="w-4 h-4" /> : <Bus className="w-4 h-4" />}
+          <div className="w-9 h-9 rounded-lg overflow-hidden border border-border shadow-sm">
+            <img src="/logo.jpg" alt="RK Group" className="w-full h-full object-cover" />
           </div>
           <div>
             <h1 className="text-sm font-bold text-text-primary leading-none">
