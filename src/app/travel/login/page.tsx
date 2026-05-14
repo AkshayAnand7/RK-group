@@ -34,9 +34,9 @@ export default function TravelLoginPage() {
 
         <div className="glass p-8 sm:p-10 rounded-4xl border border-white shadow-2xl relative overflow-hidden">
           {/* Header */}
-          <div className="relative z-10 mb-10 text-center">
-            <div className="w-16 h-16 bg-travel/10 border border-travel/20 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-              <Bus className="w-8 h-8 text-travel" />
+          <div className="relative z-10 mb-10 text-center flex flex-col items-center">
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl overflow-hidden shadow-2xl shadow-travel/20 border-2 border-white mb-6">
+              <img src="/logo.jpg" alt="RK Group" className="w-full h-full object-cover" />
             </div>
             <p className="text-[10px] font-black text-travel uppercase tracking-[0.2em] mb-1">Fleet Management Portal</p>
             <h2 className="text-3xl font-black text-text-primary uppercase tracking-tight">
