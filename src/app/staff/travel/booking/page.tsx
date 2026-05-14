@@ -57,7 +57,7 @@ export default function TravelBookingPage() {
     setLoading(true); // Wait for revalidation
     if (result.success) {
       setSuccess(true);
-      fetchRides();
+      fetchData();
     } else alert(result.error);
     setLoading(false);
   };
