@@ -85,7 +85,8 @@ export default function TravelBookingPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          {/* Date & Staff */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Date</label>
               <div className="relative">
@@ -110,7 +111,7 @@ export default function TravelBookingPage() {
                 <input type="text" required placeholder="Full Name" value={formData.customerName} onChange={e => setFormData({...formData, customerName: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Phone Number</label>
                 <div className="relative">
@@ -131,7 +132,7 @@ export default function TravelBookingPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Vehicle</label>
               <div className="relative">
@@ -161,7 +162,7 @@ export default function TravelBookingPage() {
           </div>
 
           <div className="space-y-4 p-4 bg-page rounded-3xl border border-border">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">From</label>
                 <input type="text" required placeholder="Pickup" value={formData.fromLocation} onChange={e => setFormData({...formData, fromLocation: e.target.value})} className="w-full h-12 px-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />

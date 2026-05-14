@@ -4,35 +4,35 @@ import { Ticket, Bus, ChevronRight, Settings } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-mesh overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center bg-mesh overflow-hidden py-10">
       {/* Admin Access (Discrete) */}
-      <div className="absolute top-6 right-6 z-50">
-        <Link href="/admin/login" className="p-3 bg-white/20 hover:bg-white/40 rounded-full backdrop-blur-md border border-white/20 transition-all group">
-          <Settings className="w-5 h-5 text-text-primary group-hover:rotate-90 transition-transform" />
+      <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50">
+        <Link href="/admin/login" className="p-2.5 md:p-3 bg-white/20 hover:bg-white/40 rounded-full backdrop-blur-md border border-white/20 transition-all group">
+          <Settings className="w-4 h-4 md:w-5 md:h-5 text-text-primary group-hover:rotate-90 transition-transform" />
         </Link>
       </div>
 
-      {/* Background Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/10 blur-[150px] rounded-full animate-slow-spin" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-lottery/10 blur-[120px] rounded-full animate-pulse" />
+      {/* ... Background Orbs ... */}
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/10 blur-[100px] md:blur-[150px] rounded-full animate-slow-spin" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-lottery/10 blur-[80px] md:blur-[120px] rounded-full animate-pulse" />
 
-      <div className="relative z-10 w-full max-w-4xl px-6 py-12 text-center">
+      <div className="relative z-10 w-full max-w-4xl px-4 md:px-6 py-6 md:py-12 text-center">
         {/* Main Logo */}
-        <div className="mb-12 animate-fade-in flex flex-col items-center">
-          <div className="relative w-40 h-40 md:w-56 md:h-56 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/30 border-4 border-white mb-6 transform hover:scale-105 transition-transform duration-500">
+        <div className="mb-8 md:mb-12 animate-fade-in flex flex-col items-center">
+          <div className="relative w-32 h-32 md:w-56 md:h-56 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/30 border-4 border-white mb-6 transform hover:scale-105 transition-transform duration-500">
             <img 
               src="/logo.jpg" 
               alt="RK Group Logo" 
               className="w-full h-full object-cover"
             />
           </div>
-          <p className="mt-2 text-text-secondary font-black tracking-[0.4em] uppercase text-[10px] sm:text-xs opacity-70">
+          <p className="mt-2 text-text-secondary font-black tracking-[0.2em] md:tracking-[0.4em] uppercase text-[9px] md:text-xs opacity-70">
             Enterprise Management System
           </p>
         </div>
 
         {/* Two Separate Modules */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 max-w-3xl mx-auto">
           {/* RK Lottery Link */}
           <Link 
             href="/lottery" 
