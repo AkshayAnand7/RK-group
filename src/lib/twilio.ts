@@ -1,3 +1,5 @@
+'use server'
+
 import twilio from 'twilio'
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID
