@@ -7,13 +7,45 @@ export async function getDashboardStats(period: string = 'week') {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
+  const now = new Date()
+  let startDate = new Date()
+
+  if (period === 'today') {
+    startDate.setHours(0, 0, 0, 0)
+  } else if (period === 'week') {
+    startDate.setDate(now.getDate() - 7)
+  } else if (period === 'month') {
+    startDate.setMonth(now.getMonth() - 1)
+  } else {
+    // Default to all time or a large window if period is 'custom' or 'all'
+    startDate = new Date(2000, 0, 1)
+  }
+
+  const startDateIso = startDate.toISOString()
+
   // 1. Fetch Lottery Data
-  const { data: collections } = await supabase.from('collections').select('amount, created_at')
-  const { data: lotteryExpenses } = await supabase.from('expenses').select('amount').eq('module', 'lottery')
+  const { data: collections } = await supabase
+    .from('collections')
+    .select('amount, created_at, date')
+    .gte('created_at', startDateIso)
+
+  const { data: lotteryExpenses } = await supabase
+    .from('expenses')
+    .select('amount')
+    .eq('module', 'lottery')
+    .gte('created_at', startDateIso)
   
   // 2. Fetch Travel Data
-  const { data: trips } = await supabase.from('trips').select('total_amount, received_amount, date')
-  const { data: travelExpenses } = await supabase.from('expenses').select('amount').eq('module', 'travel')
+  const { data: trips } = await supabase
+    .from('trips')
+    .select('total_amount, received_amount, date')
+    .gte('date', startDateIso.split('T')[0])
+
+  const { data: travelExpenses } = await supabase
+    .from('expenses')
+    .select('amount')
+    .eq('module', 'travel')
+    .gte('created_at', startDateIso)
 
   // Aggregations
   const totalLotteryCollection = collections?.reduce((sum, c) => sum + Number(c.amount), 0) || 0
@@ -23,7 +55,7 @@ export async function getDashboardStats(period: string = 'week') {
   const totalTravelExpense = travelExpenses?.reduce((sum, e) => sum + Number(e.amount), 0) || 0
   const pendingTripAmount = trips?.reduce((sum, t) => sum + (Number(t.total_amount) - Number(t.received_amount)), 0) || 0
 
-  // 3. Generate REAL Daily Chart Data (Last 7 Days)
+  // 3. Generate Daily Chart Data (Last 7 Days)
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const revenueData = Array.from({ length: 7 }, (_, i) => {
     const d = new Date()
@@ -31,7 +63,7 @@ export async function getDashboardStats(period: string = 'week') {
     const dayName = days[d.getDay()]
     const dateStr = d.toISOString().split('T')[0]
 
-    const lotteryDay = collections?.filter(c => c.created_at.startsWith(dateStr))
+    const lotteryDay = collections?.filter(c => (c.date === dateStr || (c.created_at && c.created_at.startsWith(dateStr))))
       .reduce((sum, c) => sum + Number(c.amount), 0) || 0
     
     const travelDay = trips?.filter(t => t.date === dateStr)
@@ -52,6 +84,7 @@ export async function getDashboardStats(period: string = 'week') {
       pendingAmount: pendingTripAmount,
       netProfit: totalTripIncome - totalTravelExpense
     },
-    revenueData
+    revenueData,
+    period
   }
 }

@@ -10,8 +10,18 @@ import {
   ResponsiveContainer 
 } from "recharts";
 
+import { useRouter, useSearchParams } from "next/navigation";
+
 export default function DashboardClient({ stats }: { stats: any }) {
-  const [period, setPeriod] = useState("week");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentPeriod = stats.period || "week";
+
+  const handlePeriod = (p: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('period', p);
+    router.push(`?${params.toString()}`);
+  };
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -22,10 +32,10 @@ export default function DashboardClient({ stats }: { stats: any }) {
           <p className="text-sm text-text-secondary font-medium">RK Group Enterprise Management Command Center</p>
         </div>
         <div className="flex gap-1 p-1 bg-white border border-border rounded-xl shadow-sm">
-          {["today", "week", "month", "custom"].map(p => (
-            <button key={p} onClick={() => setPeriod(p)}
+          {["today", "week", "month", "all"].map(p => (
+            <button key={p} onClick={() => handlePeriod(p)}
               className={`px-4 py-2 text-xs font-bold rounded-lg transition-all duration-150 capitalize cursor-pointer ${
-                period === p ? "bg-primary text-white shadow-lg shadow-primary/25" : "text-text-secondary hover:text-text-primary"
+                currentPeriod === p ? "bg-primary text-white shadow-lg shadow-primary/25" : "text-text-secondary hover:text-text-primary"
               }`}>
               {p}
             </button>
