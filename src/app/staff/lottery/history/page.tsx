@@ -6,19 +6,30 @@ import {
   Search, Filter, Lock, CheckCircle2, AlertCircle
 } from "lucide-react";
 
-const mockHistory = [
-  { id: 1, date: "13 May 2026", collection: 45000, expense: 2000, prize: 5000, balance: 38000, status: "Locked" },
-  { id: 2, date: "12 May 2026", collection: 38000, expense: 1500, prize: 3000, balance: 33500, status: "Locked" },
-  { id: 3, date: "11 May 2026", collection: 52000, expense: 2500, prize: 8000, balance: 41500, status: "Locked" },
-  { id: 4, date: "10 May 2026", collection: 29000, expense: 1000, prize: 2000, balance: 26000, status: "Locked" },
-  { id: 5, date: "09 May 2026", collection: 41000, expense: 1800, prize: 4000, balance: 35200, status: "Locked" },
-];
+import { getHistory } from "./actions";
+import { useEffect } from "react";
 
 export default function LotteryHistoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [history, setHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getHistory();
+      setHistory(data || []);
+      setLoading(false);
+    }
+    fetchData();
+  }, []);
+
+  const filteredHistory = history.filter(item => 
+    item.shop_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.staff_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <StaffLayout module="lottery" shopName="RK Shop 1">
+    <StaffLayout module="lottery" shopName="Lottery Terminal">
       <div className="p-4 space-y-6">
         
         {/* Header & Search */}
@@ -48,7 +59,12 @@ export default function LotteryHistoryPage() {
 
         {/* History List */}
         <div className="space-y-3">
-          {mockHistory.map((item) => (
+          {loading ? (
+            <div className="py-20 text-center">
+              <Loader2 className="w-8 h-8 text-lottery animate-spin mx-auto opacity-20" />
+              <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mt-4">Fetching Records...</p>
+            </div>
+          ) : filteredHistory.map((item) => (
             <div key={item.id} className="bg-surface p-4 rounded-2xl border border-border active:scale-[0.98] transition-transform group">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -56,24 +72,32 @@ export default function LotteryHistoryPage() {
                     <Calendar className="w-4 h-4 text-text-muted" />
                   </div>
                   <div>
-                    <p className="text-xs font-black text-text-primary uppercase tracking-tight">{item.date}</p>
-                    <p className="text-[10px] font-bold text-text-muted">ID: #00{item.id}</p>
+                    <p className="text-xs font-black text-text-primary uppercase tracking-tight">
+                      {new Date(item.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </p>
+                    <p className="text-[10px] font-bold text-text-muted uppercase">{item.shop_name}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100">
-                  <Lock className="w-3 h-3" />
-                  <span className="text-[9px] font-black uppercase tracking-widest">Locked</span>
+                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full border ${
+                  item.is_locked 
+                    ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
+                    : "bg-blue-50 text-blue-600 border-blue-100"
+                }`}>
+                  {item.is_locked ? <Lock className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+                  <span className="text-[9px] font-black uppercase tracking-widest">
+                    {item.is_locked ? "Locked" : "Open"}
+                  </span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-3 border-t border-border/50">
                 <div>
                   <p className="text-[9px] font-black text-text-muted uppercase tracking-widest mb-1">Collection</p>
-                  <p className="text-sm font-black text-text-primary font-mono-nums">₹{item.collection.toLocaleString()}</p>
+                  <p className="text-sm font-black text-text-primary font-mono-nums">₹{Number(item.amount).toLocaleString()}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[9px] font-black text-text-muted uppercase tracking-widest mb-1">Net Balance</p>
-                  <p className="text-sm font-black text-emerald-600 font-mono-nums">₹{item.balance.toLocaleString()}</p>
+                  <p className="text-sm font-black text-emerald-600 font-mono-nums">₹{(item.amount - (item.expense || 0)).toLocaleString()}</p>
                 </div>
               </div>
 
@@ -81,19 +105,25 @@ export default function LotteryHistoryPage() {
                 <div className="flex items-center gap-4">
                   <div>
                     <p className="text-[8px] font-black text-text-muted uppercase">Exp</p>
-                    <p className="text-[10px] font-bold text-red-500 font-mono-nums">₹{item.expense}</p>
+                    <p className="text-[10px] font-bold text-red-500 font-mono-nums">₹{item.expense || 0}</p>
                   </div>
                   <div>
                     <p className="text-[8px] font-black text-text-muted uppercase">Prize</p>
-                    <p className="text-[10px] font-bold text-amber-600 font-mono-nums">₹{item.prize}</p>
+                    <p className="text-[10px] font-bold text-amber-600 font-mono-nums">₹{item.prize || 0}</p>
                   </div>
                 </div>
-                <button className="text-[10px] font-black text-lottery uppercase flex items-center gap-1 hover:underline">
-                  View Details <ChevronRight className="w-3 h-3" />
-                </button>
+                <div className="text-[9px] font-bold text-text-muted uppercase italic">
+                  By {item.staff_name}
+                </div>
               </div>
             </div>
           ))}
+          {!loading && filteredHistory.length === 0 && (
+            <div className="py-20 text-center border-2 border-dashed border-border rounded-3xl">
+              <AlertCircle className="w-8 h-8 text-text-muted mx-auto opacity-20" />
+              <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mt-4">No records found</p>
+            </div>
+          )}
         </div>
 
         {/* Empty State / Bottom Info */}

@@ -17,9 +17,14 @@ import { Settings } from "lucide-react";
 
 const fuelTypes = ["Diesel", "Petrol"];
 const maintenanceTypes = ["Washing", "Service", "Cleaning", "Tire Change", "Oil Change"];
-const vehicles = ["MH-12-AB-1234", "MH-14-CD-5678", "MH-12-EF-9012", "MH-20-GH-3456"];
 
-export default function ExpensesClient({ initialExpenses }: { initialExpenses: any[] }) {
+export default function ExpensesClient({ 
+  initialExpenses, 
+  initialVehicles 
+}: { 
+  initialExpenses: any[], 
+  initialVehicles: any[] 
+}) {
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -173,7 +178,9 @@ export default function ExpensesClient({ initialExpenses }: { initialExpenses: a
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Module</label>
                   <select name="vehicle" className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all cursor-pointer">
                     <option value="">Lottery (General)</option>
-                    {vehicles.map(v => <option key={v} value={v}>{v}</option>)}
+                    {initialVehicles.map(v => (
+                      <option key={v.id} value={v.vehicle_number}>{v.vehicle_number}</option>
+                    ))}
                   </select>
                 </div>
               </div>

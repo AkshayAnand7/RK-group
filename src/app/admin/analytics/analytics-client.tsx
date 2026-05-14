@@ -31,12 +31,12 @@ export default function AnalyticsClient({ initialTrips, initialExpenses }: { ini
 
   // Month-wise aggregation (simplified for demo/production)
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const currentMonth = new Date().getMonth();
-  const trendData = months.slice(Math.max(0, currentMonth - 4), currentMonth + 1).map((m, idx) => {
-    // In a real app, you'd filter by month. For now, we'll show current data in current month.
-    if (idx === 4) return { month: m, fuel: totalFuel, maint: totalMaint };
-    return { month: m, fuel: totalFuel * (0.8 + idx/10), maint: totalMaint * (0.5 + idx/10) };
-  });
+  const trendData = months.map((m, idx) => {
+    const monthExpenses = initialExpenses.filter(e => new Date(e.date).getMonth() === idx);
+    const fuel = monthExpenses.filter(e => e.category === 'fuel').reduce((s, e) => s + Number(e.amount), 0);
+    const maint = monthExpenses.filter(e => e.category === 'maintenance').reduce((s, e) => s + Number(e.amount), 0);
+    return { month: m, fuel, maint };
+  }).filter(d => d.fuel > 0 || d.maint > 0); // Only show months with data
 
   return (
     <div className="space-y-8 animate-fade-in">

@@ -67,7 +67,7 @@ export default function LotteryEntryPage() {
 
   if (success) {
     return (
-      <StaffLayout module="lottery" shopName="RK Shop 1">
+      <StaffLayout module="lottery" shopName="Lottery Terminal">
         <div className="p-6 text-center animate-fade-in pt-12">
           <div className="w-20 h-20 rounded-full bg-success-subtle flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-success" />
@@ -97,7 +97,7 @@ export default function LotteryEntryPage() {
 
 
   return (
-    <StaffLayout module="lottery" shopName="RK Shop 1">
+    <StaffLayout module="lottery" shopName="Lottery Terminal">
       <div className="p-4 space-y-4">
         {/* Date Display */}
         <div className="flex items-center justify-between bg-surface p-4 rounded-2xl border border-border">

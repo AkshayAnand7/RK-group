@@ -1,0 +1,21 @@
+'use server'
+
+import { createClient } from '@/utils/supabase/server'
+import { cookies } from 'next/headers'
+
+export async function getHistory() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+  
+  const { data, error } = await supabase
+    .from('collections')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(30)
+
+  if (error) {
+    console.error("Error fetching history:", error)
+    return []
+  }
+  return data
+}
