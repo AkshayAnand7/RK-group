@@ -127,11 +127,20 @@ export default function TravelBookingPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-             <div className="space-y-2">
+            <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Vehicle</label>
               <div className="relative">
                 <Car className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
-                <input type="text" required placeholder="Vehicle Name" value={formData.vehicle} onChange={e => setFormData({...formData, vehicle: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+                <select 
+                  required 
+                  value={formData.vehicle} 
+                  onChange={e => setFormData({...formData, vehicle: e.target.value})} 
+                  className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold appearance-none focus:border-primary outline-none transition-all"
+                >
+                  <option value="">Select Vehicle</option>
+                  <option value="Tata Winger 1">Tata Winger 1</option>
+                  <option value="Tata Winger 2">Tata Winger 2</option>
+                </select>
               </div>
             </div>
             <div className="space-y-2">
