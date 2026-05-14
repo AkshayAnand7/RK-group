@@ -6,8 +6,7 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getShops() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   const { data, error } = await supabase.from('shops').select('*').order('created_at', { ascending: false })
   if (error) throw error
   return data

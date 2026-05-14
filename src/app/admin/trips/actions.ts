@@ -6,8 +6,7 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getTrips() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   const { data, error } = await supabase.from('trips').select(`
     *,
     driver:profiles(full_name),
@@ -19,8 +18,7 @@ export async function getTrips() {
 }
 
 export async function getVehicles() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   const { data, error } = await supabase.from('vehicles').select('*').order('vehicle_number', { ascending: true })
   if (error) throw error
   return data

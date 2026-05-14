@@ -6,8 +6,7 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getExpenses() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { data, error } = await supabase
     .from('expenses')
@@ -19,8 +18,7 @@ export async function getExpenses() {
 }
 
 export async function getVehicles() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   const { data, error } = await supabase.from('vehicles').select('*').order('vehicle_number', { ascending: true })
   if (error) return []
   return data
