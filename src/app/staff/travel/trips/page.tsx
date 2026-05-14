@@ -63,7 +63,7 @@ export default function TravelTripPage() {
       setTimeout(() => {
         setSuccess(false);
         setShowForm(false);
-        fetchTrips();
+        fetchData();
       }, 2000);
     } else {
       alert(result.error);
