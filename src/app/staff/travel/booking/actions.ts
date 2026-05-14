@@ -61,13 +61,41 @@ export async function updateBookingStatus(id: number, status: string) {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  const { error } = await supabase
+  // 1. Update Booking Status
+  const { data: booking, error: fetchError } = await supabase
+    .from('bookings')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (fetchError) return { error: fetchError.message }
+
+  const { error: updateError } = await supabase
     .from('bookings')
     .update({ status })
     .eq('id', id)
 
-  if (error) return { error: error.message }
+  if (updateError) return { error: updateError.message }
+
+  // 2. If accepted, create a TRIP record automatically
+  if (status === 'accepted') {
+    const { error: tripError } = await supabase
+      .from('trips')
+      .insert({
+        date: booking.date,
+        staff_name: booking.staff_name,
+        vehicle: booking.vehicle,
+        from_location: booking.from_location,
+        to_location: booking.to_location,
+        trip_type: booking.trip_type,
+        received_amount: booking.advance_amount || 0,
+        status: 'active'
+      })
+
+    if (tripError) console.error("Failed to create trip record:", tripError)
+  }
   
   revalidatePath('/staff/travel/booking')
+  revalidatePath('/staff/travel/trips')
   return { success: true }
 }
