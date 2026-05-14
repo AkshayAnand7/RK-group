@@ -23,8 +23,8 @@ export default function LotteryShopList() {
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
         
-        <div className="w-16 h-16 bg-lottery rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-lottery/20 animate-float">
-          <Ticket className="w-8 h-8 text-white" />
+        <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl overflow-hidden shadow-2xl shadow-lottery/20 border-2 border-white mb-6 animate-float">
+          <img src="/logo.png?v=2" alt="RK Group" className="w-full h-full object-cover" />
         </div>
         <h1 className="text-4xl font-black text-text-primary uppercase tracking-tight mb-2">
           RK <span className="text-lottery">Lottery</span>
