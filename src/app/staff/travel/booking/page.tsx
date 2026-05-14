@@ -47,7 +47,7 @@ export default function TravelBookingPage() {
 
   async function handleStatusUpdate(id: number, status: string) {
     const result = await updateBookingStatus(id, status);
-    if (result.success) fetchRides();
+    if (result.success) fetchData();
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
