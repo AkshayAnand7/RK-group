@@ -13,7 +13,7 @@ export default function TodoItem({ todo }: { todo: any }) {
     >
       <div className="flex items-center gap-4">
         <button
-          onClick={() => startTransition(() => toggleTodo(todo.id, !todo.is_completed))}
+          onClick={() => startTransition(async () => { await toggleTodo(todo.id, !todo.is_completed) })}
           disabled={isPending}
           className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors"
         >
