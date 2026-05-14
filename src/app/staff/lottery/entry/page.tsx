@@ -8,13 +8,10 @@ import {
 } from "lucide-react";
 
 import { submitCollection } from "./actions";
-import { getShops } from "@/app/admin/shops/actions";
-import { getUsers } from "@/app/admin/users/actions";
 
 export default function LotteryEntryPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [staff, setStaff] = useState<any[]>([]);
   const [shopInfo, setShopInfo] = useState({ id: "", name: "Lottery Terminal" });
   
   const [formData, setFormData] = useState({
@@ -36,12 +33,6 @@ export default function LotteryEntryPage() {
     
     setShopInfo({ id: shopId, name: shopName });
     if (userName) setFormData(prev => ({ ...prev, staffName: userName }));
-
-    async function fetchData() {
-      const staffData = await getUsers();
-      setStaff(staffData);
-    }
-    fetchData();
   }, []);
 
   useEffect(() => {
@@ -122,17 +113,14 @@ export default function LotteryEntryPage() {
           <div className="bg-surface p-6 rounded-2xl border border-border space-y-5">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Staff Name</label>
-              <select 
+              <input 
+                type="text"
                 required 
+                placeholder="Enter your name"
                 value={formData.staffName}
                 onChange={e => setFormData({ ...formData, staffName: e.target.value })}
-                className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all cursor-pointer"
-              >
-                <option value="">Select Staff...</option>
-                {staff.map(s => (
-                  <option key={s.id} value={s.full_name}>{s.full_name}</option>
-                ))}
-              </select>
+                className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"
+              />
             </div>
 
             <div className="space-y-1.5">
