@@ -3,7 +3,7 @@ import { useState } from "react";
 import StaffLayout from "@/components/StaffLayout";
 import { 
   History, Calendar, IndianRupee, ChevronRight, 
-  Search, Filter, Lock, CheckCircle2, AlertCircle
+  Search, Filter, Lock, CheckCircle2, AlertCircle, Loader2
 } from "lucide-react";
 
 import { getHistory } from "./actions";
