@@ -18,6 +18,8 @@ export async function submitBooking(formData: any) {
     from_location: formData.fromLocation,
     to_location: formData.toLocation,
     trip_type: formData.tripType,
+    advance_amount: Number(formData.advanceAmount) || 0,
+    status: 'pending',
     date: formData.date || new Date().toISOString().split('T')[0]
   })
 
@@ -32,11 +34,40 @@ export async function submitBooking(formData: any) {
     `🚗 *Vehicle:* ${formData.vehicle}\n` +
     `📍 *From:* ${formData.fromLocation}\n` +
     `🏁 *To:* ${formData.toLocation}\n` +
-    `🔄 *Type:* ${formData.tripType === 'round' ? 'Round Trip' : 'One Side'}\n\n` +
-    `✅ _Booking saved to system_`
+    `🔄 *Type:* ${formData.tripType === 'round' ? 'Round Trip' : 'One Side'}\n` +
+    `💰 *Advance:* ₹${formData.advanceAmount || 0}\n\n` +
+    `✅ _Booking saved as PENDING_`
 
   await sendWhatsAppMessage(adminPhone, whatsappMessage)
 
-  revalidatePath('/admin/bookings') // For future admin view
+  revalidatePath('/staff/travel/booking')
+  return { success: true }
+}
+
+export async function getBookings() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) return []
+  return data
+}
+
+export async function updateBookingStatus(id: number, status: string) {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  const { error } = await supabase
+    .from('bookings')
+    .update({ status })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+  
+  revalidatePath('/staff/travel/booking')
   return { success: true }
 }

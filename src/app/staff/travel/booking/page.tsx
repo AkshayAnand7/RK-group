@@ -4,13 +4,16 @@ import Link from "next/link";
 import StaffLayout from "@/components/StaffLayout";
 import { 
   Calendar, User, Phone, Car, MapPin, 
-  ArrowRightLeft, CheckCircle, Loader2, AlertCircle, ChevronLeft
+  ArrowRightLeft, CheckCircle, Loader2, AlertCircle, ChevronLeft,
+  Clock, Check, X as Close, IndianRupee
 } from "lucide-react";
-import { submitBooking } from "./actions";
+import { submitBooking, getBookings, updateBookingStatus } from "./actions";
+import { useEffect } from "react";
 
 export default function TravelBookingPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [upcomingRides, setUpcomingRides] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     staffName: "",
@@ -19,16 +22,33 @@ export default function TravelBookingPage() {
     vehicle: "",
     fromLocation: "",
     toLocation: "",
-    tripType: "one-side"
+    tripType: "one-side",
+    advanceAmount: ""
   });
+
+  useEffect(() => {
+    fetchRides();
+  }, []);
+
+  async function fetchRides() {
+    const data = await getBookings();
+    setUpcomingRides(data || []);
+  }
+
+  async function handleStatusUpdate(id: number, status: string) {
+    const result = await updateBookingStatus(id, status);
+    if (result.success) fetchRides();
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const result = await submitBooking(formData);
     setLoading(false);
-    if (result.success) setSuccess(true);
-    else alert(result.error);
+    if (result.success) {
+      setSuccess(true);
+      fetchRides();
+    } else alert(result.error);
   };
 
   if (success) {
@@ -38,14 +58,14 @@ export default function TravelBookingPage() {
           <div className="w-20 h-20 rounded-full bg-success-subtle flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-success" />
           </div>
-          <h2 className="text-2xl font-bold text-text-primary">Booking Confirmed!</h2>
-          <p className="text-text-secondary mt-2">The trip has been scheduled and admin has been notified.</p>
+          <h2 className="text-2xl font-bold text-text-primary">Booking Saved!</h2>
+          <p className="text-text-secondary mt-2">The trip has been saved as PENDING and admin has been notified via WhatsApp.</p>
           <div className="mt-10 space-y-3">
-            <button onClick={() => window.location.reload()} className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 cursor-pointer">
+            <button onClick={() => { setSuccess(false); setFormData({...formData, customerName: "", customerNumber: "", fromLocation: "", toLocation: "", advanceAmount: ""}) }} className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 cursor-pointer">
               New Booking
             </button>
-            <Link href="/staff/travel" className="block w-full py-4 bg-page text-text-secondary border border-border rounded-2xl font-bold text-center">
-              Back to Travel Home
+            <Link href="/staff/travel/trips" className="block w-full py-4 bg-page text-text-secondary border border-border rounded-2xl font-bold text-center">
+              View All Trips
             </Link>
           </div>
         </div>
@@ -60,11 +80,11 @@ export default function TravelBookingPage() {
           <Link href="/staff/travel" className="p-2 bg-surface border border-border rounded-xl">
             <ChevronLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-xl font-black">New Booking</h1>
+          <h1 className="text-xl font-black">Bookings</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 pb-20">
-          {/* Date & Staff */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* ... (Existing Date & Staff fields remain same) ... */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Date</label>
@@ -82,7 +102,6 @@ export default function TravelBookingPage() {
             </div>
           </div>
 
-          {/* Customer Info */}
           <div className="space-y-4 p-4 bg-primary/5 rounded-3xl border border-primary/10">
              <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Customer Name</label>
@@ -91,16 +110,24 @@ export default function TravelBookingPage() {
                 <input type="text" required placeholder="Full Name" value={formData.customerName} onChange={e => setFormData({...formData, customerName: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
               </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Customer Number</label>
-              <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                <input type="tel" required placeholder="Phone Number" value={formData.customerNumber} onChange={e => setFormData({...formData, customerNumber: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Phone Number</label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                  <input type="tel" required placeholder="Number" value={formData.customerNumber} onChange={e => setFormData({...formData, customerNumber: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Advance (₹)</label>
+                <div className="relative">
+                  <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
+                  <input type="number" placeholder="0" value={formData.advanceAmount} onChange={e => setFormData({...formData, advanceAmount: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Vehicle & Trip Type */}
           <div className="grid grid-cols-2 gap-4">
              <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Vehicle</label>
@@ -121,23 +148,99 @@ export default function TravelBookingPage() {
             </div>
           </div>
 
-          {/* Locations */}
           <div className="space-y-4 p-4 bg-page rounded-3xl border border-border">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">From Location</label>
-              <div className="relative">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-success" />
-                <input type="text" required placeholder="Pickup Location" value={formData.fromLocation} onChange={e => setFormData({...formData, fromLocation: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">From</label>
+                <input type="text" required placeholder="Pickup" value={formData.fromLocation} onChange={e => setFormData({...formData, fromLocation: e.target.value})} className="w-full h-12 px-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
               </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">To Location</label>
-              <div className="relative">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-danger" />
-                <input type="text" required placeholder="Destination" value={formData.toLocation} onChange={e => setFormData({...formData, toLocation: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">To</label>
+                <input type="text" required placeholder="Drop" value={formData.toLocation} onChange={e => setFormData({...formData, toLocation: e.target.value})} className="w-full h-12 px-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
               </div>
             </div>
           </div>
+
+          <button type="submit" disabled={loading} className="w-full py-4 bg-primary text-white rounded-2xl font-black shadow-xl shadow-primary/30 flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50">
+            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Save Booking"}
+          </button>
+        </form>
+
+        {/* Upcoming Rides Section */}
+        <div className="pt-8 pb-10 space-y-4">
+          <div className="flex items-center justify-between px-2">
+            <h2 className="text-sm font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
+              <Clock className="w-4 h-4 text-primary" /> Upcoming Rides
+            </h2>
+            <span className="text-[10px] font-bold text-text-muted">{upcomingRides.length} active</span>
+          </div>
+
+          <div className="space-y-4">
+            {upcomingRides.map((ride) => (
+              <div key={ride.id} className="glass p-5 rounded-3xl border border-border shadow-lg relative overflow-hidden group">
+                {/* Status Badge */}
+                <div className={`absolute top-0 right-0 px-4 py-1 rounded-bl-xl text-[8px] font-black uppercase tracking-tighter ${
+                  ride.status === 'accepted' ? 'bg-success text-white' : 
+                  ride.status === 'rejected' ? 'bg-danger text-white' : 'bg-primary/20 text-primary'
+                }`}>
+                  {ride.status}
+                </div>
+
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 className="font-bold text-text-primary">{ride.customer_name}</h3>
+                    <p className="text-xs text-text-muted">{ride.customer_number}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-black text-primary uppercase">{ride.vehicle}</p>
+                    <p className="text-[10px] font-bold text-text-muted">{new Date(ride.date).toLocaleDateString()}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 text-sm font-bold text-text-secondary bg-page p-3 rounded-2xl mb-4">
+                  <span className="truncate">{ride.from_location}</span>
+                  <ArrowRightLeft className="w-3 h-3 shrink-0" />
+                  <span className="truncate">{ride.to_location}</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-text-muted font-black uppercase tracking-widest">Advance</span>
+                    <span className="text-emerald-600 font-black">₹{ride.advance_amount || 0}</span>
+                  </div>
+                  
+                  {ride.status === 'pending' && (
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => handleStatusUpdate(ride.id, 'rejected')}
+                        className="p-2 bg-danger-subtle text-danger rounded-xl hover:bg-danger hover:text-white transition-all"
+                      >
+                        <Close className="w-5 h-5" />
+                      </button>
+                      <button 
+                        onClick={() => handleStatusUpdate(ride.id, 'accepted')}
+                        className="p-2 bg-success-subtle text-success rounded-xl hover:bg-success hover:text-white transition-all"
+                      >
+                        <Check className="w-5 h-5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+            
+            {upcomingRides.length === 0 && (
+              <div className="py-10 text-center text-text-muted text-sm italic">
+                No upcoming bookings found
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </StaffLayout>
+  );
+}
+
 
           <button type="submit" disabled={loading} className="w-full py-4 bg-primary text-white rounded-2xl font-black shadow-xl shadow-primary/30 flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50">
             {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Confirm Booking"}
