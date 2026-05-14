@@ -14,9 +14,9 @@ import { getUsers } from "@/app/admin/users/actions";
 export default function LotteryEntryPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [shops, setShops] = useState<any[]>([]);
   const [staff, setStaff] = useState<any[]>([]);
-  const [selectedShop, setSelectedShop] = useState<any>(null);
+  const [shopInfo, setShopInfo] = useState({ id: "", name: "Lottery Terminal" });
+  
   const [formData, setFormData] = useState({
     staffName: "",
     collection: "",
@@ -28,14 +28,18 @@ export default function LotteryEntryPage() {
   const [balance, setBalance] = useState(0);
 
   useEffect(() => {
+    // Get shop info from cookies
+    const cookies = document.cookie.split('; ');
+    const shopId = cookies.find(row => row.startsWith('active_shop_id='))?.split('=')[1] || "";
+    const shopName = decodeURIComponent(cookies.find(row => row.startsWith('active_shop_name='))?.split('=')[1] || "Lottery Terminal");
+    const userName = cookies.find(row => row.startsWith('user_name='))?.split('=')[1] || "";
+    
+    setShopInfo({ id: shopId, name: shopName });
+    if (userName) setFormData(prev => ({ ...prev, staffName: userName }));
+
     async function fetchData() {
-      const [shopsData, staffData] = await Promise.all([
-        getShops(),
-        getUsers()
-      ]);
-      setShops(shopsData);
+      const staffData = await getUsers();
       setStaff(staffData);
-      if (shopsData.length > 0) setSelectedShop(shopsData[0]);
     }
     fetchData();
   }, []);
@@ -51,41 +55,27 @@ export default function LotteryEntryPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedShop) return alert("Please select a shop");
     setLoading(true);
-    
-    const result = await submitCollection(formData, selectedShop.name, selectedShop.shop_id);
-    
+    const result = await submitCollection(formData, shopInfo.name, shopInfo.id);
     setLoading(false);
-    if (result.success) {
-      setSuccess(true);
-    } else {
-      alert(result.error);
-    }
+    if (result.success) setSuccess(true);
+    else alert(result.error);
   };
-
 
   if (success) {
     return (
-      <StaffLayout module="lottery" shopName="Lottery Terminal">
+      <StaffLayout module="lottery" shopName={shopInfo.name}>
         <div className="p-6 text-center animate-fade-in pt-12">
           <div className="w-20 h-20 rounded-full bg-success-subtle flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-success" />
           </div>
           <h2 className="text-2xl font-bold text-text-primary">Submission Successful!</h2>
-          <p className="text-text-secondary mt-2">Daily record has been saved and admin has been notified.</p>
-          
+          <p className="text-text-secondary mt-2">Daily record for <b>{shopInfo.name}</b> has been saved.</p>
           <div className="mt-10 space-y-3">
-            <button 
-              onClick={() => window.location.reload()}
-              className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
-            >
+            <button onClick={() => window.location.reload()} className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer">
               Enter Another Record
             </button>
-            <Link 
-              href="/admin/dashboard"
-              className="block w-full py-4 bg-page text-text-secondary border border-border rounded-2xl font-bold hover:bg-slate-100 transition-all text-center"
-            >
+            <Link href="/admin/dashboard" className="block w-full py-4 bg-page text-text-secondary border border-border rounded-2xl font-bold hover:bg-slate-100 transition-all text-center">
               View Dashboard
             </Link>
           </div>
@@ -94,10 +84,8 @@ export default function LotteryEntryPage() {
     );
   }
 
-
-
   return (
-    <StaffLayout module="lottery" shopName="Lottery Terminal">
+    <StaffLayout module="lottery" shopName={shopInfo.name}>
       <div className="p-4 space-y-4">
         {/* Date Display */}
         <div className="flex items-center justify-between bg-surface p-4 rounded-2xl border border-border">
@@ -108,10 +96,8 @@ export default function LotteryEntryPage() {
             </p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">Status</p>
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-warning">
-              <span className="w-1.5 h-1.5 rounded-full bg-warning animate-pulse" /> OPEN
-            </span>
+            <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">Shop ID</p>
+            <p className="text-xs font-black text-lottery">{shopInfo.id || 'N/A'}</p>
           </div>
         </div>
 
@@ -129,29 +115,11 @@ export default function LotteryEntryPage() {
               {balance >= 0 ? "Credit" : "Debit"}
             </span>
           </div>
-          <p className="text-[10px] text-text-muted mt-2 font-medium">
-            Balance = Software Sale - (Expense + Advance + Physical Sale + Pending)
-          </p>
         </div>
 
         {/* Entry Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="bg-surface p-6 rounded-2xl border border-border space-y-5">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Select Shop Terminal</label>
-              <select 
-                required 
-                value={selectedShop?.shop_id || ""}
-                onChange={e => setSelectedShop(shops.find(s => s.shop_id === e.target.value))}
-                className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all cursor-pointer"
-              >
-                <option value="">Select Shop...</option>
-                {shops.map(shop => (
-                  <option key={shop.shop_id} value={shop.shop_id}>{shop.name} ({shop.shop_id})</option>
-                ))}
-              </select>
-            </div>
-
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Staff Name</label>
               <select 
@@ -185,55 +153,24 @@ export default function LotteryEntryPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Expenses</label>
-                <input 
-                  type="number" 
-                  placeholder="0" 
-                  value={formData.expense}
-                  onChange={e => setFormData({ ...formData, expense: e.target.value })}
-                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary"
-                />
+                <input type="number" placeholder="0" value={formData.expense} onChange={e => setFormData({ ...formData, expense: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Advances</label>
-                <input 
-                  type="number" 
-                  placeholder="0" 
-                  value={formData.advance}
-                  onChange={e => setFormData({ ...formData, advance: e.target.value })}
-                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary"
-                />
+                <input type="number" placeholder="0" value={formData.advance} onChange={e => setFormData({ ...formData, advance: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Physical Sale</label>
-                <input 
-                  type="number" 
-                  placeholder="0" 
-                  value={formData.prize}
-                  onChange={e => setFormData({ ...formData, prize: e.target.value })}
-                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary"
-                />
+                <input type="number" placeholder="0" value={formData.prize} onChange={e => setFormData({ ...formData, prize: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Pending Amount</label>
-                <input 
-                  type="number" 
-                  placeholder="0" 
-                  value={formData.pending}
-                  onChange={e => setFormData({ ...formData, pending: e.target.value })}
-                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary"
-                />
+                <input type="number" placeholder="0" value={formData.pending} onChange={e => setFormData({ ...formData, pending: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
               </div>
             </div>
-          </div>
-
-          <div className="px-2 py-4 flex items-start gap-3 bg-blue-50/50 rounded-xl border border-blue-100">
-            <AlertCircle className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
-            <p className="text-[10px] text-blue-700 font-medium leading-relaxed">
-              Please double check all amounts. Once submitted, the daily entry will be locked and can only be edited by the Super Admin.
-            </p>
           </div>
 
           <button 

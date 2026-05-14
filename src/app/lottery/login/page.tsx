@@ -31,6 +31,8 @@ function LoginContent() {
       document.cookie = "staff_session=true; path=/";
       document.cookie = `user_role=super_admin; path=/`;
       document.cookie = `user_name=${authId}; path=/`;
+      document.cookie = `active_shop_id=${shopId}; path=/`;
+      document.cookie = `active_shop_name=${shopName}; path=/`;
       setLoading(false);
       router.push("/staff/lottery/entry");
     } else {
