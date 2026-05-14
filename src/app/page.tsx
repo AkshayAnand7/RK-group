@@ -21,7 +21,7 @@ export default function LandingPage() {
         <div className="mb-8 md:mb-12 animate-fade-in flex flex-col items-center">
           <div className="relative w-32 h-32 md:w-56 md:h-56 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/30 border-4 border-white mb-6 transform hover:scale-105 transition-transform duration-500">
             <img 
-              src="/logo.jpg" 
+              src="/logo.png?v=2" 
               alt="RK Group Logo" 
               className="w-full h-full object-cover"
             />

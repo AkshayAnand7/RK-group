@@ -36,7 +36,7 @@ export default function TravelLoginPage() {
           {/* Header */}
           <div className="relative z-10 mb-10 text-center flex flex-col items-center">
             <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl overflow-hidden shadow-2xl shadow-travel/20 border-2 border-white mb-6">
-              <img src="/logo.jpg" alt="RK Group" className="w-full h-full object-cover" />
+              <img src="/logo.png?v=2" alt="RK Group" className="w-full h-full object-cover" />
             </div>
             <p className="text-[10px] font-black text-travel uppercase tracking-[0.2em] mb-1">Fleet Management Portal</p>
             <h2 className="text-3xl font-black text-text-primary uppercase tracking-tight">
@@ -86,10 +86,6 @@ export default function TravelLoginPage() {
             </button>
           </form>
 
-          {/* Decorative */}
-          <div className="absolute top-0 right-0 p-4 opacity-5">
-            <Bus className="w-32 h-32 text-travel -mr-16 -mt-16 rotate-12" />
-          </div>
         </div>
 
         <div className="mt-8 text-center flex flex-col items-center gap-2">

@@ -35,7 +35,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-mesh opacity-10" />
         <div className="relative z-10 max-w-lg text-center lg:text-left flex flex-col items-center lg:items-start">
           <div className="w-24 h-24 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl mb-10 animate-float">
-            <img src="/logo.jpg" alt="RK Group" className="w-full h-full object-cover" />
+            <img src="/logo.png?v=2" alt="RK Group" className="w-full h-full object-cover" />
           </div>
           <h1 className="text-5xl font-black text-white leading-tight mb-6">
             The Hub of <br />
@@ -66,7 +66,7 @@ export default function LoginPage() {
           <div className="lg:hidden flex justify-center mb-10">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl overflow-hidden border border-border shadow-lg">
-                <img src="/logo.jpg" alt="RK" className="w-full h-full object-cover" />
+                <img src="/logo.png?v=2" alt="RK" className="w-full h-full object-cover" />
               </div>
               <span className="text-2xl font-black tracking-tight text-text-primary uppercase">RK Group</span>
             </div>
