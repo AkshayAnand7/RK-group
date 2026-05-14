@@ -8,10 +8,13 @@ import {
 } from "lucide-react";
 
 import { submitCollection } from "./actions";
+import { getShops } from "@/app/admin/shops/actions";
 
 export default function LotteryEntryPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [shops, setShops] = useState<any[]>([]);
+  const [selectedShop, setSelectedShop] = useState<any>(null);
   const [formData, setFormData] = useState({
     staffName: "",
     collection: "",
@@ -21,6 +24,15 @@ export default function LotteryEntryPage() {
     pending: ""
   });
   const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    async function fetchShops() {
+      const data = await getShops();
+      setShops(data);
+      if (data.length > 0) setSelectedShop(data[0]);
+    }
+    fetchShops();
+  }, []);
 
   useEffect(() => {
     const col = Number(formData.collection) || 0;
@@ -33,10 +45,10 @@ export default function LotteryEntryPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedShop) return alert("Please select a shop");
     setLoading(true);
     
-    // Using the name from the form and a shop name (e.g. VAKAD)
-    const result = await submitCollection(formData, "VAKAD", "001");
+    const result = await submitCollection(formData, selectedShop.name, selectedShop.shop_id);
     
     setLoading(false);
     if (result.success) {
@@ -118,10 +130,26 @@ export default function LotteryEntryPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="bg-surface p-6 rounded-2xl border border-border space-y-5">
             <div className="space-y-1.5">
+              <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Select Shop Terminal</label>
+              <select 
+                required 
+                value={selectedShop?.shop_id || ""}
+                onChange={e => setSelectedShop(shops.find(s => s.shop_id === e.target.value))}
+                className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all cursor-pointer"
+              >
+                <option value="">Select Shop...</option>
+                {shops.map(shop => (
+                  <option key={shop.shop_id} value={shop.shop_id}>{shop.name} ({shop.shop_id})</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
               <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Staff Name</label>
               <input 
                 type="text" 
                 required 
+                placeholder="Enter your name"
                 value={formData.staffName}
                 onChange={e => setFormData({ ...formData, staffName: e.target.value })}
                 className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"

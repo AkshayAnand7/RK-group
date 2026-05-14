@@ -38,14 +38,27 @@ export default function TravelTripPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1500));
+    
+    // Extract staffName from the form element as it was missing in the state
+    const target = e.target as any;
+    const staffName = target[0].value;
+
+    const result = await submitTrip({
+      ...form,
+      staffName
+    });
+
     setLoading(false);
-    setSuccess(true);
-    setTimeout(() => {
-      setSuccess(false);
-      setShowForm(false);
-      fetchTrips();
-    }, 2000);
+    if (result.success) {
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        setShowForm(false);
+        fetchTrips();
+      }, 2000);
+    } else {
+      alert(result.error);
+    }
   };
 
   return (
