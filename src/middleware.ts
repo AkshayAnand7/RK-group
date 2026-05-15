@@ -1,37 +1,64 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
   const { pathname } = request.nextUrl;
-
-  // Define protected routes
-  const isAdminRoute = (pathname.startsWith('/admin') || (pathname.startsWith('/software-sale') && pathname !== '/software-sale/login')) && pathname !== '/admin/login';
-  const isStaffRoute = pathname.startsWith('/staff');
-
-  // For simulation: Get auth cookies
-  const isAdminAuth = request.cookies.get('admin_session')?.value === 'true';
-  const isStaffAuth = request.cookies.get('staff_session')?.value === 'true';
-
-  // 1. Protect Admin Routes
-  if (isAdminRoute && !isAdminAuth) {
-    const loginUrl = new URL(pathname.startsWith('/software-sale') ? '/software-sale/login' : '/admin/login', request.url);
-    return NextResponse.redirect(loginUrl);
+  
+  // Public routes
+  if (pathname === '/admin/login' || pathname === '/' || pathname.startsWith('/_next') || pathname.includes('.')) {
+    return supabaseResponse;
   }
 
-  // 2. Protect Staff Routes
-  if (isStaffRoute && !isStaffAuth) {
-    const loginUrl = new URL('/', request.url); // Send back to home for selection
-    return NextResponse.redirect(loginUrl);
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Protect Admin Routes
+  if (pathname.startsWith('/admin') && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/admin/login';
+    return NextResponse.redirect(url);
   }
 
-  return NextResponse.next();
+  // Protect Staff Routes
+  if (pathname.startsWith('/staff') && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+    return NextResponse.redirect(url);
+  }
+
+  return supabaseResponse;
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/staff/:path*',
-    '/software-sale/:path*',
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

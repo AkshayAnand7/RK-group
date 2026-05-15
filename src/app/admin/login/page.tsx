@@ -7,10 +7,12 @@ import {
   ChevronRight, Loader2, Sparkles, Key
 } from "lucide-react";
 
+import { login } from "./actions";
+
 export default function AdminLoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [adminId, setAdminId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -19,21 +21,17 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError("");
 
-    // Validate Master Credentials
-    await new Promise(r => setTimeout(r, 1200));
-    
-    const isRkAdmin = adminId === "rk_admin" && password === "rk_password123";
-    const isLijin = adminId === "Lijin" && password === "lijin@1122";
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
 
-    if (isRkAdmin || isLijin) {
-      document.cookie = "admin_session=true; path=/";
-      document.cookie = `user_role=super_admin; path=/`;
-      document.cookie = `user_name=${adminId}; path=/`;
-      setLoading(false);
+    const result = await login(formData);
+    
+    if (result.success) {
       router.push("/admin/dashboard");
     } else {
       setLoading(false);
-      setError("Invalid Super Admin Credentials");
+      setError(result.error || "Login failed");
     }
   };
 
@@ -69,14 +67,15 @@ export default function AdminLoginPage() {
               </div>
             )}
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Admin Username</label>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
               <div className="relative group">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-primary transition-colors" />
                 <input 
-                  type="text" 
+                  type="email" 
                   required 
-                  value={adminId}
-                  onChange={e => setAdminId(e.target.value)}
+                  placeholder="admin@rkgroup.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                   className="w-full h-14 pl-12 pr-4 bg-slate-800/50 border border-white/10 rounded-2xl text-sm font-bold text-white focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                 />
               </div>
