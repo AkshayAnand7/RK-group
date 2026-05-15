@@ -5,7 +5,7 @@ import {
   Monitor, ArrowLeft, History, 
   Search, Download, ExternalLink, Calendar
 } from "lucide-react";
-import { getSoftwareSalesHistory } from "./actions";
+import { getSoftwareSalesHistory } from "../actions";
 
 export default function SoftwareSaleHistoryPage() {
   const [history, setHistory] = useState<any[]>([]);
