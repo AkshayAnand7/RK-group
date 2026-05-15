@@ -116,10 +116,6 @@ export default function SoftwareSalePage() {
             <Link href="/software-sale/history" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-border rounded-xl font-bold text-xs uppercase tracking-widest text-text-secondary hover:bg-slate-50 transition-colors">
               <History className="w-4 h-4" /> View History
             </Link>
-            <div className="h-10 w-[1px] bg-border mx-2 hidden md:block" />
-            <p className="text-[10px] font-black text-success uppercase tracking-widest flex items-center gap-2">
-              <span className="w-2 h-2 bg-success rounded-full animate-pulse" /> Live Portal
-            </p>
           </div>
         </div>
 

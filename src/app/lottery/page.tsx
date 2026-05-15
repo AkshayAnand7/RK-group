@@ -72,19 +72,19 @@ export default function LotteryShopList() {
           <Link 
             key={shop.shop_id}
             href={`/lottery/login?shopId=${shop.shop_id}&shopName=${encodeURIComponent(shop.name)}`}
-            className="group relative glass p-6 rounded-3xl card-hover flex items-center gap-4 animate-fade-in"
+            className="group relative glass p-4 md:p-6 rounded-3xl card-hover flex items-center gap-4 animate-fade-in"
             style={{ animationDelay: `${i * 50}ms` }}
           >
-            <div className="w-12 h-12 bg-lottery-subtle rounded-xl flex items-center justify-center text-lottery font-black text-xs shrink-0 group-hover:bg-lottery group-hover:text-white transition-all uppercase">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-lottery-subtle rounded-xl flex items-center justify-center text-lottery font-black text-[10px] md:text-xs shrink-0 group-hover:bg-lottery group-hover:text-white transition-all uppercase">
               {shop.shop_id.slice(0, 3)}
             </div>
             <div className="flex-1">
-              <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-0.5">Shop Terminal</p>
-              <h3 className="text-lg font-black text-text-primary tracking-tight leading-none uppercase">
+              <p className="text-[8px] md:text-[10px] font-black text-text-muted uppercase tracking-widest mb-0.5">Shop Terminal</p>
+              <h3 className="text-base md:text-lg font-black text-text-primary tracking-tight leading-none uppercase">
                 {shop.name}
               </h3>
             </div>
-            <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-lottery group-hover:translate-x-1 transition-all" />
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-text-muted group-hover:text-lottery group-hover:translate-x-1 transition-all" />
           </Link>
         ))}
       </div>

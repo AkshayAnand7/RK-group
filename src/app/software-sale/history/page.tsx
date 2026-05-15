@@ -64,17 +64,17 @@ export default function SoftwareSaleHistoryPage() {
 
         {/* History Table */}
         <div className="glass rounded-4xl border border-white shadow-2xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+            <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
                 <tr className="bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest">
-                  <th className="px-6 py-5">Period</th>
-                  <th className="px-6 py-5">Shop Name</th>
-                  <th className="px-6 py-5">Rapido</th>
-                  <th className="px-6 py-5">WhatsApp</th>
-                  <th className="px-6 py-5">Total</th>
-                  <th className="px-6 py-5">Win</th>
-                  <th className="px-6 py-5">Balance</th>
+                  <th className="px-6 py-5 whitespace-nowrap">Period</th>
+                  <th className="px-6 py-5 whitespace-nowrap">Shop Name</th>
+                  <th className="px-6 py-5 whitespace-nowrap text-right">Rapido</th>
+                  <th className="px-6 py-5 whitespace-nowrap text-right">WhatsApp</th>
+                  <th className="px-6 py-5 whitespace-nowrap text-right">Total</th>
+                  <th className="px-6 py-5 whitespace-nowrap text-right">Win</th>
+                  <th className="px-6 py-5 whitespace-nowrap text-right">Balance</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -98,18 +98,18 @@ export default function SoftwareSaleHistoryPage() {
                     <tr key={sale.id} className="hover:bg-slate-50 transition-colors group">
                       <td className="px-6 py-5">
                         <div className="flex flex-col">
-                          <span className="text-xs font-bold text-text-primary">{new Date(sale.date_from).toLocaleDateString()}</span>
-                          <span className="text-[10px] font-medium text-text-muted">to {new Date(sale.date_to).toLocaleDateString()}</span>
+                          <span className="text-xs font-bold text-text-primary whitespace-nowrap">{new Date(sale.date_from).toLocaleDateString()}</span>
+                          <span className="text-[10px] font-medium text-text-muted whitespace-nowrap">to {new Date(sale.date_to).toLocaleDateString()}</span>
                         </div>
                       </td>
                       <td className="px-6 py-5">
-                        <span className="text-sm font-black text-slate-800 uppercase tracking-tight">{sale.shop_name}</span>
+                        <span className="text-sm font-black text-slate-800 uppercase tracking-tight whitespace-nowrap">{sale.shop_name}</span>
                       </td>
-                      <td className="px-6 py-5 font-mono-nums text-sm">₹{sale.rapido_sale}</td>
-                      <td className="px-6 py-5 font-mono-nums text-sm">₹{sale.whatsapp_sale}</td>
-                      <td className="px-6 py-5 font-mono-nums text-sm font-black text-slate-800">₹{sale.total}</td>
-                      <td className="px-6 py-5 font-mono-nums text-sm text-success">₹{sale.win_amount}</td>
-                      <td className="px-6 py-5 font-mono-nums text-sm font-black text-danger">₹{sale.balance}</td>
+                      <td className="px-6 py-5 font-mono-nums text-sm text-right">₹{sale.rapido_sale}</td>
+                      <td className="px-6 py-5 font-mono-nums text-sm text-right">₹{sale.whatsapp_sale}</td>
+                      <td className="px-6 py-5 font-mono-nums text-sm font-black text-slate-800 text-right">₹{sale.total}</td>
+                      <td className="px-6 py-5 font-mono-nums text-sm text-success text-right">₹{sale.win_amount}</td>
+                      <td className="px-6 py-5 font-mono-nums text-sm font-black text-danger text-right">₹{sale.balance}</td>
                     </tr>
                   ))
                 )}

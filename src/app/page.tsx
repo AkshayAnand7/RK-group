@@ -36,48 +36,48 @@ export default function LandingPage() {
           {/* RK Lottery Link */}
           <Link 
             href="/lottery" 
-            className="group relative glass p-8 rounded-4xl card-hover overflow-hidden block text-left"
+            className="group relative glass p-6 md:p-8 rounded-4xl card-hover overflow-hidden block text-left"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-lottery/10 blur-3xl -mr-16 -mt-16 group-hover:bg-lottery/20 transition-all" />
-            <div className="w-14 h-14 bg-lottery rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-lottery/30 group-hover:rotate-6 transition-transform">
-              <Ticket className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-lottery rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-lottery/30 group-hover:rotate-6 transition-transform">
+              <Ticket className="w-6 h-6 md:w-7 md:h-7 text-white" />
             </div>
-            <h2 className="text-2xl font-black text-text-primary mb-2 uppercase tracking-tight">RK Lottery</h2>
-            <p className="text-text-secondary text-xs font-medium mb-6">Shop Terminals & Daily Collections</p>
-            <div className="inline-flex items-center gap-2 font-bold text-lottery text-[10px] uppercase tracking-widest group/link">
-              Select Shop <ChevronRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+            <h2 className="text-xl md:text-2xl font-black text-text-primary mb-2 uppercase tracking-tight">RK Lottery</h2>
+            <p className="text-text-secondary text-[10px] md:text-xs font-medium mb-6">Shop Terminals & Daily Collections</p>
+            <div className="inline-flex items-center gap-2 font-bold text-lottery text-[9px] md:text-[10px] uppercase tracking-widest group/link">
+              Select Shop <ChevronRight className="w-3 h-3 md:w-3.5 md:h-3.5 group-hover/link:translate-x-1 transition-transform" />
             </div>
           </Link>
 
           {/* RK Travel Link */}
           <Link 
             href="/travel/login" 
-            className="group relative glass p-8 rounded-4xl card-hover overflow-hidden block text-left"
+            className="group relative glass p-6 md:p-8 rounded-4xl card-hover overflow-hidden block text-left"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-travel/10 blur-3xl -mr-16 -mt-16 group-hover:bg-travel/20 transition-all" />
-            <div className="w-14 h-14 bg-travel rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-travel/30 group-hover:-rotate-6 transition-transform">
-              <Bus className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-travel rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-travel/30 group-hover:-rotate-6 transition-transform">
+              <Bus className="w-6 h-6 md:w-7 md:h-7 text-white" />
             </div>
-            <h2 className="text-2xl font-black text-text-primary mb-2 uppercase tracking-tight">RK Travel</h2>
-            <p className="text-text-secondary text-xs font-medium mb-6">Driver & Fleet Management Gateway</p>
-            <div className="inline-flex items-center gap-2 font-bold text-travel text-[10px] uppercase tracking-widest group/link">
-              Staff Login <ChevronRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+            <h2 className="text-xl md:text-2xl font-black text-text-primary mb-2 uppercase tracking-tight">RK Travel</h2>
+            <p className="text-text-secondary text-[10px] md:text-xs font-medium mb-6">Driver & Fleet Management Gateway</p>
+            <div className="inline-flex items-center gap-2 font-bold text-travel text-[9px] md:text-[10px] uppercase tracking-widest group/link">
+              Staff Login <ChevronRight className="w-3 h-3 md:w-3.5 md:h-3.5 group-hover/link:translate-x-1 transition-transform" />
             </div>
           </Link>
 
           {/* Software Sale Link */}
           <Link 
             href="/software-sale/login" 
-            className="group relative glass p-8 rounded-4xl card-hover overflow-hidden block text-left"
+            className="group relative glass p-6 md:p-8 rounded-4xl card-hover overflow-hidden block text-left"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/10 blur-3xl -mr-16 -mt-16 group-hover:bg-slate-500/20 transition-all" />
-            <div className="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-slate-800/30 group-hover:rotate-12 transition-transform">
-              <Monitor className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-slate-800/30 group-hover:rotate-12 transition-transform">
+              <Monitor className="w-6 h-6 md:w-7 md:h-7 text-white" />
             </div>
-            <h2 className="text-2xl font-black text-text-primary mb-2 uppercase tracking-tight">Software Sale</h2>
-            <p className="text-text-secondary text-xs font-medium mb-6">Admin Software Sales & Reporting</p>
-            <div className="inline-flex items-center gap-2 font-bold text-slate-800 text-[10px] uppercase tracking-widest group/link">
-              Admin Login <ChevronRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+            <h2 className="text-xl md:text-2xl font-black text-text-primary mb-2 uppercase tracking-tight">Software Sale</h2>
+            <p className="text-text-secondary text-[10px] md:text-xs font-medium mb-6">Admin Software Sales & Reporting</p>
+            <div className="inline-flex items-center gap-2 font-bold text-slate-800 text-[9px] md:text-[10px] uppercase tracking-widest group/link">
+              Admin Login <ChevronRight className="w-3 h-3 md:w-3.5 md:h-3.5 group-hover/link:translate-x-1 transition-transform" />
             </div>
           </Link>
         </div>
