@@ -6,15 +6,23 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getExpenses() {
-  const supabase = createAdminClient()
+  try {
+    const supabase = createAdminClient()
 
-  const { data, error } = await supabase
-    .from('expenses')
-    .select('*')
-    .order('created_at', { ascending: false })
+    const { data, error } = await supabase
+      .from('expenses')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-  if (error) throw error
-  return data
+    if (error) {
+      console.error("Supabase error in getExpenses:", error)
+      return []
+    }
+    return data || []
+  } catch (e) {
+    console.error("Runtime error in getExpenses:", e)
+    return []
+  }
 }
 
 export async function getVehicles() {

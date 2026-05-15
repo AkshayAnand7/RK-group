@@ -6,15 +6,23 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getTrips() {
-  const supabase = createAdminClient()
-  const { data, error } = await supabase.from('trips').select(`
-    *,
-    driver:profiles(full_name),
-    vehicle:vehicles(vehicle_number)
-  `).order('date', { ascending: false })
-  
-  if (error) throw error
-  return data
+  try {
+    const supabase = createAdminClient()
+    const { data, error } = await supabase.from('trips').select(`
+      *,
+      driver:profiles(full_name),
+      vehicle:vehicles(vehicle_number)
+    `).order('date', { ascending: false })
+    
+    if (error) {
+      console.error("Supabase error in getTrips:", error)
+      return []
+    }
+    return data || []
+  } catch (e) {
+    console.error("Runtime error in getTrips:", e)
+    return []
+  }
 }
 
 export async function getVehicles() {
