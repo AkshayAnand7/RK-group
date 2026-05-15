@@ -1,22 +1,50 @@
 "use client";
 import { useState } from "react";
 import { FileText, Download, Calendar, Store, Bus, Filter } from "lucide-react";
+import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
+import { generateReportData } from "./actions";
 
 const reportTypes = [
-  { id: "daily", label: "Daily Report", desc: "Today's complete business summary", icon: Calendar, formats: ["PDF", "Excel"] },
+  { id: "daily", label: "Daily Report", desc: "Complete business summary", icon: Calendar, formats: ["PDF", "Excel"] },
   { id: "monthly", label: "Monthly Report", desc: "Month-wise aggregated data", icon: Calendar, formats: ["PDF", "Excel"] },
   { id: "shop", label: "Shop Report", desc: "Individual shop performance", icon: Store, formats: ["PDF", "Excel"] },
-  { id: "vehicle", label: "Vehicle Report", desc: "Vehicle-wise expense breakdown", icon: Bus, formats: ["PDF"] },
-  { id: "financial", label: "Financial Statement", desc: "Complete P&L statement", icon: FileText, formats: ["Excel"] },
+  { id: "vehicle", label: "Vehicle Report", desc: "Vehicle-wise expense breakdown", icon: Bus, formats: ["PDF", "Excel"] },
+  { id: "financial", label: "Financial Statement", desc: "Complete P&L statement", icon: FileText, formats: ["PDF", "Excel"] },
 ];
 
 export default function ReportsPage() {
   const [dateRange, setDateRange] = useState("month");
+  const [customStart, setCustomStart] = useState("");
+  const [customEnd, setCustomEnd] = useState("");
   const [generating, setGenerating] = useState<string | null>(null);
 
   const handleGenerate = async (id: string, format: string) => {
     setGenerating(`${id}-${format}`);
-    await new Promise(r => setTimeout(r, 1500));
+    try {
+      const result = await generateReportData(id, dateRange, customStart, customEnd);
+      if (result.success && result.headers && result.data) {
+        const title = `${reportTypes.find(r => r.id === id)?.label} (${dateRange.toUpperCase()})`;
+        const filename = `rk_group_${id}_report_${new Date().getTime()}`;
+        
+        if (format === "PDF") {
+          exportToPDF(title, [result.headers], result.data, filename);
+        } else if (format === "Excel") {
+          const excelData = result.data.map(row => {
+            const obj: any = {};
+            result.headers!.forEach((h: string, i: number) => {
+              obj[h] = row[i];
+            });
+            return obj;
+          });
+          exportToExcel(excelData, filename);
+        }
+      } else {
+        alert("Failed to generate report or no data found.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error generating report");
+    }
     setGenerating(null);
   };
 
@@ -42,9 +70,9 @@ export default function ReportsPage() {
         </div>
         {dateRange === "custom" && (
           <div className="flex gap-2 animate-fade-in">
-            <input type="date" className="h-9 px-3 bg-page border border-border rounded-lg text-sm focus:outline-none focus:border-primary" />
+            <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="h-9 px-3 bg-page border border-border rounded-lg text-sm focus:outline-none focus:border-primary" />
             <span className="text-text-muted self-center">to</span>
-            <input type="date" className="h-9 px-3 bg-page border border-border rounded-lg text-sm focus:outline-none focus:border-primary" />
+            <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="h-9 px-3 bg-page border border-border rounded-lg text-sm focus:outline-none focus:border-primary" />
           </div>
         )}
       </div>
