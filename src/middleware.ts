@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Define protected routes
-  const isAdminRoute = pathname.startsWith('/admin') && pathname !== '/admin/login';
+  const isAdminRoute = (pathname.startsWith('/admin') || (pathname.startsWith('/software-sale') && pathname !== '/software-sale/login')) && pathname !== '/admin/login';
   const isStaffRoute = pathname.startsWith('/staff');
 
   // For simulation: Get auth cookies
@@ -14,7 +14,7 @@ export function middleware(request: NextRequest) {
 
   // 1. Protect Admin Routes
   if (isAdminRoute && !isAdminAuth) {
-    const loginUrl = new URL('/admin/login', request.url);
+    const loginUrl = new URL(pathname.startsWith('/software-sale') ? '/software-sale/login' : '/admin/login', request.url);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -32,5 +32,6 @@ export const config = {
   matcher: [
     '/admin/:path*',
     '/staff/:path*',
+    '/software-sale/:path*',
   ],
 };

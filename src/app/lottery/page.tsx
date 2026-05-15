@@ -8,12 +8,19 @@ import { getShops } from "@/app/admin/shops/actions";
 export default function LotteryShopList() {
   const [shops, setShops] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchShops() {
-      const data = await getShops();
-      setShops(data);
-      setLoading(false);
+      try {
+        const data = await getShops();
+        setShops(data);
+      } catch (err: any) {
+        console.error("Failed to fetch shops:", err);
+        setError("Failed to load shops. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
     }
     fetchShops();
   }, []);
@@ -21,6 +28,22 @@ export default function LotteryShopList() {
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-page">
       <div className="w-8 h-8 border-4 border-lottery border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-page px-6 text-center">
+      <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4">
+        <Ticket className="w-8 h-8" />
+      </div>
+      <h2 className="text-2xl font-black text-text-primary mb-2 uppercase">Oops!</h2>
+      <p className="text-text-secondary mb-6">{error}</p>
+      <button 
+        onClick={() => window.location.reload()}
+        className="px-6 py-2 bg-lottery text-white font-bold rounded-xl hover:bg-lottery/90 transition-colors"
+      >
+        Retry
+      </button>
     </div>
   );
   return (

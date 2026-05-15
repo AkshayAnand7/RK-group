@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   Store, Lock, User, ArrowLeft, 
-  ChevronRight, Loader2, ShieldCheck, Ticket
+  ChevronRight, Loader2, ShieldCheck, Ticket, AlertCircle
 } from "lucide-react";
 
 function LoginContent() {
@@ -16,10 +16,12 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [authId, setAuthId] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     
     // Validate Credentials
     await new Promise(r => setTimeout(r, 1200));
@@ -37,7 +39,7 @@ function LoginContent() {
       router.push("/staff/lottery/entry");
     } else {
       setLoading(false);
-      alert("Invalid Terminal or Super Admin Credentials");
+      setError("Invalid Terminal or Super Admin Credentials");
     }
   };
 
@@ -94,6 +96,13 @@ function LoginContent() {
                 />
               </div>
             </div>
+
+            {error && (
+              <div className="p-4 bg-danger-subtle border border-danger/20 rounded-2xl flex items-center gap-3 animate-fade-in">
+                <AlertCircle className="w-5 h-5 text-danger shrink-0" />
+                <p className="text-xs font-bold text-danger leading-tight">{error}</p>
+              </div>
+            )}
 
             <button 
               type="submit" 
