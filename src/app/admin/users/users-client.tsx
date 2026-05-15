@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { updateUserRole, deleteUser } from "./actions";
 
-const roles = ["admin", "travel_staff", "lottery_staff"];
+const roles = ["admin", "agent", "staff"];
 
 export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
   const [isPending, startTransition] = useTransition();
@@ -81,11 +81,11 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
               <div className="flex items-center justify-between p-3 bg-page rounded-2xl border border-border/50">
                 <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">System Role</span>
                 <span className={`inline-flex items-center gap-1.5 text-xs font-black uppercase ${
-                  user.role === "admin" ? "text-indigo-600" : user.role === "travel_staff" ? "text-blue-600" : "text-emerald-600"
+                  user.role === "admin" ? "text-indigo-600" : user.role === "agent" ? "text-blue-600" : "text-emerald-600"
                 }`}>
                   {user.role === "admin" ? <ShieldCheck className="w-3.5 h-3.5" /> : 
-                   user.role === "travel_staff" ? <Bus className="w-3.5 h-3.5" /> : <Ticket className="w-3.5 h-3.5" />}
-                  {user.role?.replace('_', ' ')}
+                   user.role === "agent" ? <Bus className="w-3.5 h-3.5" /> : <Ticket className="w-3.5 h-3.5" />}
+                  {user.role}
                 </span>
               </div>
             </div>
@@ -132,7 +132,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
                     <p className="text-xs font-black uppercase tracking-widest text-text-primary">{role.replace('_', ' ')}</p>
                     <p className="text-[10px] font-bold text-text-muted mt-0.5">
                       {role === 'admin' ? "Full access to all management modules" : 
-                       role === 'travel_staff' ? "Access to travel booking & expenses" : "Access to lottery shop entries"}
+                       role === 'agent' ? "Access to sales monitoring & analytics" : "General staff access for daily entries"}
                     </p>
                   </div>
                   {showRoleModal.role === role && <CheckCircle className="w-5 h-5 text-primary" />}
