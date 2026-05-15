@@ -19,6 +19,7 @@ export async function getUsers() {
   }
   
   return data || []
+}
 
 export async function updateUserRole(id: string, role: string) {
   const supabase = createAdminClient()
