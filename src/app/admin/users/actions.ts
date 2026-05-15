@@ -6,19 +6,24 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getUsers() {
-  const supabase = createAdminClient()
+  try {
+    const supabase = createAdminClient()
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('full_name', { ascending: true })
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('full_name', { ascending: true })
 
-  if (error) {
-    console.error("Supabase Profiles Error:", error)
+    if (error) {
+      console.error("Supabase Profiles Error:", error)
+      return []
+    }
+    
+    return data || []
+  } catch (e) {
+    console.error("Runtime error in getUsers:", e)
     return []
   }
-  
-  return data || []
 }
 
 export async function updateUserRole(id: string, role: string) {

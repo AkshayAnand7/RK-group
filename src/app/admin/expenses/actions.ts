@@ -26,10 +26,18 @@ export async function getExpenses() {
 }
 
 export async function getVehicles() {
-  const supabase = createAdminClient()
-  const { data, error } = await supabase.from('vehicles').select('*').order('vehicle_number', { ascending: true })
-  if (error) return []
-  return data
+  try {
+    const supabase = createAdminClient()
+    const { data, error } = await supabase.from('vehicles').select('*').order('vehicle_number', { ascending: true })
+    if (error) {
+      console.error("Supabase error in getVehicles:", error)
+      return []
+    }
+    return data || []
+  } catch (e) {
+    console.error("Runtime error in getVehicles:", e)
+    return []
+  }
 }
 
 export async function addExpense(formData: FormData) {
