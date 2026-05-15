@@ -5,7 +5,7 @@ import {
   Mail, Store, X, CheckCircle, Loader2, Key,
   UserX, UserCheck, Settings, ShieldCheck, Bus, Ticket
 } from "lucide-react";
-import { updateUserRole, deleteUser } from "./actions";
+import { updateUserRole, deleteUser, createUser } from "./actions";
 
 const roles = ["admin", "agent", "staff"];
 
@@ -13,6 +13,24 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [showRoleModal, setShowRoleModal] = useState<any>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newUser, setNewUser] = useState({ full_name: "", email: "", password: "", role: "staff" });
+
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    startTransition(async () => {
+      const formData = new FormData();
+      Object.entries(newUser).forEach(([key, val]) => formData.append(key, val));
+      const result = await createUser(formData);
+      if (result.success) {
+        setShowAddModal(false);
+        setNewUser({ full_name: "", email: "", password: "", role: "staff" });
+        window.location.reload();
+      } else {
+        alert(result.error);
+      }
+    });
+  };
 
   const handleRoleUpdate = async (id: string, newRole: string) => {
     startTransition(async () => {
@@ -51,14 +69,22 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
           <h1 className="text-2xl font-black text-text-primary uppercase tracking-tight">System Users</h1>
           <p className="text-sm text-text-secondary font-medium">Manage access levels for staff and administrators</p>
         </div>
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-          <input 
-            value={search} 
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search users..." 
-            className="w-full h-11 pl-11 pr-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all" 
-          />
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="h-11 px-6 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+          >
+            <UserPlus className="w-4 h-4" /> Add New User
+          </button>
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+            <input 
+              value={search} 
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search users..." 
+              className="w-full h-11 pl-11 pr-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all" 
+            />
+          </div>
         </div>
       </div>
 
@@ -139,6 +165,69 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
                 </button>
               ))}
             </div>
+          </div>
+        </div>
+      {showAddModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowAddModal(false)} />
+          <div className="relative w-full max-w-md glass p-8 rounded-4xl border-white shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Add New User</h2>
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-page rounded-xl transition-colors cursor-pointer">
+                <X className="w-5 h-5 text-text-muted" />
+              </button>
+            </div>
+            <form onSubmit={handleAddUser} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Full Name</label>
+                <input 
+                  required
+                  placeholder="John Doe"
+                  value={newUser.full_name}
+                  onChange={e => setNewUser({...newUser, full_name: e.target.value})}
+                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Email Address</label>
+                <input 
+                  required
+                  type="email"
+                  placeholder="john@example.com"
+                  value={newUser.email}
+                  onChange={e => setNewUser({...newUser, email: e.target.value})}
+                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Password</label>
+                <input 
+                  required
+                  type="password"
+                  placeholder="••••••••"
+                  value={newUser.password}
+                  onChange={e => setNewUser({...newUser, password: e.target.value})}
+                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Initial Role</label>
+                <select 
+                  value={newUser.role}
+                  onChange={e => setNewUser({...newUser, role: e.target.value})}
+                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"
+                >
+                  {roles.map(r => <option key={r} value={r}>{r.toUpperCase()}</option>)}
+                </select>
+              </div>
+              <button 
+                type="submit"
+                disabled={isPending}
+                className="w-full h-14 mt-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50"
+              >
+                {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Create User Account</>}
+              </button>
+            </form>
           </div>
         </div>
       )}
