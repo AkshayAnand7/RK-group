@@ -111,12 +111,12 @@ export default function ExpensesClient({
       </div>
 
       <div className="glass rounded-4xl border border-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+          <table className="w-full text-sm text-left min-w-[800px]">
             <thead>
               <tr className="bg-page/50 border-b border-border">
                 {["Date", "Category", "Vehicle / Unit", "Details", "Amount", "Actions"].map(h => (
-                  <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{h}</th>
+                  <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -125,24 +125,24 @@ export default function ExpensesClient({
                 const cat = getCatInfo(exp.category);
                 return (
                   <tr key={exp.id} className="hover:bg-page/30 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <p className="font-bold text-text-primary">{new Date(exp.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase ${cat?.bg} ${cat?.color}`}>
                         {cat && <cat.icon className="w-3.5 h-3.5" />} {cat?.label}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-black text-text-primary uppercase tracking-tight">
+                    <td className="px-6 py-4 font-black text-text-primary uppercase tracking-tight whitespace-nowrap">
                       {exp.vehicle || "LOTTERY UNIT"}
                     </td>
-                    <td className="px-6 py-4 text-text-secondary font-medium">
+                    <td className="px-6 py-4 text-text-secondary font-medium whitespace-nowrap">
                       {exp.detail}
                     </td>
-                    <td className="px-6 py-4 font-mono-nums font-black text-red-600 text-lg">
+                    <td className="px-6 py-4 font-mono-nums font-black text-red-600 text-lg whitespace-nowrap">
                       ₹{Number(exp.amount).toLocaleString("en-IN")}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <button 
                         onClick={() => handleDelete(exp.id)}
                         className="p-2 bg-page text-text-muted hover:text-danger hover:bg-danger-subtle rounded-xl transition-all cursor-pointer"

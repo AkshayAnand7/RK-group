@@ -207,10 +207,10 @@ export default function TravelTripPage() {
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Route</label>
-                  <div className="flex items-center gap-2">
-                    <input required placeholder="From" value={form.from} onChange={e => setForm({ ...form, from: e.target.value })} className="flex-1 h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel" />
-                    <ArrowRight className="w-4 h-4 text-text-muted" />
-                    <input required placeholder="To" value={form.to} onChange={e => setForm({ ...form, to: e.target.value })} className="flex-1 h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel" />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
+                    <input required placeholder="From" value={form.from} onChange={e => setForm({ ...form, from: e.target.value })} className="w-full sm:flex-1 h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel" />
+                    <ArrowRight className="w-4 h-4 text-text-muted hidden sm:block shrink-0" />
+                    <input required placeholder="To" value={form.to} onChange={e => setForm({ ...form, to: e.target.value })} className="w-full sm:flex-1 h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel" />
                   </div>
                 </div>
 

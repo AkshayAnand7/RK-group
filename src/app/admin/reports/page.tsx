@@ -32,7 +32,7 @@ export default function ReportsPage() {
         <div className="flex items-center gap-2 text-sm text-text-secondary">
           <Filter className="w-4 h-4" /> Date Range:
         </div>
-        <div className="flex gap-1 p-1 bg-page rounded-lg">
+        <div className="flex flex-wrap gap-1 p-1 bg-page rounded-lg">
           {[{ v: "today", l: "Today" }, { v: "week", l: "This Week" }, { v: "month", l: "This Month" }, { v: "custom", l: "Custom" }].map(p => (
             <button key={p.v} onClick={() => setDateRange(p.v)}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${dateRange === p.v ? "bg-surface text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>

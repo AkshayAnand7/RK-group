@@ -131,47 +131,47 @@ export default function CollectionsClient({ initialEntries }: { initialEntries: 
 
       {/* Table Container */}
       <div className="glass rounded-4xl border border-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+          <table className="w-full text-sm text-left min-w-[1000px]">
             <thead>
               <tr className="bg-page/50 border-b border-border">
                 {["Date", "Shop Name", "Collection", "Exp/Adv/Prize", "Net Balance", "Staff", "Status", "Actions"].map(h => (
-                  <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{h}</th>
+                  <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {initialEntries.map((entry) => (
                 <tr key={entry.id} className="hover:bg-page/30 transition-colors group">
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <p className="font-bold text-text-primary">{new Date(entry.created_at).toLocaleDateString()}</p>
                     <p className="text-[10px] font-black text-text-muted">ID: {entry.id.toString().padStart(3, '0')}</p>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-3 py-1 bg-lottery-subtle text-lottery text-[10px] font-black rounded-full border border-lottery/10">
                       {entry.shop_name}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-mono-nums font-black text-emerald-600">
+                  <td className="px-6 py-4 font-mono-nums font-black text-emerald-600 whitespace-nowrap">
                     ₹{Number(entry.amount).toLocaleString("en-IN")}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="space-y-0.5 font-mono-nums text-[10px] font-bold">
                       <p className="text-danger">E: ₹{entry.expense || 0}</p>
                       <p className="text-warning">A: ₹{entry.advance || 0}</p>
                       <p className="text-info">P: ₹{entry.prize || 0}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="inline-flex items-center gap-1.5 font-mono-nums font-black text-sm text-primary">
                       <ArrowUp className="w-3 h-3" />
                       ₹{Number(entry.amount - (entry.expense || 0)).toLocaleString("en-IN")}
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-bold text-text-secondary">
+                  <td className="px-6 py-4 font-bold text-text-secondary whitespace-nowrap">
                     {entry.staff_name}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {entry.is_locked ? (
                       <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase">
                         <Lock className="w-3 h-3" /> Locked

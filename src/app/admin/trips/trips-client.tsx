@@ -111,27 +111,27 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
       </div>
 
       <div className="glass rounded-4xl border border-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+          <table className="w-full text-sm text-left min-w-[1000px]">
             <thead>
               <tr className="bg-page/50 border-b border-border">
                 {["Date", "Driver & Vehicle", "Route Details", "Amount Status", "Status", "Actions"].map(h => (
-                  <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{h}</th>
+                  <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredTrips.map((trip) => (
                 <tr key={trip.id} className={`hover:bg-page/30 transition-colors ${isPending ? 'opacity-50' : ''}`}>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <p className="font-bold text-text-primary">{new Date(trip.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                     <p className="text-[10px] font-black text-text-muted">TRIP-ID: {trip.id.toString().padStart(4, '0')}</p>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <p className="font-bold text-text-primary">{trip.driver?.full_name || 'N/A'}</p>
                     <p className="text-[10px] font-black text-travel uppercase tracking-widest">{trip.vehicle?.vehicle_number || 'N/A'}</p>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-text-secondary">{trip.from_location}</span>
                       <ArrowRight className="w-3 h-3 text-text-muted" />
@@ -139,7 +139,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
                     </div>
                     <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">{trip.trip_type}</span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex flex-col gap-0.5">
                       <p className="font-black text-emerald-600 font-mono-nums">₹{Number(trip.received_amount).toLocaleString("en-IN")}</p>
                       {trip.total_amount > trip.received_amount && (
@@ -149,7 +149,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {trip.is_locked ? (
                       <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase">
                         <Lock className="w-3 h-3" /> Locked
@@ -160,7 +160,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <button 
                         onClick={() => handleToggleLock(trip.id, trip.is_locked)}
