@@ -167,6 +167,8 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
             </div>
           </div>
         </div>
+      )}
+
       {showAddModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowAddModal(false)} />
