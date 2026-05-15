@@ -13,9 +13,12 @@ export async function getUsers() {
     .select('*')
     .order('full_name', { ascending: true })
 
-  if (error) throw error
-  return data
-}
+  if (error) {
+    console.error("Supabase Profiles Error:", error)
+    return []
+  }
+  
+  return data || []
 
 export async function updateUserRole(id: string, role: string) {
   const supabase = createAdminClient()
