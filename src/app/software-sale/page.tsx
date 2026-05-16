@@ -43,16 +43,19 @@ export default function SoftwareSalePage() {
     const sw1 = parseFloat(formData.software_sale_1) || 0;
     const waTotal = formData.whatsapp_total || 0;
     const win = parseFloat(formData.win_amount) || 0;
+    const old = parseFloat(formData.old_amount) || 0;
     
     const newTotal = sw1 + waTotal;
     const newBalance = newTotal - win;
+    const newCollected = newBalance - old;
 
     setFormData(prev => ({
       ...prev,
       total: newTotal,
-      balance: newBalance
+      balance: newBalance,
+      collected_amount: newCollected ? newCollected.toString() : ""
     }));
-  }, [formData.software_sale_1, formData.whatsapp_total, formData.win_amount]);
+  }, [formData.software_sale_1, formData.whatsapp_total, formData.win_amount, formData.old_amount]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
