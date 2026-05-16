@@ -46,14 +46,12 @@ export default function SoftwareSalePage() {
     const old = parseFloat(formData.old_amount) || 0;
     
     const newTotal = sw1 + waTotal;
-    const newBalance = newTotal - win;
-    const newCollected = newBalance - old;
+    const newBalance = newTotal - win - old;
 
     setFormData(prev => ({
       ...prev,
       total: newTotal,
-      balance: newBalance,
-      collected_amount: newCollected ? newCollected.toString() : ""
+      balance: newBalance
     }));
   }, [formData.software_sale_1, formData.whatsapp_total, formData.win_amount, formData.old_amount]);
 
@@ -319,7 +317,7 @@ export default function SoftwareSalePage() {
                   <div className="px-2 py-0.5 bg-slate-200 rounded text-[8px] font-black uppercase text-slate-600 tracking-tighter">Auto</div>
                 </div>
                 <div className="text-4xl font-black text-slate-800">₹ {formData.balance.toLocaleString()}</div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total - Win</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total - Win - Old</p>
               </div>
             </div>
 
