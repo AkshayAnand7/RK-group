@@ -93,11 +93,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 >
                   <item.icon className="w-[18px] h-[18px] shrink-0" />
                   <span className="flex-1">{item.name}</span>
-                  {item.badge && (
-                    <span className="min-w-[20px] h-5 px-1.5 bg-danger text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                      {item.badge}
-                    </span>
-                  )}
                 </Link>
               ))}
             </div>
