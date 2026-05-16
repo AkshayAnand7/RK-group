@@ -4,8 +4,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   Store, Lock, User, ArrowLeft, 
-  ChevronRight, Loader2, ShieldCheck, Ticket, AlertCircle
+  ChevronRight, Loader2, ShieldCheck, Ticket, AlertCircle, Mail
 } from "lucide-react";
+import { loginToLottery } from "./actions";
 
 function LoginContent() {
   const searchParams = useSearchParams();
@@ -23,23 +24,18 @@ function LoginContent() {
     setLoading(true);
     setError(null);
     
-    // Validate Credentials
-    await new Promise(r => setTimeout(r, 1200));
-    
-    const isRkAdmin = authId === "rk_admin" && password === "rk_password123";
-    const isLijin = authId === "Lijin" && password === "lijin@1122";
+    const result = await loginToLottery(authId, password);
 
-    if (isRkAdmin || isLijin) {
-      document.cookie = "staff_session=true; path=/";
-      document.cookie = `user_role=super_admin; path=/`;
-      document.cookie = `user_name=${authId}; path=/`;
+    if (result.success) {
+      // Set frontend session state cookies that the legacy layout depends on
+      document.cookie = `user_name=${authId.split('@')[0]}; path=/`;
       document.cookie = `active_shop_id=${shopId}; path=/`;
       document.cookie = `active_shop_name=${shopName}; path=/`;
       setLoading(false);
       router.push("/staff/lottery/entry");
     } else {
       setLoading(false);
-      setError("Invalid Terminal or Super Admin Credentials");
+      setError(result.error || "Invalid Credentials");
     }
   };
 
@@ -68,13 +64,13 @@ function LoginContent() {
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-6 relative z-10">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Staff Auth ID</label>
+              <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Email Address</label>
               <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted group-focus-within:text-lottery transition-colors" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted group-focus-within:text-lottery transition-colors" />
                 <input 
-                  type="text" 
+                  type="email" 
                   required 
-                  placeholder="Enter ID"
+                  placeholder="Enter Email"
                   value={authId}
                   onChange={e => setAuthId(e.target.value)}
                   className="w-full h-14 pl-12 pr-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-lottery focus:ring-4 focus:ring-lottery/10 transition-all"
