@@ -33,7 +33,6 @@ const navSections = [
     label: "System",
     items: [
       { name: "Reports", href: "/admin/reports", icon: FileBarChart },
-      { name: "Notifications", href: "/admin/notifications", icon: Bell, badge: 3 },
       { name: "Users", href: "/admin/users", icon: Users },
       { name: "Settings", href: "/admin/settings", icon: Settings },
     ],
