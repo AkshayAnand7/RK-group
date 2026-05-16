@@ -227,8 +227,14 @@ export default function SoftwareSalePage() {
                     <input 
                       type="number" 
                       placeholder="0.00"
+                      min="1"
+                      max="10"
                       value={formData.whatsapp_cm}
-                      onChange={e => setFormData({...formData, whatsapp_cm: e.target.value})}
+                      onChange={e => {
+                        const val = parseFloat(e.target.value);
+                        if (val > 10) return;
+                        setFormData({...formData, whatsapp_cm: e.target.value});
+                      }}
                       className="w-full h-12 px-3 bg-white border border-green-200 rounded-xl text-sm font-bold focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none" 
                     />
                   </div>
