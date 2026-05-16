@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   Monitor, ArrowLeft, Send, History, 
-  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User, AlertTriangle, X
+  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User, AlertTriangle, X, MessageSquare
 } from "lucide-react";
 import { submitSoftwareSale, getLastOldAmount } from "./actions";
 
@@ -12,6 +12,7 @@ export default function SoftwareSalePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [whatsappStatus, setWhatsappStatus] = useState<string | null>(null);
   const [lastOldAmount, setLastOldAmount] = useState<any>(null);
   const [showReminder, setShowReminder] = useState(true);
 
@@ -80,33 +81,9 @@ export default function SoftwareSalePage() {
       const result = await submitSoftwareSale(formData);
       
       if (result.success) {
-        // Build WhatsApp message
-        const lines = [
-          `*SOFTWARE SALE REPORT*`,
-          `----------------------------`,
-          `📅 *Date:* ${formData.date_from} to ${formData.date_to}`,
-          `🏪 *Shop:* ${formData.shop_name}`,
-          `👤 *Agent:* ${formData.agent_name}`,
-          `----------------------------`,
-          `🔹 *Software Sale 1:* ₹${formData.software_sale_1 || 0}`,
-          `🔹 *WhatsApp Sale:* ${formData.whatsapp_count || 0} × ₹${formData.whatsapp_cm || 0} = ₹${formData.whatsapp_total}`,
-          `🔸 *Old Amount:* ₹${formData.old_amount || 0}`,
-          `----------------------------`,
-          `💰 *TOTAL:* ₹${formData.total}`,
-          `🏆 *Win Amount:* ₹${formData.win_amount || 0}`,
-          `💵 *Paid Amount:* ₹${formData.paid_amount || 0}`,
-          `📥 *Collected Amount:* ₹${formData.collected_amount || 0}`,
-          `📉 *BALANCE:* ₹${formData.balance}`,
-          `----------------------------`,
-          `✅ *Submitted by Admin*`
-        ];
-
-        const message = lines.join('%0A');
-        const whatsappUrl = `https://wa.me/919847113888?text=${message}`;
-        window.open(whatsappUrl, '_blank');
-        
         setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
+        setWhatsappStatus(result.whatsappError ? 'Data saved but WhatsApp failed' : 'Sent via WhatsApp ✓');
+        setTimeout(() => { setSuccess(false); setWhatsappStatus(null); }, 4000);
         
         // Reset form fields but keep dates
         setFormData(prev => ({
@@ -377,7 +354,7 @@ export default function SoftwareSalePage() {
                 disabled={loading}
                 className="w-full md:flex-1 h-16 bg-slate-800 text-white rounded-2xl font-black text-lg shadow-xl shadow-slate-800/20 flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
               >
-                {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Send className="w-5 h-5" /> Submit & Send to WhatsApp</>}
+                {loading ? <><Loader2 className="w-6 h-6 animate-spin" /> Submitting...</> : <><Send className="w-5 h-5" /> Submit & Send Report</>}
               </button>
               
               <button 
@@ -402,7 +379,10 @@ export default function SoftwareSalePage() {
                 <CheckCircle2 className="w-10 h-10 text-success" />
               </div>
               <h3 className="text-2xl font-black text-text-primary uppercase tracking-tight mb-2">Sale Recorded!</h3>
-              <p className="text-text-secondary font-medium">Redirecting to WhatsApp...</p>
+              <div className="flex items-center gap-2 text-text-secondary font-medium">
+                <MessageSquare className="w-4 h-4 text-green-600" />
+                <p>{whatsappStatus || 'WhatsApp report sent'}</p>
+              </div>
             </div>
           )}
         </div>

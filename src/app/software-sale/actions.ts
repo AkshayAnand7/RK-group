@@ -2,6 +2,9 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
+import { sendWhatsAppMessage } from '@/lib/twilio'
+
+const RECIPIENT_NUMBER = '919847113888'
 
 export async function submitSoftwareSale(formData: any) {
   const cookieStore = await cookies()
@@ -25,6 +28,7 @@ export async function submitSoftwareSale(formData: any) {
   } = formData
 
   try {
+    // 1. Save to database
     const { data, error } = await supabase.from('software_sales').insert({
       date_from,
       date_to,
@@ -45,6 +49,35 @@ export async function submitSoftwareSale(formData: any) {
     if (error) {
       console.error('Error storing software sale:', error)
       return { success: false, error: error.message }
+    }
+
+    // 2. Send WhatsApp message via Twilio (background)
+    const message = [
+      `*SOFTWARE SALE REPORT*`,
+      `----------------------------`,
+      `📅 *Date:* ${date_from} to ${date_to}`,
+      `🏪 *Shop:* ${shop_name}`,
+      `👤 *Agent:* ${agent_name}`,
+      `----------------------------`,
+      `🔹 *Software Sale 1:* ₹${parseFloat(software_sale_1) || 0}`,
+      `🔹 *WhatsApp Sale:* ${parseFloat(whatsapp_count) || 0} × ₹${parseFloat(whatsapp_cm) || 0} = ₹${parseFloat(whatsapp_total) || 0}`,
+      `🔸 *Old Amount:* ₹${parseFloat(old_amount) || 0}`,
+      `----------------------------`,
+      `💰 *TOTAL:* ₹${parseFloat(total) || 0}`,
+      `🏆 *Win Amount:* ₹${parseFloat(win_amount) || 0}`,
+      `💵 *Paid Amount:* ₹${parseFloat(paid_amount) || 0}`,
+      `📥 *Collected Amount:* ₹${parseFloat(collected_amount) || 0}`,
+      `📉 *BALANCE:* ₹${parseFloat(balance) || 0}`,
+      `----------------------------`,
+      `✅ *Submitted by Admin*`
+    ].join('\n')
+
+    const waResult = await sendWhatsAppMessage(RECIPIENT_NUMBER, message)
+    
+    if (!waResult.success) {
+      console.error('WhatsApp send failed:', waResult.error)
+      // Still return success since data was saved
+      return { success: true, whatsappError: waResult.error }
     }
 
     return { success: true }
