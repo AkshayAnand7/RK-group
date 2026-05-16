@@ -2,7 +2,6 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
-import { revalidatePath } from 'next/cache'
 
 export async function submitSoftwareSale(formData: any) {
   const cookieStore = await cookies()
@@ -25,41 +24,78 @@ export async function submitSoftwareSale(formData: any) {
     balance
   } = formData
 
-  const { data, error } = await supabase.from('software_sales').insert({
-    date_from,
-    date_to,
-    shop_name,
-    agent_name,
-    software_sale_1: parseFloat(software_sale_1),
-    whatsapp_count: parseFloat(whatsapp_count) || 0,
-    whatsapp_cm: parseFloat(whatsapp_cm) || 0,
-    whatsapp_total: parseFloat(whatsapp_total) || 0,
-    old_amount: parseFloat(old_amount),
-    total: parseFloat(total),
-    win_amount: parseFloat(win_amount),
-    paid_amount: parseFloat(paid_amount),
-    collected_amount: parseFloat(collected_amount),
-    balance: parseFloat(balance)
-  })
+  try {
+    const { data, error } = await supabase.from('software_sales').insert({
+      date_from,
+      date_to,
+      shop_name,
+      agent_name,
+      software_sale_1: parseFloat(software_sale_1) || 0,
+      whatsapp_count: parseFloat(whatsapp_count) || 0,
+      whatsapp_cm: parseFloat(whatsapp_cm) || 0,
+      whatsapp_total: parseFloat(whatsapp_total) || 0,
+      old_amount: parseFloat(old_amount) || 0,
+      total: parseFloat(total) || 0,
+      win_amount: parseFloat(win_amount) || 0,
+      paid_amount: parseFloat(paid_amount) || 0,
+      collected_amount: parseFloat(collected_amount) || 0,
+      balance: parseFloat(balance) || 0
+    })
 
-  if (error) {
-    console.error('Error storing software sale:', error)
-    return { error: error.message }
+    if (error) {
+      console.error('Error storing software sale:', error)
+      return { success: false, error: error.message }
+    }
+
+    return { success: true }
+  } catch (err) {
+    console.error('Unexpected error submitting software sale:', err)
+    return { success: false, error: 'Failed to submit sale' }
   }
-
-  return { success: true }
 }
 
 export async function getSoftwareSalesHistory() {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
   
-  const { data, error } = await supabase.from('software_sales').select('*').order('created_at', { ascending: false })
-  
-  if (error) {
-    console.error('Error fetching software sales history:', error)
+  try {
+    const { data, error } = await supabase
+      .from('software_sales')
+      .select('*')
+      .order('created_at', { ascending: false })
+    
+    if (error) {
+      console.error('Error fetching software sales history:', error)
+      return []
+    }
+    
+    return data || []
+  } catch {
     return []
   }
+}
+
+export async function getLastOldAmount() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   
-  return data
+  try {
+    const { data, error } = await supabase
+      .from('software_sales')
+      .select('old_amount, balance, shop_name, date_to')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+    
+    if (error || !data) return null
+    
+    return {
+      old_amount: data.old_amount || 0,
+      balance: data.balance || 0,
+      shop_name: data.shop_name || '',
+      date_to: data.date_to || ''
+    }
+  } catch {
+    return null
+  }
 }

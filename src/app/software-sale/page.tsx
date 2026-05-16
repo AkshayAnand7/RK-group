@@ -4,14 +4,16 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   Monitor, ArrowLeft, Send, History, 
-  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User
+  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User, AlertTriangle, X
 } from "lucide-react";
-import { submitSoftwareSale } from "./actions";
+import { submitSoftwareSale, getLastOldAmount } from "./actions";
 
 export default function SoftwareSalePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [lastOldAmount, setLastOldAmount] = useState<any>(null);
+  const [showReminder, setShowReminder] = useState(true);
 
   const [formData, setFormData] = useState({
     date_from: "",
@@ -29,6 +31,21 @@ export default function SoftwareSalePage() {
     collected_amount: "",
     balance: 0
   });
+
+  // Fetch last old amount on page load
+  useEffect(() => {
+    async function fetchLastOld() {
+      try {
+        const data = await getLastOldAmount();
+        if (data && data.balance !== 0) {
+          setLastOldAmount(data);
+        }
+      } catch (err) {
+        console.error("Error fetching last old amount:", err);
+      }
+    }
+    fetchLastOld();
+  }, []);
 
   // Auto-calculate WhatsApp Total = count * commission
   useEffect(() => {
@@ -63,31 +80,35 @@ export default function SoftwareSalePage() {
       const result = await submitSoftwareSale(formData);
       
       if (result.success) {
-        // Send to WhatsApp
-        const message = `*SOFTWARE SALE REPORT*%0A` +
-          `----------------------------%0A` +
-          `📅 *Date:* ${formData.date_from} to ${formData.date_to}%0A` +
-          `🏪 *Shop:* ${formData.shop_name}%0A` +
-          `👤 *Agent:* ${formData.agent_name}%0A` +
-          `----------------------------%0A` +
-          `🔹 *Software Sale 1:* ₹${formData.software_sale_1}%0A` +
-          `🔹 *WhatsApp Sale:* ${formData.whatsapp_count} × ₹${formData.whatsapp_cm} = ₹${formData.whatsapp_total}%0A` +
-          `🔸 *Old Amount:* ₹${formData.old_amount}%0A` +
-          `----------------------------%0A` +
-          `💰 *TOTAL:* ₹${formData.total}%0A` +
-          `🏆 *Win Amount:* ₹${formData.win_amount}%0A` +
-          `💵 *Paid Amount:* ₹${formData.paid_amount}%0A` +
-          `📥 *Collected Amount:* ₹${formData.collected_amount}%0A` +
-          `📉 *BALANCE:* ₹${formData.balance}%0A` +
-          `----------------------------%0A` +
-          `✅ *Submitted by Admin*`;
+        // Build WhatsApp message
+        const lines = [
+          `*SOFTWARE SALE REPORT*`,
+          `----------------------------`,
+          `📅 *Date:* ${formData.date_from} to ${formData.date_to}`,
+          `🏪 *Shop:* ${formData.shop_name}`,
+          `👤 *Agent:* ${formData.agent_name}`,
+          `----------------------------`,
+          `🔹 *Software Sale 1:* ₹${formData.software_sale_1 || 0}`,
+          `🔹 *WhatsApp Sale:* ${formData.whatsapp_count || 0} × ₹${formData.whatsapp_cm || 0} = ₹${formData.whatsapp_total}`,
+          `🔸 *Old Amount:* ₹${formData.old_amount || 0}`,
+          `----------------------------`,
+          `💰 *TOTAL:* ₹${formData.total}`,
+          `🏆 *Win Amount:* ₹${formData.win_amount || 0}`,
+          `💵 *Paid Amount:* ₹${formData.paid_amount || 0}`,
+          `📥 *Collected Amount:* ₹${formData.collected_amount || 0}`,
+          `📉 *BALANCE:* ₹${formData.balance}`,
+          `----------------------------`,
+          `✅ *Submitted by Admin*`
+        ];
 
+        const message = lines.join('%0A');
         const whatsappUrl = `https://wa.me/919847113888?text=${message}`;
         window.open(whatsappUrl, '_blank');
         
         setSuccess(true);
         setTimeout(() => setSuccess(false), 3000);
         
+        // Reset form fields but keep dates
         setFormData(prev => ({
           ...prev,
           shop_name: "",
@@ -101,10 +122,15 @@ export default function SoftwareSalePage() {
           paid_amount: "",
           collected_amount: ""
         }));
+
+        // Hide reminder after successful submission
+        setShowReminder(false);
+      } else {
+        alert(result.error || "Error submitting sale. Please try again.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error submitting sale");
+      alert("Error submitting sale. Please check your connection.");
     } finally {
       setLoading(false);
     }
@@ -116,7 +142,7 @@ export default function SoftwareSalePage() {
 
       <div className="w-full max-w-4xl">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 animate-fade-in">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 animate-fade-in">
           <div className="flex items-center gap-6">
             <Link href="/" className="p-3 bg-white shadow-lg rounded-2xl hover:scale-110 transition-transform">
               <ArrowLeft className="w-5 h-5 text-text-muted" />
@@ -136,6 +162,33 @@ export default function SoftwareSalePage() {
             </Link>
           </div>
         </div>
+
+        {/* Old Amount Reminder Banner */}
+        {lastOldAmount && showReminder && (
+          <div className="mb-6 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-4 animate-fade-in relative">
+            <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-5 h-5 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-black text-amber-800 uppercase tracking-widest mb-1">Previous Balance Reminder</p>
+              <p className="text-sm font-bold text-amber-700">
+                Last submission for <span className="font-black">{lastOldAmount.shop_name}</span> (ending {lastOldAmount.date_to}) had a balance of <span className="text-lg font-black text-amber-900">₹{lastOldAmount.balance.toLocaleString("en-IN")}</span>
+              </p>
+              <button 
+                onClick={() => {
+                  setFormData(prev => ({ ...prev, old_amount: lastOldAmount.balance.toString() }));
+                  setShowReminder(false);
+                }}
+                className="mt-2 px-4 py-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors cursor-pointer"
+              >
+                Use ₹{lastOldAmount.balance.toLocaleString("en-IN")} as Old Amount
+              </button>
+            </div>
+            <button onClick={() => setShowReminder(false)} className="p-1 hover:bg-amber-100 rounded-lg transition-colors cursor-pointer">
+              <X className="w-4 h-4 text-amber-500" />
+            </button>
+          </div>
+        )}
 
         {/* Form Card */}
         <div className="glass p-8 md:p-12 rounded-4xl border border-white shadow-2xl relative overflow-hidden animate-fade-in">
@@ -255,7 +308,6 @@ export default function SoftwareSalePage() {
                 <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Old Amount</label>
                 <input 
                   type="number" 
-                  required
                   placeholder="0.00"
                   value={formData.old_amount}
                   onChange={e => setFormData({...formData, old_amount: e.target.value})}
@@ -280,7 +332,6 @@ export default function SoftwareSalePage() {
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Win Amount</label>
                   <input 
                     type="number" 
-                    required
                     placeholder="0.00"
                     value={formData.win_amount}
                     onChange={e => setFormData({...formData, win_amount: e.target.value})}
@@ -291,7 +342,6 @@ export default function SoftwareSalePage() {
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Paid Amount</label>
                   <input 
                     type="number" 
-                    required
                     placeholder="0.00"
                     value={formData.paid_amount}
                     onChange={e => setFormData({...formData, paid_amount: e.target.value})}
@@ -302,7 +352,6 @@ export default function SoftwareSalePage() {
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Collected</label>
                   <input 
                     type="number" 
-                    required
                     placeholder="0.00"
                     value={formData.collected_amount}
                     onChange={e => setFormData({...formData, collected_amount: e.target.value})}
