@@ -26,6 +26,7 @@ export default function SoftwareSalePage() {
     total: 0,
     win_amount: "",
     paid_amount: "",
+    collected_amount: "",
     balance: 0
   });
 
@@ -75,6 +76,7 @@ export default function SoftwareSalePage() {
           `💰 *TOTAL:* ₹${formData.total}%0A` +
           `🏆 *Win Amount:* ₹${formData.win_amount}%0A` +
           `💵 *Paid Amount:* ₹${formData.paid_amount}%0A` +
+          `📥 *Collected Amount:* ₹${formData.collected_amount}%0A` +
           `📉 *BALANCE:* ₹${formData.balance}%0A` +
           `----------------------------%0A` +
           `✅ *Submitted by Admin*`;
@@ -95,7 +97,8 @@ export default function SoftwareSalePage() {
           whatsapp_total: 0,
           old_amount: "",
           win_amount: "",
-          paid_amount: ""
+          paid_amount: "",
+          collected_amount: ""
         }));
       }
     } catch (err) {
@@ -271,7 +274,7 @@ export default function SoftwareSalePage() {
                 <p className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Software Sale 1 + WhatsApp Total</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Win Amount</label>
                   <input 
@@ -291,6 +294,17 @@ export default function SoftwareSalePage() {
                     placeholder="0.00"
                     value={formData.paid_amount}
                     onChange={e => setFormData({...formData, paid_amount: e.target.value})}
+                    className="w-full h-14 px-5 bg-page border border-border rounded-2xl text-sm font-bold focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition-all outline-none" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Collected</label>
+                  <input 
+                    type="number" 
+                    required
+                    placeholder="0.00"
+                    value={formData.collected_amount}
+                    onChange={e => setFormData({...formData, collected_amount: e.target.value})}
                     className="w-full h-14 px-5 bg-page border border-border rounded-2xl text-sm font-bold focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition-all outline-none" 
                   />
                 </div>
@@ -322,7 +336,7 @@ export default function SoftwareSalePage() {
                   date_from: "", date_to: "", shop_name: "", agent_name: "",
                   software_sale_1: "", whatsapp_count: "", whatsapp_cm: "",
                   whatsapp_total: 0, old_amount: "", total: 0, win_amount: "", 
-                  paid_amount: "", balance: 0
+                  paid_amount: "", collected_amount: "", balance: 0
                 })}
                 className="w-full md:w-auto h-16 px-8 bg-white border border-border rounded-2xl font-black text-xs uppercase tracking-widest text-text-muted hover:bg-slate-50 transition-colors"
               >

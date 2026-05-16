@@ -21,6 +21,7 @@ export async function submitSoftwareSale(formData: any) {
     total,
     win_amount,
     paid_amount,
+    collected_amount,
     balance
   } = formData
 
@@ -37,6 +38,7 @@ export async function submitSoftwareSale(formData: any) {
     total: parseFloat(total),
     win_amount: parseFloat(win_amount),
     paid_amount: parseFloat(paid_amount),
+    collected_amount: parseFloat(collected_amount),
     balance: parseFloat(balance)
   })
 
