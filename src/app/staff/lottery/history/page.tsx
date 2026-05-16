@@ -24,8 +24,8 @@ export default function LotteryHistoryPage() {
   }, []);
 
   const filteredHistory = history.filter(item => 
-    item.shop_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.staff_name.toLowerCase().includes(searchTerm.toLowerCase())
+    (item.shop_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (item.staff_name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
