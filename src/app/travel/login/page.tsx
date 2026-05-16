@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   Bus, Lock, User, ArrowLeft, 
-  ChevronRight, Loader2, ShieldCheck
+  ChevronRight, Loader2, ShieldCheck, Mail
 } from "lucide-react";
+import { loginToTravel } from "./actions";
 
 export default function TravelLoginPage() {
   const router = useRouter();
@@ -16,23 +17,15 @@ export default function TravelLoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Validate Credentials
-    await new Promise(r => setTimeout(r, 1200));
+    const result = await loginToTravel(staffId, password);
     
-    const isRkAdmin = staffId === "rk_admin" && password === "rk_password123";
-    const isLijin = staffId === "Lijin" && password === "lijin@1122";
-    
-    // We also check for a generic staff password if you have one, 
-    // but for now only these master accounts are allowed as requested
-    if (isRkAdmin || isLijin) {
-      document.cookie = "staff_session=true; path=/";
-      document.cookie = `user_role=super_admin; path=/`;
-      document.cookie = `user_name=${staffId}; path=/`;
+    if (result.success) {
+      document.cookie = `user_name=${staffId.split('@')[0]}; path=/`;
       setLoading(false);
       router.push("/staff/travel/trips");
     } else {
       setLoading(false);
-      alert("Invalid Staff or Super Admin Credentials");
+      alert(result.error || "Invalid Credentials");
     }
   };
 
@@ -61,13 +54,13 @@ export default function TravelLoginPage() {
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-6 relative z-10">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Staff ID / Driver ID</label>
+              <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Email Address</label>
               <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted group-focus-within:text-travel transition-colors" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted group-focus-within:text-travel transition-colors" />
                 <input 
-                  type="text" 
+                  type="email" 
                   required 
-                  placeholder="Enter Staff ID"
+                  placeholder="Enter Email"
                   value={staffId}
                   onChange={e => setStaffId(e.target.value)}
                   className="w-full h-14 pl-12 pr-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel focus:ring-4 focus:ring-travel/10 transition-all"
