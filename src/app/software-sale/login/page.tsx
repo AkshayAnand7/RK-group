@@ -4,13 +4,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   Monitor, Lock, User, ArrowLeft, 
-  ChevronRight, Loader2, ShieldCheck, AlertCircle
+  ChevronRight, Loader2, ShieldCheck, AlertCircle, Mail
 } from "lucide-react";
+import { loginToSoftwareSale } from "./actions";
 
 export default function SoftwareSaleLoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [authId, setAuthId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -19,21 +20,18 @@ export default function SoftwareSaleLoginPage() {
     setLoading(true);
     setError(null);
     
-    // Simulate API delay
-    await new Promise(r => setTimeout(r, 1000));
-    
-    // For Software Sale, only Admin can login
-    const isAdmin = authId === "rk_admin" && password === "rk_password123";
+    try {
+      const result = await loginToSoftwareSale(email, password);
 
-    if (isAdmin) {
-      document.cookie = "admin_session=true; path=/";
-      document.cookie = `user_role=super_admin; path=/`;
-      document.cookie = `user_name=${authId}; path=/`;
+      if (result.success) {
+        router.push("/software-sale");
+      } else {
+        setError(result.error || "Invalid credentials. Please try again.");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-      router.push("/software-sale");
-    } else {
-      setLoading(false);
-      setError("Only Admin can access Software Sale portal");
     }
   };
 
@@ -61,15 +59,15 @@ export default function SoftwareSaleLoginPage() {
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-6 relative z-10">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Admin ID</label>
+              <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Email Address</label>
               <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted group-focus-within:text-slate-800 transition-colors" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted group-focus-within:text-slate-800 transition-colors" />
                 <input 
-                  type="text" 
+                  type="email" 
                   required 
-                  placeholder="Enter Admin ID"
-                  value={authId}
-                  onChange={e => setAuthId(e.target.value)}
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                   className="w-full h-14 pl-12 pr-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-slate-800 focus:ring-4 focus:ring-slate-800/10 transition-all"
                 />
               </div>
