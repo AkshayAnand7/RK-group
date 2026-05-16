@@ -8,8 +8,19 @@ import {
 } from "lucide-react";
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
 import { toggleCollectionLock, updateCollection, deleteCollection } from "./actions";
+import { Store } from "lucide-react";
 
 export default function CollectionsClient({ initialEntries }: { initialEntries: any[] }) {
+  // Compute shop-wise totals
+  const shopTotals = initialEntries.reduce((acc: Record<string, { collection: number; expense: number; entries: number }>, entry) => {
+    const shop = entry.shop_name || 'Unknown';
+    if (!acc[shop]) acc[shop] = { collection: 0, expense: 0, entries: 0 };
+    acc[shop].collection += Number(entry.amount) || 0;
+    acc[shop].expense += Number(entry.expense) || 0;
+    acc[shop].entries += 1;
+    return acc;
+  }, {});
+  const shopList = Object.entries(shopTotals).sort((a, b) => (b[1] as any).collection - (a[1] as any).collection);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -128,6 +139,34 @@ export default function CollectionsClient({ initialEntries }: { initialEntries: 
           ))}
         </div>
       </div>
+
+      {/* Shop-wise Total Collection Summary */}
+      {shopList.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-xs font-black text-text-muted uppercase tracking-[0.2em] flex items-center gap-2">
+            <Store className="w-4 h-4" /> Shop-wise Total Collection
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {shopList.map(([shop, totals]: [string, any]) => (
+              <div key={shop} className="glass p-5 rounded-2xl border border-border card-hover">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="px-3 py-1 bg-lottery-subtle text-lottery text-[10px] font-black rounded-full border border-lottery/10 truncate max-w-[70%]">
+                    {shop}
+                  </span>
+                  <span className="text-[9px] font-bold text-text-muted">{totals.entries} entries</span>
+                </div>
+                <div className="text-2xl font-black text-emerald-600 mb-2">
+                  ₹{totals.collection.toLocaleString("en-IN")}
+                </div>
+                <div className="flex items-center justify-between text-[10px] font-bold">
+                  <span className="text-danger">Exp: ₹{totals.expense.toLocaleString("en-IN")}</span>
+                  <span className="text-primary font-black">Net: ₹{(totals.collection - totals.expense).toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Table Container */}
       <div className="glass rounded-4xl border border-border overflow-hidden">
