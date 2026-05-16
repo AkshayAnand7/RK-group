@@ -115,16 +115,22 @@ export async function getLastOldAmount() {
   try {
     const { data, error } = await supabase
       .from('software_sales')
-      .select('old_amount, balance, shop_name, date_to')
+      .select('old_amount, balance, collected_amount, shop_name, date_to')
       .order('created_at', { ascending: false })
       .limit(1)
       .single()
     
     if (error || !data) return null
     
+    const balance = data.balance || 0
+    const collected = data.collected_amount || 0
+    const pending = balance - collected
+
     return {
       old_amount: data.old_amount || 0,
-      balance: data.balance || 0,
+      balance: balance,
+      collected_amount: collected,
+      pending: pending,
       shop_name: data.shop_name || '',
       date_to: data.date_to || ''
     }

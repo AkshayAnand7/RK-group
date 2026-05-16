@@ -38,7 +38,7 @@ export default function SoftwareSalePage() {
     async function fetchLastOld() {
       try {
         const data = await getLastOldAmount();
-        if (data && data.balance !== 0) {
+        if (data && data.pending !== 0) {
           setLastOldAmount(data);
         }
       } catch (err) {
@@ -149,16 +149,17 @@ export default function SoftwareSalePage() {
             <div className="flex-1">
               <p className="text-xs font-black text-amber-800 uppercase tracking-widest mb-1">Previous Balance Reminder</p>
               <p className="text-sm font-bold text-amber-700">
-                Last submission for <span className="font-black">{lastOldAmount.shop_name}</span> (ending {lastOldAmount.date_to}) had a balance of <span className="text-lg font-black text-amber-900">₹{lastOldAmount.balance.toLocaleString("en-IN")}</span>
+                Last submission for <span className="font-black">{lastOldAmount.shop_name}</span> (ending {lastOldAmount.date_to}) had a pending amount of <span className="text-lg font-black text-amber-900">₹{lastOldAmount.pending.toLocaleString("en-IN")}</span>
+                <span className="text-xs opacity-70 ml-1">(Balance ₹{lastOldAmount.balance.toLocaleString("en-IN")} - Collected ₹{lastOldAmount.collected_amount.toLocaleString("en-IN")})</span>
               </p>
               <button 
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, old_amount: lastOldAmount.balance.toString() }));
+                  setFormData(prev => ({ ...prev, old_amount: lastOldAmount.pending.toString() }));
                   setShowReminder(false);
                 }}
                 className="mt-2 px-4 py-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors cursor-pointer"
               >
-                Use ₹{lastOldAmount.balance.toLocaleString("en-IN")} as Old Amount
+                Use ₹{lastOldAmount.pending.toLocaleString("en-IN")} as Old Amount
               </button>
             </div>
             <button onClick={() => setShowReminder(false)} className="p-1 hover:bg-amber-100 rounded-lg transition-colors cursor-pointer">
