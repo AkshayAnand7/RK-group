@@ -4,11 +4,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { 
   Calendar, Search, Download, Lock, Unlock, 
   ArrowUp, ArrowDown, Filter, Edit3, Trash2, 
-  FileText, Table as TableIcon, CheckCircle, XCircle, Loader2
+  FileText, Table as TableIcon, CheckCircle, XCircle, Loader2, Store, ChevronDown, ChevronUp
 } from "lucide-react";
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
 import { toggleCollectionLock, updateCollection, deleteCollection } from "./actions";
-import { Store } from "lucide-react";
 
 export default function CollectionsClient({ initialEntries }: { initialEntries: any[] }) {
   // Compute shop-wise totals
@@ -21,10 +20,12 @@ export default function CollectionsClient({ initialEntries }: { initialEntries: 
     return acc;
   }, {});
   const shopList = Object.entries(shopTotals).sort((a, b) => (b[1] as any).collection - (a[1] as any).collection);
+  
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [editingEntry, setEditingEntry] = useState<any>(null);
+  const [expandedShop, setExpandedShop] = useState<string | null>(null);
   
   const currentSearch = searchParams.get('search') || "";
   const currentPeriod = searchParams.get('period') || "today";
@@ -140,122 +141,133 @@ export default function CollectionsClient({ initialEntries }: { initialEntries: 
         </div>
       </div>
 
-      {/* Shop-wise Total Collection Summary */}
-      {shopList.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="text-xs font-black text-text-muted uppercase tracking-[0.2em] flex items-center gap-2">
-            <Store className="w-4 h-4" /> Shop-wise Total Collection
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-            {shopList.map(([shop, totals]: [string, any]) => (
-              <div key={shop} className="glass p-5 rounded-2xl border border-border card-hover">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="px-3 py-1 bg-lottery-subtle text-lottery text-[10px] font-black rounded-full border border-lottery/10 truncate max-w-[70%]">
-                    {shop}
-                  </span>
-                  <span className="text-[9px] font-bold text-text-muted">{totals.entries} entries</span>
+      {/* Shop-wise Accordion View */}
+      <div className="space-y-4">
+        {shopList.map(([shop, totals]: [string, any]) => {
+          const isExpanded = expandedShop === shop;
+          const shopEntries = initialEntries.filter(e => (e.shop_name || 'Unknown') === shop);
+
+          return (
+            <div key={shop} className="glass rounded-4xl border border-border overflow-hidden transition-all duration-300">
+              {/* Shop Header / Summary */}
+              <div 
+                onClick={() => setExpandedShop(isExpanded ? null : shop)}
+                className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-page/30 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-lottery/10 border border-lottery/20 flex items-center justify-center shrink-0">
+                    <Store className="w-6 h-6 text-lottery" />
+                  </div>
+                  <div>
+                    <span className="text-lg font-black text-text-primary tracking-tight">
+                      {shop}
+                    </span>
+                    <p className="text-[10px] font-bold text-text-muted mt-1 uppercase tracking-widest">{totals.entries} entries</p>
+                  </div>
                 </div>
-                <div className="text-2xl font-black text-emerald-600 mb-2">
-                  ₹{totals.collection.toLocaleString("en-IN")}
-                </div>
-                <div className="flex items-center justify-between text-[10px] font-bold">
-                  <span className="text-danger">Exp: ₹{totals.expense.toLocaleString("en-IN")}</span>
-                  <span className="text-primary font-black">Net: ₹{(totals.collection - totals.expense).toLocaleString("en-IN")}</span>
+                
+                <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+                  <div className="text-left sm:text-right">
+                    <div className="text-sm font-black text-text-muted uppercase tracking-[0.2em] mb-1">Total Net</div>
+                    <div className="text-2xl font-black text-emerald-600">₹{(totals.collection - totals.expense).toLocaleString("en-IN")}</div>
+                    <div className="flex items-center gap-3 text-[10px] font-bold mt-1 opacity-80">
+                      <span className="text-text-secondary">Col: ₹{totals.collection.toLocaleString("en-IN")}</span>
+                      <span className="text-danger">Exp: ₹{totals.expense.toLocaleString("en-IN")}</span>
+                    </div>
+                  </div>
+                  <div className={`p-2 rounded-full bg-page text-text-muted transition-transform duration-300 ${isExpanded ? 'rotate-180 bg-primary/10 text-primary' : ''}`}>
+                    <ChevronDown className="w-5 h-5" />
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* Table Container */}
-      <div className="glass rounded-4xl border border-border overflow-hidden">
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-          <table className="w-full text-sm text-left min-w-[1000px]">
-            <thead>
-              <tr className="bg-page/50 border-b border-border">
-                {["Date", "Shop Name", "Collection", "Exp/Adv/Prize", "Net Balance", "Staff", "Status", "Actions"].map(h => (
-                  <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {initialEntries.map((entry) => (
-                <tr key={entry.id} className="hover:bg-page/30 transition-colors group">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <p className="font-bold text-text-primary">{new Date(entry.created_at).toLocaleDateString()}</p>
-                    <p className="text-[10px] font-black text-text-muted">ID: {entry.id.toString().padStart(3, '0')}</p>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-3 py-1 bg-lottery-subtle text-lottery text-[10px] font-black rounded-full border border-lottery/10">
-                      {entry.shop_name}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 font-mono-nums font-black text-emerald-600 whitespace-nowrap">
-                    ₹{Number(entry.amount).toLocaleString("en-IN")}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="space-y-0.5 font-mono-nums text-[10px] font-bold">
-                      <p className="text-danger">E: ₹{entry.expense || 0}</p>
-                      <p className="text-warning">A: ₹{entry.advance || 0}</p>
-                      <p className="text-info">P: ₹{entry.prize || 0}</p>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="inline-flex items-center gap-1.5 font-mono-nums font-black text-sm text-primary">
-                      <ArrowUp className="w-3 h-3" />
-                      ₹{Number(entry.amount - (entry.expense || 0)).toLocaleString("en-IN")}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-bold text-text-secondary whitespace-nowrap">
-                    {entry.staff_name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {entry.is_locked ? (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase">
-                        <Lock className="w-3 h-3" /> Locked
-                      </div>
-                    ) : (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-warning-subtle text-warning rounded-full text-[10px] font-black uppercase">
-                        <Unlock className="w-3 h-3" /> Open
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1">
-                      <button 
-                        onClick={() => handleToggleLock(entry.id, entry.is_locked)}
-                        className={`p-2 rounded-xl transition-all cursor-pointer ${entry.is_locked ? "bg-page text-text-muted hover:text-primary" : "bg-primary text-white"}`}
-                      >
-                        {entry.is_locked ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                      </button>
-                      <button 
-                        onClick={() => setEditingEntry(entry)}
-                        className="p-2 bg-page text-text-muted hover:text-primary hover:bg-primary-subtle rounded-xl transition-all cursor-pointer"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(entry.id)}
-                        className="p-2 bg-page text-text-muted hover:text-danger hover:bg-danger-subtle rounded-xl transition-all cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              
-              {initialEntries.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="py-20 text-center text-text-muted italic">
-                    No records found for this period.
-                  </td>
-                </tr>
+              {/* Shop Details Table */}
+              {isExpanded && (
+                <div className="border-t border-border bg-page/30 animate-fade-in">
+                  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+                    <table className="w-full text-sm text-left min-w-[800px]">
+                      <thead>
+                        <tr className="bg-page/50 border-b border-border">
+                          {["Date", "Collection", "Exp/Adv/Prize", "Net Balance", "Staff", "Status", "Actions"].map(h => (
+                            <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] whitespace-nowrap">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {shopEntries.map((entry) => (
+                          <tr key={entry.id} className="hover:bg-page/50 transition-colors group">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <p className="font-bold text-text-primary">{new Date(entry.created_at).toLocaleDateString()}</p>
+                              <p className="text-[10px] font-black text-text-muted">ID: {entry.id.toString().padStart(3, '0')}</p>
+                            </td>
+                            <td className="px-6 py-4 font-mono-nums font-black text-text-primary whitespace-nowrap">
+                              ₹{Number(entry.amount).toLocaleString("en-IN")}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="space-y-0.5 font-mono-nums text-[10px] font-bold">
+                                <p className="text-danger">E: ₹{entry.expense || 0}</p>
+                                <p className="text-warning">A: ₹{entry.advance || 0}</p>
+                                <p className="text-info">P: ₹{entry.prize || 0}</p>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="inline-flex items-center gap-1.5 font-mono-nums font-black text-sm text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">
+                                <ArrowUp className="w-3 h-3" />
+                                ₹{Number(entry.amount - (entry.expense || 0)).toLocaleString("en-IN")}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 font-bold text-text-secondary whitespace-nowrap">
+                              {entry.staff_name}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {entry.is_locked ? (
+                                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase">
+                                  <Lock className="w-3 h-3" /> Locked
+                                </div>
+                              ) : (
+                                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-warning-subtle text-warning rounded-full text-[10px] font-black uppercase">
+                                  <Unlock className="w-3 h-3" /> Open
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                  onClick={() => handleToggleLock(entry.id, entry.is_locked)}
+                                  className={`p-2 rounded-xl transition-all cursor-pointer ${entry.is_locked ? "bg-page text-text-muted hover:text-primary" : "bg-primary text-white shadow-lg shadow-primary/20"}`}
+                                >
+                                  {entry.is_locked ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                                </button>
+                                <button 
+                                  onClick={() => setEditingEntry(entry)}
+                                  className="p-2 bg-page text-text-muted hover:text-primary hover:bg-primary-subtle rounded-xl transition-all cursor-pointer"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+                                <button 
+                                  onClick={() => handleDelete(entry.id)}
+                                  className="p-2 bg-page text-text-muted hover:text-danger hover:bg-danger-subtle rounded-xl transition-all cursor-pointer"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               )}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          );
+        })}
+        
+        {shopList.length === 0 && (
+          <div className="py-20 text-center text-text-muted italic glass rounded-4xl border border-border">
+            No records found for this period.
+          </div>
+        )}
       </div>
 
       {/* Edit Modal */}
