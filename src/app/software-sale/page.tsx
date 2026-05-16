@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   Monitor, ArrowLeft, Send, History, 
-  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2
+  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User
 } from "lucide-react";
 import { submitSoftwareSale } from "./actions";
 
@@ -17,8 +17,11 @@ export default function SoftwareSalePage() {
     date_from: "",
     date_to: "",
     shop_name: "",
-    rapido_sale: "",
-    whatsapp_sale: "",
+    agent_name: "",
+    software_sale_1: "",
+    whatsapp_count: "",
+    whatsapp_cm: "",
+    whatsapp_total: 0,
     old_amount: "",
     total: 0,
     win_amount: "",
@@ -26,13 +29,21 @@ export default function SoftwareSalePage() {
     balance: 0
   });
 
-  // Handle calculations
+  // Auto-calculate WhatsApp Total = count * commission
   useEffect(() => {
-    const rapido = parseFloat(formData.rapido_sale) || 0;
-    const whatsapp = parseFloat(formData.whatsapp_sale) || 0;
+    const count = parseFloat(formData.whatsapp_count) || 0;
+    const cm = parseFloat(formData.whatsapp_cm) || 0;
+    const waTotal = count * cm;
+    setFormData(prev => ({ ...prev, whatsapp_total: waTotal }));
+  }, [formData.whatsapp_count, formData.whatsapp_cm]);
+
+  // Handle main calculations
+  useEffect(() => {
+    const sw1 = parseFloat(formData.software_sale_1) || 0;
+    const waTotal = formData.whatsapp_total || 0;
     const win = parseFloat(formData.win_amount) || 0;
     
-    const newTotal = rapido + whatsapp;
+    const newTotal = sw1 + waTotal;
     const newBalance = newTotal - win;
 
     setFormData(prev => ({
@@ -40,7 +51,7 @@ export default function SoftwareSalePage() {
       total: newTotal,
       balance: newBalance
     }));
-  }, [formData.rapido_sale, formData.whatsapp_sale, formData.win_amount]);
+  }, [formData.software_sale_1, formData.whatsapp_total, formData.win_amount]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,33 +63,36 @@ export default function SoftwareSalePage() {
       if (result.success) {
         // Send to WhatsApp
         const message = `*SOFTWARE SALE REPORT*%0A` +
-          `---------------------------%0A` +
+          `----------------------------%0A` +
           `📅 *Date:* ${formData.date_from} to ${formData.date_to}%0A` +
           `🏪 *Shop:* ${formData.shop_name}%0A` +
-          `---------------------------%0A` +
-          `🔹 *Rapido Sale:* ${formData.rapido_sale}%0A` +
-          `🔹 *WhatsApp Sale:* ${formData.whatsapp_sale}%0A` +
-          `🔸 *Old Amount:* ${formData.old_amount}%0A` +
-          `---------------------------%0A` +
-          `💰 *TOTAL:* ${formData.total}%0A` +
-          `🏆 *Win Amount:* ${formData.win_amount}%0A` +
-          `💵 *Paid Amount:* ${formData.paid_amount}%0A` +
-          `📉 *BALANCE:* ${formData.balance}%0A` +
-          `---------------------------%0A` +
+          `👤 *Agent:* ${formData.agent_name}%0A` +
+          `----------------------------%0A` +
+          `🔹 *Software Sale 1:* ₹${formData.software_sale_1}%0A` +
+          `🔹 *WhatsApp Sale:* ${formData.whatsapp_count} × ₹${formData.whatsapp_cm} = ₹${formData.whatsapp_total}%0A` +
+          `🔸 *Old Amount:* ₹${formData.old_amount}%0A` +
+          `----------------------------%0A` +
+          `💰 *TOTAL:* ₹${formData.total}%0A` +
+          `🏆 *Win Amount:* ₹${formData.win_amount}%0A` +
+          `💵 *Paid Amount:* ₹${formData.paid_amount}%0A` +
+          `📉 *BALANCE:* ₹${formData.balance}%0A` +
+          `----------------------------%0A` +
           `✅ *Submitted by Admin*`;
 
-        const whatsappUrl = `https://wa.me/919847113888?text=${message}`; // Placeholder phone number
+        const whatsappUrl = `https://wa.me/919847113888?text=${message}`;
         window.open(whatsappUrl, '_blank');
         
         setSuccess(true);
         setTimeout(() => setSuccess(false), 3000);
         
-        // Reset form except dates if needed, or keep for next entry
         setFormData(prev => ({
           ...prev,
           shop_name: "",
-          rapido_sale: "",
-          whatsapp_sale: "",
+          agent_name: "",
+          software_sale_1: "",
+          whatsapp_count: "",
+          whatsapp_cm: "",
+          whatsapp_total: 0,
           old_amount: "",
           win_amount: "",
           paid_amount: ""
@@ -151,44 +165,79 @@ export default function SoftwareSalePage() {
               </div>
             </div>
 
-            {/* Shop Details */}
+            {/* Shop & Agent Details */}
             <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest flex items-center gap-2">
-                  <Store className="w-3.5 h-3.5" /> Shop Name
-                </label>
-                <input 
-                  type="text" 
-                  required
-                  placeholder="Enter shop name"
-                  value={formData.shop_name}
-                  onChange={e => setFormData({...formData, shop_name: e.target.value})}
-                  className="w-full h-14 px-5 bg-page border border-border rounded-2xl text-sm font-bold focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition-all outline-none" 
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Rapido Sale</label>
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-widest flex items-center gap-2">
+                    <Store className="w-3.5 h-3.5" /> Shop Name
+                  </label>
                   <input 
-                    type="number" 
+                    type="text" 
                     required
-                    placeholder="0.00"
-                    value={formData.rapido_sale}
-                    onChange={e => setFormData({...formData, rapido_sale: e.target.value})}
+                    placeholder="Enter shop name"
+                    value={formData.shop_name}
+                    onChange={e => setFormData({...formData, shop_name: e.target.value})}
                     className="w-full h-14 px-5 bg-page border border-border rounded-2xl text-sm font-bold focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition-all outline-none" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">WhatsApp Sale</label>
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-widest flex items-center gap-2">
+                    <User className="w-3.5 h-3.5" /> Agent Name
+                  </label>
                   <input 
-                    type="number" 
+                    type="text" 
                     required
-                    placeholder="0.00"
-                    value={formData.whatsapp_sale}
-                    onChange={e => setFormData({...formData, whatsapp_sale: e.target.value})}
+                    placeholder="Enter agent name"
+                    value={formData.agent_name}
+                    onChange={e => setFormData({...formData, agent_name: e.target.value})}
                     className="w-full h-14 px-5 bg-page border border-border rounded-2xl text-sm font-bold focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition-all outline-none" 
                   />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Software Sale 1</label>
+                <input 
+                  type="number" 
+                  required
+                  placeholder="0.00"
+                  value={formData.software_sale_1}
+                  onChange={e => setFormData({...formData, software_sale_1: e.target.value})}
+                  className="w-full h-14 px-5 bg-page border border-border rounded-2xl text-sm font-bold focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition-all outline-none" 
+                />
+              </div>
+
+              {/* WhatsApp Sale Section */}
+              <div className="p-5 bg-green-50 rounded-2xl border border-green-100 space-y-3">
+                <label className="text-[10px] font-black text-green-700 uppercase tracking-widest">WhatsApp Sale</label>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-bold text-green-600 uppercase tracking-widest">Count</label>
+                    <input 
+                      type="number" 
+                      placeholder="0"
+                      value={formData.whatsapp_count}
+                      onChange={e => setFormData({...formData, whatsapp_count: e.target.value})}
+                      className="w-full h-12 px-3 bg-white border border-green-200 rounded-xl text-sm font-bold focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none" 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-bold text-green-600 uppercase tracking-widest">Commission (CM)</label>
+                    <input 
+                      type="number" 
+                      placeholder="0.00"
+                      value={formData.whatsapp_cm}
+                      onChange={e => setFormData({...formData, whatsapp_cm: e.target.value})}
+                      className="w-full h-12 px-3 bg-white border border-green-200 rounded-xl text-sm font-bold focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none" 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-bold text-green-600 uppercase tracking-widest">Total</label>
+                    <div className="w-full h-12 px-3 bg-green-100 border border-green-200 rounded-xl text-sm font-black text-green-800 flex items-center">
+                      ₹ {formData.whatsapp_total.toLocaleString()}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -213,7 +262,7 @@ export default function SoftwareSalePage() {
                   <Calculator className="w-4 h-4 opacity-40" />
                 </div>
                 <div className="text-4xl font-black">₹ {formData.total.toLocaleString()}</div>
-                <p className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Rapido + WhatsApp</p>
+                <p className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Software Sale 1 + WhatsApp Total</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -264,8 +313,9 @@ export default function SoftwareSalePage() {
               <button 
                 type="button"
                 onClick={() => setFormData({
-                  date_from: "", date_to: "", shop_name: "", rapido_sale: "", 
-                  whatsapp_sale: "", old_amount: "", total: 0, win_amount: "", 
+                  date_from: "", date_to: "", shop_name: "", agent_name: "",
+                  software_sale_1: "", whatsapp_count: "", whatsapp_cm: "",
+                  whatsapp_total: 0, old_amount: "", total: 0, win_amount: "", 
                   paid_amount: "", balance: 0
                 })}
                 className="w-full md:w-auto h-16 px-8 bg-white border border-border rounded-2xl font-black text-xs uppercase tracking-widest text-text-muted hover:bg-slate-50 transition-colors"

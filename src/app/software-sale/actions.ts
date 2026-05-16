@@ -12,8 +12,11 @@ export async function submitSoftwareSale(formData: any) {
     date_from,
     date_to,
     shop_name,
-    rapido_sale,
-    whatsapp_sale,
+    agent_name,
+    software_sale_1,
+    whatsapp_count,
+    whatsapp_cm,
+    whatsapp_total,
     old_amount,
     total,
     win_amount,
@@ -25,8 +28,11 @@ export async function submitSoftwareSale(formData: any) {
     date_from,
     date_to,
     shop_name,
-    rapido_sale: parseFloat(rapido_sale),
-    whatsapp_sale: parseFloat(whatsapp_sale),
+    agent_name,
+    software_sale_1: parseFloat(software_sale_1),
+    whatsapp_count: parseFloat(whatsapp_count) || 0,
+    whatsapp_cm: parseFloat(whatsapp_cm) || 0,
+    whatsapp_total: parseFloat(whatsapp_total) || 0,
     old_amount: parseFloat(old_amount),
     total: parseFloat(total),
     win_amount: parseFloat(win_amount),
@@ -50,7 +56,7 @@ export async function getSoftwareSalesHistory() {
   
   if (error) {
     console.error('Error fetching software sales history:', error)
-    throw error
+    return []
   }
   
   return data
