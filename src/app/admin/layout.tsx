@@ -24,6 +24,7 @@ const navSections = [
   {
     label: "RK Travel",
     items: [
+      { name: "Bookings", href: "/admin/bookings", icon: ClipboardList },
       { name: "Trips", href: "/admin/trips", icon: Bus },
       { name: "Expenses", href: "/admin/expenses", icon: Fuel },
       { name: "Analytics", href: "/admin/analytics", icon: FileBarChart },
