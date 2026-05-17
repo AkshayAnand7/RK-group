@@ -9,18 +9,30 @@ import {
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
 import { toggleCollectionLock, updateCollection, deleteCollection } from "./actions";
 
-export default function CollectionsClient({ initialEntries }: { initialEntries: any[] }) {
-  // Compute shop-wise totals
-  const shopTotals = initialEntries.reduce((acc: Record<string, { collection: number; expense: number; entries: number }>, entry) => {
+export default function CollectionsClient({ initialEntries, initialShops = [] }: { initialEntries: any[], initialShops?: any[] }) {
+  // Initialize with all shops
+  const shopTotals: Record<string, { collection: number; expense: number; entries: number; shop_id: string }> = 
+    initialShops.reduce((acc, shop) => {
+      acc[shop.name] = { collection: 0, expense: 0, entries: 0, shop_id: shop.shop_id };
+      return acc;
+    }, {});
+
+  // Compute shop-wise totals from entries
+  initialEntries.forEach((entry) => {
     const shop = entry.shop_name || 'Unknown';
-    if (!acc[shop]) acc[shop] = { collection: 0, expense: 0, entries: 0 };
-    acc[shop].collection += Number(entry.amount) || 0;
-    acc[shop].expense += Number(entry.expense) || 0;
-    acc[shop].entries += 1;
-    return acc;
-  }, {});
+    if (!shopTotals[shop]) shopTotals[shop] = { collection: 0, expense: 0, entries: 0, shop_id: 'N/A' };
+    shopTotals[shop].collection += Number(entry.amount) || 0;
+    shopTotals[shop].expense += Number(entry.expense) || 0;
+    shopTotals[shop].entries += 1;
+  });
   
-  const shopList = Object.entries(shopTotals).sort((a, b) => (b[1] as any).collection - (a[1] as any).collection);
+  const shopList = Object.entries(shopTotals).sort((a, b) => {
+    // Sort by collection descending, then alphabetically
+    if (b[1].collection !== a[1].collection) {
+      return b[1].collection - a[1].collection;
+    }
+    return a[0].localeCompare(b[0]);
+  });
   
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -158,8 +170,9 @@ export default function CollectionsClient({ initialEntries }: { initialEntries: 
                 <Store className="w-7 h-7 text-white" />
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Entries</p>
-                <p className="text-xl font-black text-text-primary font-mono-nums">{totals.entries.toString().padStart(2, '0')}</p>
+                <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Shop ID</p>
+                <p className="text-xl font-black text-text-primary font-mono-nums">{totals.shop_id !== 'N/A' ? totals.shop_id : '-'}</p>
+                <p className="text-[10px] font-bold text-emerald-500 mt-1">{totals.entries} Entries</p>
               </div>
             </div>
 

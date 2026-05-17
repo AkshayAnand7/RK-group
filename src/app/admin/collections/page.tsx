@@ -1,6 +1,6 @@
 import { getLotteryEntries } from "./actions";
+import { getShops } from "../shops/actions";
 import CollectionsClient from "./collections-client";
-
 export const dynamic = 'force-dynamic';
 
 export default async function LotteryEntriesPage({
@@ -13,6 +13,7 @@ export default async function LotteryEntriesPage({
   const period = typeof params.period === 'string' ? params.period : 'today';
   
   const entries = await getLotteryEntries(search, period);
+  const shops = await getShops();
 
-  return <CollectionsClient initialEntries={entries} />;
+  return <CollectionsClient initialEntries={entries} initialShops={shops} />;
 }
