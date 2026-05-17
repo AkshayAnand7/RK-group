@@ -90,12 +90,19 @@ export async function submitSoftwareSale(formData: any) {
 export async function getSoftwareSalesHistory() {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
+  const activeShopName = cookieStore.get('active_shop_name')?.value
   
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('software_sales')
       .select('*')
       .order('created_at', { ascending: false })
+
+    if (activeShopName && activeShopName !== 'All') {
+      query = query.eq('shop_name', activeShopName)
+    }
+
+    const { data, error } = await query
     
     if (error) {
       console.error('Error fetching software sales history:', error)
