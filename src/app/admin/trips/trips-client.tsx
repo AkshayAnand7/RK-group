@@ -73,10 +73,10 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 scroll-reveal">
         <div>
-          <h1 className="text-2xl font-black text-text-primary uppercase tracking-tight">Trip Details Management</h1>
-          <p className="text-sm text-text-secondary font-medium">Full control over travel logs and fleet movements</p>
+          <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">Trip Details Management</h1>
+          <p className="text-xs sm:text-sm text-text-secondary font-medium">Full control over travel logs and fleet movements</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={handleExportPDF} className="btn-primary py-2.5 flex items-center gap-2 text-xs">
@@ -88,7 +88,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
         </div>
       </div>
 
-      <div className="glass p-4 rounded-3xl flex flex-col md:flex-row gap-4 items-center">
+      <div className="glass p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex flex-col md:flex-row gap-3 sm:gap-4 items-center scroll-reveal">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
           <input 
@@ -110,9 +110,9 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
         </div>
       </div>
 
-      <div className="glass rounded-4xl border border-border overflow-hidden">
+      <div className="glass rounded-3xl sm:rounded-4xl border border-border overflow-hidden scroll-reveal">
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-          <table className="w-full text-sm text-left min-w-[1000px]">
+          <table className="w-full text-sm text-left min-w-[800px] sm:min-w-[1000px]">
             <thead>
               <tr className="bg-page/50 border-b border-border">
                 {["Date", "Driver & Vehicle", "Route Details", "Amount Status", "Status", "Actions"].map(h => (

@@ -64,10 +64,10 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
 
   return (
     <div className={`space-y-6 animate-fade-in ${isPending ? 'opacity-50' : ''}`}>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4 scroll-reveal">
         <div>
-          <h1 className="text-2xl font-black text-text-primary uppercase tracking-tight">System Users</h1>
-          <p className="text-sm text-text-secondary font-medium">Manage access levels for staff and administrators</p>
+          <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">System Users</h1>
+          <p className="text-xs sm:text-sm text-text-secondary font-medium">Manage access levels for staff and administrators</p>
         </div>
         <div className="flex items-center gap-3">
           <button 
@@ -88,9 +88,9 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 scroll-stagger">
         {filtered.map((user) => (
-          <div key={user.id} className="glass p-6 rounded-4xl border border-border card-hover relative overflow-hidden group">
+          <div key={user.id} className="glass p-4 sm:p-6 rounded-3xl sm:rounded-4xl border border-border card-hover relative overflow-hidden group">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-xl font-black shadow-inner shadow-primary/5">
                 {(user.full_name || 'U')[0]}

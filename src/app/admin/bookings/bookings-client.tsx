@@ -75,9 +75,9 @@ export default function BookingsClient({ initialBookings }: { initialBookings: a
   return (
     <div className={`space-y-6 animate-fade-in ${isPending ? 'opacity-50' : ''}`}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 scroll-reveal">
         <div>
-          <h1 className="text-2xl font-black text-text-primary uppercase tracking-tight">Travel Bookings</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">Travel Bookings</h1>
           <p className="text-sm text-text-secondary font-medium">Manage and review customer trip requests</p>
         </div>
         <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export default function BookingsClient({ initialBookings }: { initialBookings: a
       </div>
 
       {/* Search */}
-      <div className="glass p-4 rounded-3xl flex items-center">
+      <div className="glass p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex items-center scroll-reveal">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
           <input 
@@ -104,9 +104,9 @@ export default function BookingsClient({ initialBookings }: { initialBookings: a
       </div>
 
       {/* Grid of Bookings */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 scroll-stagger">
         {initialBookings.map((booking) => (
-          <div key={booking.id} className="glass p-8 rounded-4xl border border-border group hover:bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden flex flex-col">
+          <div key={booking.id} className="glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border border-border group hover:bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden flex flex-col">
             <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl -mr-16 -mt-16 transition-all ${
               booking.status === 'accepted' ? 'bg-emerald-500/10 group-hover:bg-emerald-500/20' : 
               booking.status === 'rejected' ? 'bg-red-500/10 group-hover:bg-red-500/20' : 

@@ -70,17 +70,17 @@ export default function ExpensesClient({
 
   return (
     <div className={`space-y-6 animate-fade-in ${isPending ? 'opacity-50' : ''}`}>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 scroll-reveal">
         <div>
-          <h1 className="text-2xl font-black text-text-primary uppercase tracking-tight">Financial Expenses</h1>
-          <p className="text-sm text-text-secondary font-medium">Track fuel, salary, and overhead costs across the group</p>
+          <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">Financial Expenses</h1>
+          <p className="text-xs sm:text-sm text-text-secondary font-medium">Track fuel, salary, and overhead costs across the group</p>
         </div>
         <button onClick={() => setShowForm(true)} className="btn-primary flex items-center gap-2">
           <Plus className="w-5 h-5" /> Add New Expense
         </button>
       </div>
 
-      <div className="glass p-4 rounded-3xl flex flex-col md:flex-row gap-4 items-center">
+      <div className="glass p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex flex-col md:flex-row gap-3 sm:gap-4 items-center scroll-reveal">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
           <input 
@@ -90,8 +90,8 @@ export default function ExpensesClient({
             className="w-full h-12 pl-11 pr-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all" 
           />
         </div>
-        <div className="flex items-center gap-2 p-1 bg-page border border-border rounded-xl">
-          <button onClick={() => setCatFilter("all")} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${catFilter === "all" ? "bg-primary text-white" : "text-text-muted"}`}>
+        <div className="flex items-center gap-2 p-1 bg-page border border-border rounded-xl overflow-x-auto scrollbar-none">
+          <button onClick={() => setCatFilter("all")} className={`px-3 sm:px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap ${catFilter === "all" ? "bg-primary text-white" : "text-text-muted"}`}>
             All
           </button>
           {categories.map(c => (
@@ -102,7 +102,7 @@ export default function ExpensesClient({
         </div>
       </div>
 
-      <div className="bg-primary text-white p-6 rounded-4xl shadow-xl shadow-primary/20 flex items-center justify-between">
+      <div className="bg-primary text-white p-4 sm:p-6 rounded-3xl sm:rounded-4xl shadow-xl shadow-primary/20 flex items-center justify-between scroll-reveal-scale">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70 mb-1">Total Period Expense</p>
           <p className="text-3xl font-black font-mono-nums">₹{total.toLocaleString("en-IN")}</p>
@@ -110,9 +110,9 @@ export default function ExpensesClient({
         <IndianRupee className="w-12 h-12 opacity-20" />
       </div>
 
-      <div className="glass rounded-4xl border border-border overflow-hidden">
+      <div className="glass rounded-3xl sm:rounded-4xl border border-border overflow-hidden scroll-reveal">
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-          <table className="w-full text-sm text-left min-w-[800px]">
+          <table className="w-full text-sm text-left min-w-[600px] sm:min-w-[800px]">
             <thead>
               <tr className="bg-page/50 border-b border-border">
                 {["Date", "Category", "Vehicle / Unit", "Details", "Amount", "Actions"].map(h => (

@@ -50,17 +50,17 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Reports</h1>
-        <p className="text-sm text-text-secondary mt-1">Generate and export business reports</p>
+      <div className="scroll-reveal">
+        <h1 className="text-xl sm:text-2xl font-bold">Reports</h1>
+        <p className="text-xs sm:text-sm text-text-secondary mt-1">Generate and export business reports</p>
       </div>
 
       {/* Date Range */}
-      <div className="bg-surface rounded-xl border border-border p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+      <div className="bg-surface rounded-xl border border-border p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 scroll-reveal">
         <div className="flex items-center gap-2 text-sm text-text-secondary">
           <Filter className="w-4 h-4" /> Date Range:
         </div>
-        <div className="flex flex-wrap gap-1 p-1 bg-page rounded-lg">
+        <div className="flex flex-wrap gap-1 p-1 bg-page rounded-lg overflow-x-auto scrollbar-none">
           {[{ v: "today", l: "Today" }, { v: "week", l: "This Week" }, { v: "month", l: "This Month" }, { v: "custom", l: "Custom" }].map(p => (
             <button key={p.v} onClick={() => setDateRange(p.v)}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${dateRange === p.v ? "bg-surface text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
@@ -69,7 +69,7 @@ export default function ReportsPage() {
           ))}
         </div>
         {dateRange === "custom" && (
-          <div className="flex gap-2 animate-fade-in">
+          <div className="flex flex-col sm:flex-row gap-2 animate-fade-in">
             <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="h-9 px-3 bg-page border border-border rounded-lg text-sm focus:outline-none focus:border-primary" />
             <span className="text-text-muted self-center">to</span>
             <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="h-9 px-3 bg-page border border-border rounded-lg text-sm focus:outline-none focus:border-primary" />
@@ -78,9 +78,9 @@ export default function ReportsPage() {
       </div>
 
       {/* Report Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 scroll-stagger">
         {reportTypes.map(report => (
-          <div key={report.id} className="bg-surface rounded-xl border border-border p-5 hover:shadow-md transition-all duration-200">
+          <div key={report.id} className="bg-surface rounded-2xl sm:rounded-xl border border-border p-4 sm:p-5 hover:shadow-md transition-all duration-200">
             <div className="w-10 h-10 rounded-xl bg-primary-subtle flex items-center justify-center mb-4">
               <report.icon className="w-5 h-5 text-primary" />
             </div>

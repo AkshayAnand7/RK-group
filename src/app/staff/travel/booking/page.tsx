@@ -65,7 +65,7 @@ export default function TravelBookingPage() {
   if (success) {
     return (
       <StaffLayout module="travel" shopName="Travel Desk">
-        <div className="p-6 text-center animate-fade-in pt-12">
+        <div className="p-6 text-center scroll-reveal pt-12">
           <div className="w-20 h-20 rounded-full bg-success-subtle flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-success" />
           </div>
@@ -86,7 +86,7 @@ export default function TravelBookingPage() {
 
   return (
     <StaffLayout module="travel" shopName="Travel Desk">
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 scroll-reveal">
         <div className="flex items-center gap-3 mb-2">
           <Link href="/staff/travel" className="p-2 bg-surface border border-border rounded-xl">
             <ChevronLeft className="w-5 h-5" />
@@ -209,7 +209,7 @@ export default function TravelBookingPage() {
             <span className="text-[10px] font-bold text-text-muted">{upcomingRides.length} active</span>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 scroll-stagger">
             {upcomingRides.map((ride) => (
               <div key={ride.id} className="glass p-5 rounded-3xl border border-border shadow-lg relative overflow-hidden group">
                 <div className={`absolute top-0 right-0 px-4 py-1 rounded-bl-xl text-[8px] font-black uppercase tracking-tighter ${

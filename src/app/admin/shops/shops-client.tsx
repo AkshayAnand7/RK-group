@@ -57,10 +57,10 @@ export default function ShopsClient({ initialShops }: { initialShops: any[] }) {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 scroll-reveal">
         <div>
-          <h1 className="text-2xl font-black text-text-primary uppercase tracking-tight">Lottery Shop Management</h1>
-          <p className="text-sm text-text-secondary font-medium">Add, Edit and Monitor all shop terminals</p>
+          <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">Lottery Shop Management</h1>
+          <p className="text-xs sm:text-sm text-text-secondary font-medium">Add, Edit and Monitor all shop terminals</p>
         </div>
         <button 
           onClick={() => { setEditingShop(null); setShowForm(true); }}
@@ -71,7 +71,7 @@ export default function ShopsClient({ initialShops }: { initialShops: any[] }) {
       </div>
 
       {/* Search */}
-      <div className="glass p-4 rounded-3xl flex items-center gap-4">
+      <div className="glass p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex items-center gap-4 scroll-reveal">
         <Search className="w-5 h-5 text-text-muted ml-2" />
         <input 
           value={search}
@@ -82,9 +82,9 @@ export default function ShopsClient({ initialShops }: { initialShops: any[] }) {
       </div>
 
       {/* Grid of Shops */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 scroll-stagger">
         {filteredShops.map((shop) => (
-          <div key={shop.shop_id} className="glass p-8 rounded-4xl border border-border group hover:bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
+          <div key={shop.shop_id} className="glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border border-border group hover:bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-lottery/5 blur-3xl -mr-16 -mt-16 group-hover:bg-lottery/10 transition-all" />
             
             <div className="flex items-start justify-between mb-8">

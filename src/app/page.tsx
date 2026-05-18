@@ -21,7 +21,7 @@ export default function LandingPage() {
 
       <div className="relative z-10 w-full max-w-6xl px-4 md:px-6 py-6 md:py-12 text-center">
         {/* Main Logo */}
-        <div className="mb-8 md:mb-12 animate-fade-in flex flex-col items-center">
+        <div className="mb-8 md:mb-12 scroll-reveal flex flex-col items-center">
           <div className="relative w-32 h-32 md:w-56 md:h-56 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/30 border-4 border-white mb-6 transform hover:scale-105 transition-transform duration-500">
             <img 
               src="/logo.png?v=2" 
@@ -35,7 +35,7 @@ export default function LandingPage() {
         </div>
 
         {/* Three Separate Modules */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto scroll-stagger">
           {/* RK Lottery Link */}
           <Link 
             href="/lottery" 
@@ -86,7 +86,7 @@ export default function LandingPage() {
         </div>
 
         {/* Footer info */}
-        <div className="mt-20 text-text-muted font-bold text-[10px] uppercase tracking-widest animate-fade-in [animation-delay:600ms]">
+        <div className="mt-20 text-text-muted font-bold text-[10px] uppercase tracking-widest scroll-reveal [animation-delay:600ms]">
           © 2026 RK GROUP • INDEPENDENT MODULE GATEWAY
         </div>
       </div>

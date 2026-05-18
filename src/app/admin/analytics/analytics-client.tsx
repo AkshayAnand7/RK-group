@@ -41,16 +41,16 @@ export default function AnalyticsClient({ initialTrips, initialExpenses }: { ini
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 scroll-reveal">
         <div>
-          <h1 className="text-2xl font-black text-text-primary uppercase tracking-tight">Vehicle Analytics</h1>
-          <p className="text-sm text-text-secondary font-medium">Live insights into fleet performance and operational costs</p>
+          <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">Vehicle Analytics</h1>
+          <p className="text-xs sm:text-sm text-text-secondary font-medium">Live insights into fleet performance and operational costs</p>
         </div>
       </div>
 
       {/* Top Level Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass p-6 rounded-4xl border-l-4 border-l-travel shadow-xl shadow-travel/5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 scroll-stagger">
+        <div className="glass p-4 sm:p-6 rounded-3xl sm:rounded-4xl border-l-4 border-l-travel shadow-xl shadow-travel/5">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-2xl bg-travel/10 flex items-center justify-center">
               <Fuel className="w-5 h-5 text-travel" />
@@ -81,9 +81,9 @@ export default function AnalyticsClient({ initialTrips, initialExpenses }: { ini
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Expense Trends */}
-        <div className="glass p-8 rounded-4xl">
+        <div className="glass p-4 sm:p-8 rounded-3xl sm:rounded-4xl scroll-reveal">
           <div className="flex items-center justify-between mb-10">
             <div>
               <h3 className="text-sm font-black uppercase tracking-widest text-text-primary">Expense Trends</h3>

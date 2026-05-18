@@ -121,23 +121,23 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
   return (
     <div className={`space-y-6 animate-fade-in ${isPending ? 'opacity-50' : ''}`}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 scroll-reveal">
         <div>
-          <h1 className="text-2xl font-black text-text-primary uppercase tracking-tight">Lottery Collections</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">Lottery Collections</h1>
           <p className="text-sm text-text-secondary font-medium">Manage and audit all shop collections in real-time</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={handleExportPDF} className="btn-primary py-2.5 flex items-center gap-2 text-xs">
-            <FileText className="w-4 h-4" /> Export PDF
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={handleExportPDF} className="btn-primary py-2.5 flex items-center gap-2 text-[10px] sm:text-xs">
+            <FileText className="w-4 h-4" /> <span className="hidden sm:inline">Export</span> PDF
           </button>
-          <button onClick={handleExportExcel} className="px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
+          <button onClick={handleExportExcel} className="px-3 sm:px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-[10px] sm:text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
             <TableIcon className="w-4 h-4" /> Export Excel
           </button>
         </div>
       </div>
 
       {/* Filters & Search */}
-      <div className="glass p-4 rounded-3xl flex flex-col md:flex-row gap-4 items-center">
+      <div className="glass p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex flex-col md:flex-row gap-3 sm:gap-4 items-center scroll-reveal">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
           <input 
@@ -160,9 +160,9 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
       </div>
 
       {/* Grid of Shops (Replicating the Shop Management UI) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 scroll-stagger">
         {shopList.map(([shop, totals]: [string, any]) => (
-          <div key={shop} className="glass p-8 rounded-4xl border border-border group hover:bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden flex flex-col h-full">
+          <div key={shop} className="glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border border-border group hover:bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden flex flex-col h-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl -mr-16 -mt-16 group-hover:bg-emerald-500/10 transition-all" />
             
             <div className="flex items-start justify-between mb-8 relative z-10">
