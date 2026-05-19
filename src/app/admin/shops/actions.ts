@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache'
 export async function getShops() {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
-  const { data, error } = await supabase.from('shops').select('*').order('created_at', { ascending: false })
+  const { data, error } = await supabase.from('shops').select('*').order('shop_id', { ascending: true })
   if (error) {
     console.error('Error fetching shops:', error)
     throw error
