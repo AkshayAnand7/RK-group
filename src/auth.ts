@@ -2,7 +2,6 @@ import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import { authConfig } from './auth.config'
 import bcrypt from 'bcryptjs'
-import { z } from 'zod'
 import { createClient } from '@supabase/supabase-js'
 
 // Use Supabase service role client to query auth_users table
@@ -16,47 +15,56 @@ function getSupabaseAdmin() {
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  trustHost: true,
   providers: [
     Credentials({
       async authorize(credentials) {
-        const parsedCredentials = z
-          .object({ user_id: z.string(), password: z.string() })
-          .safeParse(credentials)
+        try {
+          const user_id = credentials?.user_id as string
+          const password = credentials?.password as string
 
-        if (!parsedCredentials.success) {
-          throw new Error('Invalid input format')
-        }
+          if (!user_id || !password) {
+            console.log('[AUTH] Missing credentials')
+            return null
+          }
 
-        const { user_id, password } = parsedCredentials.data
+          const supabase = getSupabaseAdmin()
+          const { data: user, error } = await supabase
+            .from('auth_users')
+            .select('*')
+            .eq('user_id', user_id)
+            .single()
 
-        const supabase = getSupabaseAdmin()
-        const { data: user, error } = await supabase
-          .from('auth_users')
-          .select('*')
-          .eq('user_id', user_id)
-          .single()
+          if (error || !user) {
+            console.log('[AUTH] User not found:', user_id, error?.message)
+            return null
+          }
 
-        if (error || !user) {
-          throw new Error('Invalid user ID')
-        }
+          if (!user.is_active) {
+            console.log('[AUTH] User disabled:', user_id)
+            return null
+          }
 
-        if (!user.is_active) {
-          throw new Error('User disabled')
-        }
+          const passwordMatch = await bcrypt.compare(password, user.password)
 
-        const passwordMatch = await bcrypt.compare(password, user.password)
+          if (!passwordMatch) {
+            console.log('[AUTH] Wrong password for:', user_id)
+            return null
+          }
 
-        if (!passwordMatch) {
-          throw new Error('Wrong password')
-        }
-
-        return {
-          id: user.id,
-          user_id: user.user_id,
-          name: user.full_name,
-          role: user.role,
+          console.log('[AUTH] Login success:', user_id, user.role)
+          return {
+            id: user.id,
+            user_id: user.user_id,
+            name: user.full_name,
+            role: user.role,
+          }
+        } catch (err) {
+          console.error('[AUTH] Unexpected error:', err)
+          return null
         }
       },
     }),
   ],
 })
+
