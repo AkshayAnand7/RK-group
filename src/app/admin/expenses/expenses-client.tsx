@@ -90,12 +90,12 @@ export default function ExpensesClient({
             className="w-full h-12 pl-11 pr-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all" 
           />
         </div>
-        <div className="flex items-center gap-2 p-1 bg-page border border-border rounded-xl overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1 sm:gap-2 p-1 bg-page border border-border rounded-xl overflow-x-auto scrollbar-none w-full sm:w-auto">
           <button onClick={() => setCatFilter("all")} className={`px-3 sm:px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap ${catFilter === "all" ? "bg-primary text-white" : "text-text-muted"}`}>
             All
           </button>
           {categories.map(c => (
-            <button key={c.value} onClick={() => setCatFilter(c.value)} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${catFilter === c.value ? "bg-primary text-white" : "text-text-muted"}`}>
+            <button key={c.value} onClick={() => setCatFilter(c.value)} className={`px-3 sm:px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap ${catFilter === c.value ? "bg-primary text-white" : "text-text-muted"}`}>
               {c.value}
             </button>
           ))}
@@ -112,7 +112,7 @@ export default function ExpensesClient({
 
       <div className="glass rounded-3xl sm:rounded-4xl border border-border overflow-hidden scroll-reveal">
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-          <table className="w-full text-sm text-left min-w-[600px] sm:min-w-[800px]">
+          <table className="w-full text-sm text-left min-w-[550px]">
             <thead>
               <tr className="bg-page/50 border-b border-border">
                 {["Date", "Category", "Vehicle / Unit", "Details", "Amount", "Actions"].map(h => (
@@ -161,7 +161,7 @@ export default function ExpensesClient({
       {showForm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowForm(false)} />
-          <div className="relative w-full max-w-md glass p-8 rounded-4xl border-white shadow-2xl animate-fade-in">
+          <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Add Expense</h2>
               <button onClick={() => setShowForm(false)} className="p-2 hover:bg-page rounded-xl transition-colors cursor-pointer">

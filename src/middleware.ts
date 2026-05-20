@@ -1,64 +1,59 @@
-import { createServerClient } from "@supabase/ssr";
-import { type NextRequest, NextResponse } from "next/server";
+import NextAuth from 'next-auth'
+import { authConfig } from './auth.config'
+import { NextResponse } from 'next/server'
 
-export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
+const { auth } = NextAuth(authConfig)
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
-      },
+export default auth((req) => {
+  const { nextUrl } = req
+  const isLoggedIn = !!req.auth
+  const user = req.auth?.user as any
+  const role = user?.role
+
+  const isOnAdmin = nextUrl.pathname.startsWith('/admin')
+  const isOnTravel = nextUrl.pathname.startsWith('/travel')
+  const isOnLottery = nextUrl.pathname.startsWith('/lottery')
+  const isOnLogin = nextUrl.pathname === '/login'
+
+  if (nextUrl.pathname === '/admin') {
+    return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
+  }
+
+  // 1. Redirect unauthenticated users to login
+  if ((isOnAdmin || isOnTravel || isOnLottery) && !isLoggedIn) {
+    return NextResponse.redirect(new URL('/login', nextUrl))
+  }
+
+  // 2. Redirect authenticated users trying to access login
+  if (isOnLogin && isLoggedIn) {
+    if (role === 'admin') {
+      return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
+    } else if (role === 'travel_staff') {
+      return NextResponse.redirect(new URL('/travel', nextUrl))
+    } else if (role === 'lottery_staff') {
+      return NextResponse.redirect(new URL('/lottery', nextUrl))
     }
-  );
-
-  const { pathname } = request.nextUrl;
-  
-  // Public routes
-  if (pathname === '/admin/login' || pathname === '/' || pathname.startsWith('/_next') || pathname.includes('.')) {
-    return supabaseResponse;
   }
 
-  const { data: { user } } = await supabase.auth.getUser();
-
-  // Protect Admin Routes
-  if (pathname.startsWith('/admin') && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/admin/login';
-    return NextResponse.redirect(url);
+  // 3. Role-Based Route Protection
+  if (isOnAdmin && role !== 'admin') {
+    return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
+  }
+  if (isOnTravel && role !== 'travel_staff') {
+    return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
+  }
+  if (isOnLottery && role !== 'lottery_staff') {
+    return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
   }
 
-  // Protect Staff Routes
-  if (pathname.startsWith('/staff') && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    return NextResponse.redirect(url);
-  }
-
-  return supabaseResponse;
-}
+  return NextResponse.next()
+})
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
-};
+    '/admin/:path*',
+    '/travel/:path*',
+    '/lottery/:path*',
+    '/login'
+  ]
+}

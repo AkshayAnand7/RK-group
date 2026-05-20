@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard, Store, ClipboardList, Bus, Fuel, FileBarChart,
   Bell, Users, Settings, LogOut, Menu, X, ChevronDown,
+  Car, UserCheck, Briefcase,
 } from "lucide-react";
 
 const navSections = [
@@ -26,8 +28,16 @@ const navSections = [
     items: [
       { name: "Bookings", href: "/admin/bookings", icon: ClipboardList },
       { name: "Trips", href: "/admin/trips", icon: Bus },
+      { name: "Vehicles", href: "/admin/vehicles", icon: Car },
       { name: "Expenses", href: "/admin/expenses", icon: Fuel },
       { name: "Analytics", href: "/admin/analytics", icon: FileBarChart },
+    ],
+  },
+  {
+    label: "Management",
+    items: [
+      { name: "Staff", href: "/admin/staff", icon: UserCheck },
+      { name: "Agents", href: "/admin/agents", icon: Briefcase },
     ],
   },
   {
@@ -42,20 +52,14 @@ const navSections = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
+  const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-
-  // If we are on the login page, don't show the sidebar and header
-  if (pathname === "/admin/login") {
-    return <>{children}</>;
-  }
 
   const isActive = (href: string) => pathname === href;
 
   const handleLogout = () => {
-    document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    router.push("/admin/login");
+    signOut({ callbackUrl: "/login" });
   };
 
   const SidebarContent = () => (
@@ -165,9 +169,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-lg hover:bg-page transition-colors cursor-pointer"
               >
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-primary text-xs font-bold">SA</span>
+                  <span className="text-primary text-xs font-bold">{(session?.user?.name || 'SA')[0]}</span>
                 </div>
-                <span className="hidden md:block text-sm font-medium">Super Admin</span>
+                <span className="hidden md:block text-sm font-medium">{session?.user?.name || 'Admin'}</span>
                 <ChevronDown className="w-4 h-4 text-text-muted" />
               </button>
 

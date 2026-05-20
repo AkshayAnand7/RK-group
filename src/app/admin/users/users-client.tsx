@@ -69,10 +69,10 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
           <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">System Users</h1>
           <p className="text-xs sm:text-sm text-text-secondary font-medium">Manage access levels for staff and administrators</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button 
             onClick={() => setShowAddModal(true)}
-            className="h-11 px-6 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+            className="h-11 px-6 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
           >
             <UserPlus className="w-4 h-4" /> Add New User
           </button>
@@ -136,7 +136,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
       {showRoleModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowRoleModal(null)} />
-          <div className="relative w-full max-w-md glass p-8 rounded-4xl border-white shadow-2xl animate-fade-in">
+          <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Assign Role</h2>
               <button onClick={() => setShowRoleModal(null)} className="p-2 hover:bg-page rounded-xl transition-colors cursor-pointer">
@@ -172,7 +172,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
       {showAddModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowAddModal(false)} />
-          <div className="relative w-full max-w-md glass p-8 rounded-4xl border-white shadow-2xl animate-fade-in">
+          <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Add New User</h2>
               <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-page rounded-xl transition-colors cursor-pointer">

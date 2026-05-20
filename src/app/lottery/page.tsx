@@ -1,29 +1,46 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Ticket, Store, ChevronRight, ArrowLeft } from "lucide-react";
-
 import { useState, useEffect } from "react";
 import { getShops } from "@/app/admin/shops/actions";
+import { getSession } from "next-auth/react";
 
 export default function LotteryShopList() {
+  const router = useRouter();
   const [shops, setShops] = useState<any[]>([]);
+  const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchShops() {
+    async function fetchData() {
       try {
-        const data = await getShops();
-        setShops(data);
+        const [shopsData, sessionData] = await Promise.all([
+          getShops(),
+          getSession()
+        ]);
+        setShops(shopsData || []);
+        setSession(sessionData);
       } catch (err: any) {
-        console.error("Failed to fetch shops:", err);
-        setError("Failed to load shops. Please try again later.");
+        console.error("Failed to fetch shops or session:", err);
+        setError("Failed to load page data. Please try again later.");
       } finally {
         setLoading(false);
       }
     }
-    fetchShops();
+    fetchData();
   }, []);
+
+  const handleSelectShop = (shop: any) => {
+    // Set cookies for selected shop
+    document.cookie = `active_shop_id=${shop.shop_id}; path=/; max-age=86400`;
+    document.cookie = `active_shop_name=${encodeURIComponent(shop.name)}; path=/; max-age=86400`;
+    if (session?.user?.name) {
+      document.cookie = `user_name=${encodeURIComponent(session.user.name)}; path=/; max-age=86400`;
+    }
+    router.push("/lottery/entry");
+  };
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-page">
@@ -40,12 +57,13 @@ export default function LotteryShopList() {
       <p className="text-text-secondary mb-6">{error}</p>
       <button 
         onClick={() => window.location.reload()}
-        className="px-6 py-2 bg-lottery text-white font-bold rounded-xl hover:bg-lottery/90 transition-colors"
+        className="px-6 py-2 bg-lottery text-white font-bold rounded-xl hover:bg-lottery/90 transition-colors cursor-pointer"
       >
         Retry
       </button>
     </div>
   );
+
   return (
     <div className="min-h-screen bg-page flex flex-col items-center py-12 px-6">
       {/* Background Decor */}
@@ -69,10 +87,10 @@ export default function LotteryShopList() {
       {/* Shop Grid */}
       <div className="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-4">
         {shops.map((shop, i) => (
-          <Link 
+          <button 
             key={shop.shop_id}
-            href={`/lottery/login?shopId=${shop.shop_id}&shopName=${encodeURIComponent(shop.name)}`}
-            className="group relative glass p-4 md:p-6 rounded-3xl card-hover flex items-center gap-4 animate-fade-in"
+            onClick={() => handleSelectShop(shop)}
+            className="group relative glass p-4 md:p-6 rounded-3xl card-hover flex items-center gap-4 animate-fade-in w-full text-left cursor-pointer"
             style={{ animationDelay: `${i * 50}ms` }}
           >
             <div className="w-10 h-10 md:w-12 md:h-12 bg-lottery-subtle rounded-xl flex items-center justify-center text-lottery font-black text-[10px] md:text-xs shrink-0 group-hover:bg-lottery group-hover:text-white transition-all uppercase">
@@ -85,7 +103,7 @@ export default function LotteryShopList() {
               </h3>
             </div>
             <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-text-muted group-hover:text-lottery group-hover:translate-x-1 transition-all" />
-          </Link>
+          </button>
         ))}
       </div>
 

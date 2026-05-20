@@ -8,21 +8,21 @@ export default function StaffTravelDashboard() {
       title: "New Booking",
       desc: "Schedule a future trip",
       icon: Calendar,
-      href: "/staff/travel/booking",
+      href: "/travel/booking",
       color: "bg-blue-500"
     },
     {
       title: "New Trip",
       desc: "Start a current trip log",
       icon: PlusCircle,
-      href: "/staff/travel/trips",
+      href: "/travel/trips",
       color: "bg-green-500"
     },
     {
       title: "Add Expense",
       desc: "Fuel & maintenance",
       icon: Wallet,
-      href: "/staff/travel/expenses",
+      href: "/travel/expenses",
       color: "bg-orange-500"
     }
   ];

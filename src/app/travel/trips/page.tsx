@@ -111,7 +111,7 @@ export default function TravelTripPage() {
             {/* 2. Options (Below Reports) */}
             <div className="space-y-3">
               <Link 
-                href="/staff/travel/booking"
+                href="/travel/booking"
                 className="w-full h-16 bg-surface text-travel border-2 border-travel/20 rounded-2xl font-black text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] cursor-pointer"
               >
                 <Calendar className="w-5 h-5" /> Schedule New Booking

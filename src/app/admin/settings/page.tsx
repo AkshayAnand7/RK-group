@@ -29,8 +29,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Settings</h1>
-        <p className="text-sm text-text-secondary mt-1">Manage your account and platform preferences</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-text-primary">Settings</h1>
+        <p className="text-xs sm:text-sm text-text-secondary mt-1">Manage your account and platform preferences</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -65,7 +65,7 @@ export default function SettingsPage() {
             <div className="p-6 space-y-6">
               {activeTab === "profile" && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="flex items-center gap-6">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                     <div className="relative group">
                       <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center border-4 border-surface shadow-sm overflow-hidden">
                         <span className="text-primary text-2xl font-bold">SA</span>
@@ -153,7 +153,7 @@ export default function SettingsPage() {
               )}
             </div>
 
-            <div className="px-6 py-4 bg-page/50 border-t border-border flex items-center justify-between">
+            <div className="px-4 sm:px-6 py-4 bg-page/50 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
               <p className="text-xs text-text-muted">Last updated: 13 May 2026</p>
               <button 
                 onClick={handleSave}

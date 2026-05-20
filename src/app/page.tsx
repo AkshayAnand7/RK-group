@@ -8,7 +8,7 @@ export default function LandingPage() {
       {/* Admin Access (Discrete) */}
       <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50">
         <Link 
-          href="/admin/login" 
+          href="/login" 
           className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm border border-white/10 transition-all group"
         >
           <Settings className="w-4 h-4 md:w-5 md:h-5 text-text-primary group-hover:rotate-90 transition-transform" />
@@ -54,7 +54,7 @@ export default function LandingPage() {
 
           {/* RK Travel Link */}
           <Link 
-            href="/travel/login" 
+            href="/login" 
             className="group relative glass p-6 md:p-8 rounded-4xl card-hover overflow-hidden block text-left"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-travel/10 blur-3xl -mr-16 -mt-16 group-hover:bg-travel/20 transition-all" />
@@ -70,7 +70,7 @@ export default function LandingPage() {
 
           {/* Software Sale Link */}
           <Link 
-            href="/software-sale/login" 
+            href="/login" 
             className="group relative glass p-6 md:p-8 rounded-4xl card-hover overflow-hidden block text-left"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/10 blur-3xl -mr-16 -mt-16 group-hover:bg-slate-500/20 transition-all" />

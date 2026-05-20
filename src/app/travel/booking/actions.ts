@@ -42,7 +42,7 @@ export async function submitBooking(formData: any) {
 
   await sendWhatsAppMessage(adminPhone, whatsappMessage)
 
-  revalidatePath('/staff/travel/booking')
+  revalidatePath('/travel/booking')
   return { success: true }
 }
 
@@ -98,7 +98,7 @@ export async function updateBookingStatus(id: number, status: string) {
     if (tripError) console.error("Failed to create trip record:", tripError)
   }
   
-  revalidatePath('/staff/travel/booking')
-  revalidatePath('/staff/travel/trips')
+  revalidatePath('/travel/booking')
+  revalidatePath('/travel/trips')
   return { success: true }
 }

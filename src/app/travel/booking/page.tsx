@@ -75,7 +75,7 @@ export default function TravelBookingPage() {
             <button onClick={() => { setSuccess(false); setFormData({...formData, customerName: "", customerNumber: "", fromLocation: "", toLocation: "", totalAmount: "", receivedAmount: ""}) }} className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 cursor-pointer">
               New Booking
             </button>
-            <Link href="/staff/travel/trips" className="block w-full py-4 bg-page text-text-secondary border border-border rounded-2xl font-bold text-center">
+            <Link href="/travel/trips" className="block w-full py-4 bg-page text-text-secondary border border-border rounded-2xl font-bold text-center">
               View All Trips
             </Link>
           </div>
@@ -88,7 +88,7 @@ export default function TravelBookingPage() {
     <StaffLayout module="travel" shopName="Travel Desk">
       <div className="p-4 space-y-6 scroll-reveal">
         <div className="flex items-center gap-3 mb-2">
-          <Link href="/staff/travel" className="p-2 bg-surface border border-border rounded-xl">
+          <Link href="/travel" className="p-2 bg-surface border border-border rounded-xl">
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-xl font-black">Bookings</h1>

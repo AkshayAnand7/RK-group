@@ -147,10 +147,10 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
             className="w-full h-12 pl-11 pr-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all" 
           />
         </div>
-        <div className="flex items-center gap-2 p-1 bg-page border border-border rounded-xl">
+        <div className="flex items-center gap-1 sm:gap-2 p-1 bg-page border border-border rounded-xl overflow-x-auto scrollbar-none w-full sm:w-auto">
           {["today", "weekly", "monthly", "all"].map(p => (
             <button key={p} onClick={() => handlePeriod(p)}
-              className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+              className={`px-3 sm:px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap ${
                 currentPeriod === p ? "bg-primary text-white" : "text-text-muted hover:text-text-primary"
               }`}>
               {p}
@@ -217,9 +217,9 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
       {selectedShop && (
         <div className="fixed inset-0 z-[50] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={() => setSelectedShop(null)} />
-          <div className="relative w-full max-w-6xl max-h-[90vh] glass rounded-4xl border border-white shadow-2xl flex flex-col animate-fade-in overflow-hidden">
+          <div className="relative w-full max-w-6xl max-h-[90vh] glass rounded-3xl sm:rounded-4xl border border-white shadow-2xl flex flex-col animate-fade-in overflow-hidden">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 sm:p-8 border-b border-border/50 bg-page/50">
+            <div className="flex items-center justify-between p-4 sm:p-6 md:p-8 border-b border-border/50 bg-page/50">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
                   <Store className="w-6 h-6 text-white" />
@@ -235,10 +235,10 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
             </div>
             
             {/* Modal Table Content */}
-            <div className="overflow-y-auto p-6 sm:p-8 custom-scrollbar flex-1 bg-page/30">
+            <div className="overflow-y-auto p-4 sm:p-6 md:p-8 custom-scrollbar flex-1 bg-page/30">
               <div className="glass rounded-3xl border border-border overflow-hidden">
                 <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-                  <table className="w-full text-sm text-left min-w-[900px]">
+                  <table className="w-full text-sm text-left min-w-[700px]">
                     <thead>
                       <tr className="bg-page/50 border-b border-border">
                         {["Date", "Collection", "Exp/Adv/Prize", "Net Balance", "Staff", "Status", "Actions"].map(h => (
@@ -325,7 +325,7 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
       {editingEntry && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={() => setEditingEntry(null)} />
-          <div className="relative w-full max-w-md glass p-8 rounded-4xl border-white shadow-2xl animate-fade-in">
+          <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Edit Collection</h2>

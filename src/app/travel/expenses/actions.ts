@@ -36,7 +36,7 @@ export async function submitExpense(formData: any) {
     created_at: new Date().toISOString()
   })
 
-  revalidatePath('/staff/travel/expenses')
+  revalidatePath('/travel/expenses')
   revalidatePath('/admin/expenses')
   revalidatePath('/admin/dashboard')
   return { success: true }

@@ -60,7 +60,7 @@ export default function AnalyticsClient({ initialTrips, initialExpenses }: { ini
           <p className="text-3xl font-black text-text-primary font-mono-nums">₹{totalFuel.toLocaleString("en-IN")}</p>
         </div>
 
-        <div className="glass p-6 rounded-4xl border-l-4 border-l-warning shadow-xl shadow-warning/5">
+        <div className="glass p-4 sm:p-6 rounded-3xl sm:rounded-4xl border-l-4 border-l-warning shadow-xl shadow-warning/5">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-2xl bg-warning/10 flex items-center justify-center">
               <Wrench className="w-5 h-5 text-warning" />
@@ -70,7 +70,7 @@ export default function AnalyticsClient({ initialTrips, initialExpenses }: { ini
           <p className="text-3xl font-black text-text-primary font-mono-nums">₹{totalMaint.toLocaleString("en-IN")}</p>
         </div>
 
-        <div className="glass p-6 rounded-4xl border-l-4 border-l-primary shadow-xl shadow-primary/5">
+        <div className="glass p-4 sm:p-6 rounded-3xl sm:rounded-4xl border-l-4 border-l-primary shadow-xl shadow-primary/5">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-primary" />
@@ -107,7 +107,7 @@ export default function AnalyticsClient({ initialTrips, initialExpenses }: { ini
         </div>
 
         {/* Profit per Vehicle */}
-        <div className="glass p-8 rounded-4xl">
+        <div className="glass p-4 sm:p-8 rounded-3xl sm:rounded-4xl">
           <div className="mb-10 flex items-center justify-between">
             <div>
               <h3 className="text-sm font-black uppercase tracking-widest text-text-primary">Profit per Vehicle</h3>

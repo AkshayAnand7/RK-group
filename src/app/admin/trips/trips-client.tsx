@@ -78,12 +78,12 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
           <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">Trip Details Management</h1>
           <p className="text-xs sm:text-sm text-text-secondary font-medium">Full control over travel logs and fleet movements</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={handleExportPDF} className="btn-primary py-2.5 flex items-center gap-2 text-xs">
-            <FileText className="w-4 h-4" /> PDF Export
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={handleExportPDF} className="btn-primary py-2.5 flex items-center gap-2 text-[10px] sm:text-xs">
+            <FileText className="w-4 h-4" /> <span className="hidden sm:inline">PDF</span> Export
           </button>
-          <button onClick={handleExportExcel} className="px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
-            <TableIcon className="w-4 h-4" /> Excel Export
+          <button onClick={handleExportExcel} className="px-3 sm:px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-[10px] sm:text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
+            <TableIcon className="w-4 h-4" /> <span className="hidden sm:inline">Excel</span> Export
           </button>
         </div>
       </div>
@@ -98,10 +98,10 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
             className="w-full h-12 pl-11 pr-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" 
           />
         </div>
-        <div className="flex items-center gap-2 p-1 bg-page border border-border rounded-xl">
+        <div className="flex items-center gap-1 sm:gap-2 p-1 bg-page border border-border rounded-xl overflow-x-auto scrollbar-none w-full sm:w-auto">
           {["today", "weekly", "monthly", "custom"].map(p => (
             <button key={p} onClick={() => setPeriod(p)}
-              className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+              className={`px-3 sm:px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap ${
                 period === p ? "bg-travel text-white shadow-lg shadow-travel/20" : "text-text-muted hover:text-text-primary"
               }`}>
               {p}
@@ -112,7 +112,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
 
       <div className="glass rounded-3xl sm:rounded-4xl border border-border overflow-hidden scroll-reveal">
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-          <table className="w-full text-sm text-left min-w-[800px] sm:min-w-[1000px]">
+          <table className="w-full text-sm text-left min-w-[700px]">
             <thead>
               <tr className="bg-page/50 border-b border-border">
                 {["Date", "Driver & Vehicle", "Route Details", "Amount Status", "Status", "Actions"].map(h => (
@@ -194,7 +194,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
       {editingTrip && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setEditingTrip(null)} />
-          <div className="relative w-full max-w-md glass p-8 rounded-4xl border-white shadow-2xl animate-fade-in">
+          <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Edit Trip Log</h2>

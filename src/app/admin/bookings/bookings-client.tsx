@@ -80,19 +80,19 @@ export default function BookingsClient({ initialBookings }: { initialBookings: a
           <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">Travel Bookings</h1>
           <p className="text-sm text-text-secondary font-medium">Manage and review customer trip requests</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={handleExportPDF} className="btn-primary py-2.5 flex items-center gap-2 text-xs">
-            <FileText className="w-4 h-4" /> Export PDF
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={handleExportPDF} className="btn-primary py-2.5 flex items-center gap-2 text-[10px] sm:text-xs">
+            <FileText className="w-4 h-4" /> <span className="hidden sm:inline">Export</span> PDF
           </button>
-          <button onClick={handleExportExcel} className="px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
-            <TableIcon className="w-4 h-4" /> Export Excel
+          <button onClick={handleExportExcel} className="px-3 sm:px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-[10px] sm:text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 hover:bg-emerald-700 transition-all cursor-pointer">
+            <TableIcon className="w-4 h-4" /> <span className="hidden sm:inline">Export</span> Excel
           </button>
         </div>
       </div>
 
       {/* Search */}
       <div className="glass p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex items-center scroll-reveal">
-        <div className="relative w-full md:w-96">
+        <div className="relative w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
           <input 
             defaultValue={currentSearch}
