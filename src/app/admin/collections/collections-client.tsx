@@ -225,7 +225,7 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
                   <Store className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">{selectedShop}</h2>
+                  <h2 className="text-lg sm:text-2xl font-black text-text-primary uppercase tracking-tight">{selectedShop}</h2>
                   <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Collection History</p>
                 </div>
               </div>
@@ -238,7 +238,7 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
             <div className="overflow-y-auto p-4 sm:p-6 md:p-8 custom-scrollbar flex-1 bg-page/30">
               <div className="glass rounded-3xl border border-border overflow-hidden">
                 <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-                  <table className="w-full text-sm text-left min-w-[700px]">
+                  <table className="w-full text-sm text-left min-w-[600px]">
                     <thead>
                       <tr className="bg-page/50 border-b border-border">
                         {["Date", "Collection", "Exp/Adv/Prize", "Net Balance", "Staff", "Status", "Actions"].map(h => (

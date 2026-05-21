@@ -26,12 +26,12 @@ export default function SoftwareSaleHistoryPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-page flex flex-col items-center py-12 px-6">
+    <div className="min-h-screen bg-page flex flex-col items-center py-6 sm:py-12 px-4 sm:px-6">
       <div className="fixed inset-0 -z-10 bg-mesh opacity-20" />
 
       <div className="w-full max-w-6xl">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div className="flex items-center gap-6">
             <Link href="/software-sale" className="p-3 bg-white shadow-lg rounded-2xl hover:scale-110 transition-transform">
               <ArrowLeft className="w-5 h-5 text-text-muted" />
@@ -41,31 +41,31 @@ export default function SoftwareSaleHistoryPage() {
                 <History className="w-5 h-5 text-slate-800" />
                 <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Reporting Portal</span>
               </div>
-              <h1 className="text-4xl font-black text-text-primary uppercase tracking-tight">Sale <span className="text-slate-800">History</span></h1>
+              <h1 className="text-2xl sm:text-4xl font-black text-text-primary uppercase tracking-tight">Sale <span className="text-slate-800">History</span></h1>
             </div>
           </div>
         </div>
 
         {/* Stats Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-          <div className="glass p-6 rounded-3xl border border-white shadow-xl">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10">
+          <div className="glass p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white shadow-xl">
             <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-2">Total Entries</p>
-            <p className="text-3xl font-black text-slate-800">{history.length}</p>
+            <p className="text-2xl sm:text-3xl font-black text-slate-800">{history.length}</p>
           </div>
-          <div className="glass p-6 rounded-3xl border border-white shadow-xl">
+          <div className="glass p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white shadow-xl">
             <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-2">Total Revenue</p>
-            <p className="text-3xl font-black text-slate-800">₹ {history.reduce((acc, curr) => acc + curr.total, 0).toLocaleString()}</p>
+            <p className="text-2xl sm:text-3xl font-black text-slate-800">₹ {history.reduce((acc, curr) => acc + curr.total, 0).toLocaleString()}</p>
           </div>
-          <div className="glass p-6 rounded-3xl border border-white shadow-xl">
+          <div className="glass p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white shadow-xl">
             <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-2">Pending Balance</p>
-            <p className="text-3xl font-black text-danger">₹ {history.reduce((acc, curr) => acc + curr.balance, 0).toLocaleString()}</p>
+            <p className="text-2xl sm:text-3xl font-black text-danger">₹ {history.reduce((acc, curr) => acc + curr.balance, 0).toLocaleString()}</p>
           </div>
         </div>
 
         {/* History Table */}
-        <div className="glass rounded-4xl border border-white shadow-2xl overflow-hidden">
+        <div className="glass rounded-3xl sm:rounded-4xl border border-white shadow-2xl overflow-hidden">
           <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-            <table className="w-full text-left border-collapse min-w-[800px]">
+            <table className="w-full text-left border-collapse min-w-[650px]">
               <thead>
                 <tr className="bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest">
                   <th className="px-6 py-5 whitespace-nowrap">Period</th>

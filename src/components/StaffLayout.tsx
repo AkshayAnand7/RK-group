@@ -63,7 +63,7 @@ export default function StaffLayout({ children, module, shopName }: StaffLayoutP
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 h-16 bg-surface border-t border-border flex items-center justify-around px-2 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-border flex items-center justify-around px-2 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]" style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))', height: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}>
         {navItems.map(item => (
           <Link 
             key={item.href}

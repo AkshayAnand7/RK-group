@@ -39,10 +39,10 @@ export default async function Page() {
   }
 
   return (
-    <div className="min-h-screen bg-mesh p-8 md:p-12">
+    <div className="min-h-screen bg-mesh p-4 sm:p-8 md:p-12">
       <div className="max-w-2xl mx-auto">
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-text-primary uppercase">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tighter text-text-primary uppercase">
             My <span className="text-gradient">Tasks</span>
           </h1>
           <p className="text-text-secondary font-bold tracking-[0.2em] uppercase text-[10px] mt-1">

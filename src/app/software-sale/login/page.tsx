@@ -36,7 +36,7 @@ export default function SoftwareSaleLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-page flex flex-col items-center justify-center py-12 px-6">
+    <div className="min-h-screen bg-page flex flex-col items-center justify-center py-8 sm:py-12 px-4 sm:px-6">
       <div className="fixed inset-0 -z-10 bg-mesh opacity-30" />
 
       <div className="w-full max-w-md animate-fade-in">
@@ -44,14 +44,14 @@ export default function SoftwareSaleLoginPage() {
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
 
-        <div className="glass p-8 sm:p-10 rounded-4xl border border-white shadow-2xl relative overflow-hidden">
+        <div className="glass p-6 sm:p-8 md:p-10 rounded-3xl sm:rounded-4xl border border-white shadow-2xl relative overflow-hidden">
           {/* Header */}
           <div className="relative z-10 mb-10 text-center">
             <div className="w-16 h-16 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center mb-6 mx-auto">
               <Monitor className="w-8 h-8 text-slate-800" />
             </div>
             <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] mb-1">Admin Software Portal</p>
-            <h2 className="text-3xl font-black text-text-primary uppercase tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-text-primary uppercase tracking-tight">
               Software Sale
             </h2>
           </div>

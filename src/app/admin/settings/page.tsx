@@ -34,25 +34,28 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Navigation Sidebar */}
-        <div className="lg:col-span-1 space-y-1">
-          {sections.map(section => (
-            <button
-              key={section.id}
-              onClick={() => setActiveTab(section.id)}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${
-                activeTab === section.id 
-                  ? "bg-primary text-white shadow-md shadow-primary/20" 
-                  : "text-text-secondary hover:bg-surface hover:text-text-primary"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <section.icon className="w-4 h-4" />
-                {section.label}
-              </div>
-              {activeTab !== section.id && <ChevronRight className="w-4 h-4 opacity-40" />}
-            </button>
-          ))}
+        {/* Navigation Sidebar - horizontal on mobile, vertical on desktop */}
+        <div className="lg:col-span-1">
+          <div className="flex lg:flex-col gap-1 overflow-x-auto scrollbar-none pb-2 lg:pb-0">
+            {sections.map(section => (
+              <button
+                key={section.id}
+                onClick={() => setActiveTab(section.id)}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                  activeTab === section.id 
+                    ? "bg-primary text-white shadow-md shadow-primary/20" 
+                    : "text-text-secondary hover:bg-surface hover:text-text-primary"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <section.icon className="w-4 h-4" />
+                  <span className="hidden sm:inline">{section.label}</span>
+                  <span className="sm:hidden text-xs">{section.label.split(' ')[0]}</span>
+                </div>
+                {activeTab !== section.id && <ChevronRight className="w-4 h-4 opacity-40 hidden lg:block" />}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Content Area */}

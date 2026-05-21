@@ -139,7 +139,7 @@ export default function TravelBookingPage() {
                   <input type="tel" required placeholder="Number" value={formData.customerNumber} onChange={e => setFormData({...formData, customerNumber: e.target.value})} className="w-full h-12 pl-11 pr-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Total (₹)</label>
                   <input type="number" placeholder="0" value={formData.totalAmount} onChange={e => setFormData({...formData, totalAmount: e.target.value})} className="w-full h-12 px-3 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />

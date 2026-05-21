@@ -64,19 +64,10 @@ function LoginForm() {
         if (callbackUrl) {
           router.push(callbackUrl)
         } else {
-          // Default: redirect based on role
-          const session = await getSession()
-          const role = (session?.user as any)?.role
-
-          if (role === "admin") {
-            router.push("/admin/dashboard")
-          } else if (role === "travel_staff") {
-            router.push("/travel")
-          } else if (role === "lottery_staff") {
-            router.push("/lottery")
-          } else {
-            router.push("/")
-          }
+          // Trigger a redirect to /login which the middleware will instantly catch
+          // and route to the correct role-based dashboard without a client-side session fetch delay.
+          router.push("/")
+          router.refresh()
         }
       }
     } catch (err) {
@@ -87,7 +78,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-page flex flex-col items-center justify-center py-12 px-6">
+    <div className="min-h-screen bg-page flex flex-col items-center justify-center py-8 sm:py-12 px-4 sm:px-6">
       <div className="fixed inset-0 -z-10 bg-mesh opacity-30" />
 
       <div className="w-full max-w-md animate-fade-in">
@@ -95,14 +86,14 @@ function LoginForm() {
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
 
-        <div className="glass p-8 sm:p-10 rounded-4xl border border-white shadow-2xl relative overflow-hidden">
+        <div className="glass p-6 sm:p-8 md:p-10 rounded-3xl sm:rounded-4xl border border-white shadow-2xl relative overflow-hidden">
           {/* Header */}
           <div className="relative z-10 mb-10 text-center">
             <div className="w-16 h-16 rounded-2xl overflow-hidden border border-slate-200 shadow-lg mb-6 mx-auto">
               <img src="/logo.png?v=2" alt="RK Group" className="w-full h-full object-cover" />
             </div>
             <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] mb-1">{moduleInfo.subtitle}</p>
-            <h2 className={`text-3xl font-black uppercase tracking-tight ${moduleInfo.color}`}>
+            <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tight ${moduleInfo.color}`}>
               {moduleInfo.label}
             </h2>
           </div>

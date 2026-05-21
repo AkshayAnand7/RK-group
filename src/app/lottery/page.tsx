@@ -65,7 +65,7 @@ export default function LotteryShopList() {
   );
 
   return (
-    <div className="min-h-screen bg-page flex flex-col items-center py-12 px-6">
+    <div className="min-h-screen bg-page flex flex-col items-center py-8 sm:py-12 px-4 sm:px-6">
       {/* Background Decor */}
       <div className="fixed inset-0 -z-10 bg-mesh opacity-40" />
 
@@ -78,7 +78,7 @@ export default function LotteryShopList() {
         <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl overflow-hidden shadow-2xl shadow-lottery/20 border-2 border-white mb-6 animate-float">
           <img src="/logo.png?v=2" alt="RK Group" className="w-full h-full object-cover" />
         </div>
-        <h1 className="text-4xl font-black text-text-primary uppercase tracking-tight mb-2">
+        <h1 className="text-2xl sm:text-4xl font-black text-text-primary uppercase tracking-tight mb-2">
           RK <span className="text-lottery">Lottery</span>
         </h1>
         <p className="text-text-secondary font-medium">Select your shop to proceed</p>

@@ -114,7 +114,7 @@ export default function SoftwareSalePage() {
   };
 
   return (
-    <div className="min-h-screen bg-page flex flex-col items-center py-12 px-6">
+    <div className="min-h-screen bg-page flex flex-col items-center py-6 sm:py-12 px-4 sm:px-6">
       <div className="fixed inset-0 -z-10 bg-mesh opacity-20" />
 
       <div className="w-full max-w-4xl">
@@ -129,7 +129,7 @@ export default function SoftwareSalePage() {
                 <Monitor className="w-5 h-5 text-slate-800" />
                 <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Admin Module</span>
               </div>
-              <h1 className="text-4xl font-black text-text-primary uppercase tracking-tight">Software <span className="text-slate-800">Sale</span></h1>
+              <h1 className="text-2xl sm:text-4xl font-black text-text-primary uppercase tracking-tight">Software <span className="text-slate-800">Sale</span></h1>
             </div>
           </div>
 
@@ -169,11 +169,11 @@ export default function SoftwareSalePage() {
         )}
 
         {/* Form Card */}
-        <div className="glass p-8 md:p-12 rounded-4xl border border-white shadow-2xl relative overflow-hidden animate-fade-in">
+        <div className="glass p-4 sm:p-8 md:p-12 rounded-3xl sm:rounded-4xl border border-white shadow-2xl relative overflow-hidden animate-fade-in">
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
             
             {/* Date Range Section */}
-            <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100">
+            <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-6 bg-slate-50 rounded-2xl sm:rounded-3xl border border-slate-100">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
                   <Calendar className="w-3.5 h-3.5" /> Date From
@@ -246,7 +246,7 @@ export default function SoftwareSalePage() {
               {/* WhatsApp Sale Section */}
               <div className="p-5 bg-green-50 rounded-2xl border border-green-100 space-y-3">
                 <label className="text-[10px] font-black text-green-700 uppercase tracking-widest">WhatsApp Sale</label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1">
                     <label className="text-[9px] font-bold text-green-600 uppercase tracking-widest">Count</label>
                     <input 
@@ -296,16 +296,16 @@ export default function SoftwareSalePage() {
 
             {/* Calculations & Summary */}
             <div className="space-y-6">
-              <div className="p-6 bg-slate-800 rounded-3xl text-white space-y-4">
+              <div className="p-4 sm:p-6 bg-slate-800 rounded-2xl sm:rounded-3xl text-white space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Calculated Total</span>
                   <Calculator className="w-4 h-4 opacity-40" />
                 </div>
-                <div className="text-4xl font-black">₹ {formData.total.toLocaleString()}</div>
+                <div className="text-2xl sm:text-4xl font-black">₹ {formData.total.toLocaleString()}</div>
                 <p className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Software Sale 1 + WhatsApp Total</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Win Amount</label>
                   <input 
@@ -338,12 +338,12 @@ export default function SoftwareSalePage() {
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-100 rounded-3xl space-y-4 border border-slate-200">
+              <div className="p-4 sm:p-6 bg-slate-100 rounded-2xl sm:rounded-3xl space-y-4 border border-slate-200">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Net Balance</span>
                   <div className="px-2 py-0.5 bg-slate-200 rounded text-[8px] font-black uppercase text-slate-600 tracking-tighter">Auto</div>
                 </div>
-                <div className="text-4xl font-black text-slate-800">₹ {formData.balance.toLocaleString()}</div>
+                <div className="text-2xl sm:text-4xl font-black text-slate-800">₹ {formData.balance.toLocaleString()}</div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total - Win - Old</p>
               </div>
             </div>
@@ -353,7 +353,7 @@ export default function SoftwareSalePage() {
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full md:flex-1 h-16 bg-slate-800 text-white rounded-2xl font-black text-lg shadow-xl shadow-slate-800/20 flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+                className="w-full md:flex-1 h-14 sm:h-16 bg-slate-800 text-white rounded-2xl font-black text-sm sm:text-lg shadow-xl shadow-slate-800/20 flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
               >
                 {loading ? <><Loader2 className="w-6 h-6 animate-spin" /> Submitting...</> : <><Send className="w-5 h-5" /> Submit & Send Report</>}
               </button>
@@ -366,7 +366,7 @@ export default function SoftwareSalePage() {
                   whatsapp_total: 0, old_amount: "", total: 0, win_amount: "", 
                   paid_amount: "", collected_amount: "", balance: 0
                 })}
-                className="w-full md:w-auto h-16 px-8 bg-white border border-border rounded-2xl font-black text-xs uppercase tracking-widest text-text-muted hover:bg-slate-50 transition-colors"
+                className="w-full md:w-auto h-14 sm:h-16 px-8 bg-white border border-border rounded-2xl font-black text-xs uppercase tracking-widest text-text-muted hover:bg-slate-50 transition-colors"
               >
                 Reset Form
               </button>
