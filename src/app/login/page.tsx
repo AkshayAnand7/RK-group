@@ -59,15 +59,12 @@ function LoginForm() {
         }
         setLoading(false)
       } else {
-        // Check if there's a callbackUrl (where user was trying to go)
-        const callbackUrl = searchParams.get("callbackUrl")
+        // Use window.location for a hard navigation. This guarantees the Next.js server 
+        // and middleware immediately process the new session cookie and redirect correctly.
         if (callbackUrl) {
-          router.push(callbackUrl)
+          window.location.href = callbackUrl
         } else {
-          // Trigger a redirect to /login which the middleware will instantly catch
-          // and route to the correct role-based dashboard without a client-side session fetch delay.
-          router.push("/")
-          router.refresh()
+          window.location.href = "/"
         }
       }
     } catch (err) {

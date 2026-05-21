@@ -24,7 +24,7 @@ export default function SoftwareSaleLoginPage() {
       const result = await loginToSoftwareSale(email, password);
 
       if (result.success) {
-        router.push("/software-sale");
+        window.location.href = "/software-sale";
       } else {
         setError(result.error || "Invalid credentials. Please try again.");
       }
