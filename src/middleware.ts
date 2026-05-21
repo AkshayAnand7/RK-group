@@ -15,6 +15,7 @@ export default auth((req) => {
   const isOnAdmin = path.startsWith('/admin')
   const isOnTravel = path.startsWith('/travel')
   const isOnLottery = path.startsWith('/lottery')
+  const isOnSoftwareSale = path.startsWith('/software-sale')
   const isOnLogin = path === '/login'
 
   // Redirect /admin to /admin/dashboard
@@ -23,7 +24,7 @@ export default auth((req) => {
   }
 
   // 1. Redirect unauthenticated users to login
-  if ((isOnAdmin || isOnTravel || isOnLottery) && !isLoggedIn) {
+  if ((isOnAdmin || isOnTravel || isOnLottery || isOnSoftwareSale) && !isLoggedIn) {
     // Save where they were trying to go
     const loginUrl = new URL('/login', nextUrl)
     loginUrl.searchParams.set('callbackUrl', path)
@@ -40,8 +41,11 @@ export default auth((req) => {
     // No callback — send to their default dashboard
     if (role === 'admin') {
       return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
-    } else if (role === 'travel_staff') {
-      return NextResponse.redirect(new URL('/travel', nextUrl))
+    } else if (role === 'agent') {
+      return NextResponse.redirect(new URL('/software-sale', nextUrl))
+    } else if (role === 'travel_staff' || role === 'staff') {
+      // Temporary fallback for legacy roles
+      return NextResponse.redirect(new URL('/travel', nextUrl)) 
     } else if (role === 'lottery_staff') {
       return NextResponse.redirect(new URL('/lottery', nextUrl))
     }
@@ -57,10 +61,15 @@ export default auth((req) => {
   if (isOnAdmin) {
     return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
   }
-  if (isOnTravel && role !== 'travel_staff') {
+  
+  if (isOnSoftwareSale && role !== 'agent') {
     return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
   }
-  if (isOnLottery && role !== 'lottery_staff') {
+
+  if (isOnTravel && role !== 'travel_staff' && role !== 'staff') {
+    return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
+  }
+  if (isOnLottery && role !== 'lottery_staff' && role !== 'staff') {
     return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
   }
 
@@ -72,6 +81,7 @@ export const config = {
     '/admin/:path*',
     '/travel/:path*',
     '/lottery/:path*',
+    '/software-sale/:path*',
     '/login'
   ]
 }
