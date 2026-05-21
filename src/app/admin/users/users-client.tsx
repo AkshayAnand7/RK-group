@@ -135,7 +135,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
 
       {showRoleModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-transparent backdrop-blur-sm" onClick={() => setShowRoleModal(null)} />
+          <div className="absolute inset-0 bg-transparent" onClick={() => setShowRoleModal(null)} />
           <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Assign Role</h2>
@@ -171,7 +171,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
 
       {showAddModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-transparent backdrop-blur-sm" onClick={() => setShowAddModal(false)} />
+          <div className="absolute inset-0 bg-transparent" onClick={() => setShowAddModal(false)} />
           <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Add New User</h2>

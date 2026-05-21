@@ -375,7 +375,7 @@ export default function SoftwareSalePage() {
 
           {/* Success Overlay */}
           {success && (
-            <div className="absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center animate-fade-in">
+            <div className="absolute inset-0 z-50 bg-white/90 flex flex-col items-center justify-center animate-fade-in">
               <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mb-6 animate-bounce">
                 <CheckCircle2 className="w-10 h-10 text-success" />
               </div>

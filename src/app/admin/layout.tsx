@@ -156,11 +156,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Notifications */}
-            <button className="relative p-2 rounded-lg hover:bg-page transition-colors cursor-pointer">
-              <Bell className="w-5 h-5 text-text-secondary" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-danger rounded-full" />
-            </button>
+
 
             {/* Profile */}
             <div className="relative">
