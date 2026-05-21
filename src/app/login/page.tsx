@@ -59,13 +59,11 @@ function LoginForm() {
         }
         setLoading(false)
       } else {
-        // Use window.location for a hard navigation. This guarantees the Next.js server 
-        // and middleware immediately process the new session cookie and redirect correctly.
-        if (callbackUrl) {
-          window.location.href = callbackUrl
-        } else {
-          window.location.href = "/"
-        }
+        // Reload the page to force a hard navigation. The Next.js middleware 
+        // will instantly intercept this request, see the new session cookie, 
+        // and correctly redirect the user to their role-based dashboard 
+        // or the callbackUrl if one exists.
+        window.location.reload()
       }
     } catch (err) {
       console.error("Login error:", err)
