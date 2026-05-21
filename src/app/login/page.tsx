@@ -18,6 +18,16 @@ function LoginForm() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
 
+  // Detect which module the user is trying to access
+  const callbackUrl = searchParams.get("callbackUrl") || ""
+  const moduleInfo = (() => {
+    if (callbackUrl.startsWith("/lottery")) return { label: "RK Lottery", subtitle: "Shop Terminal Portal", color: "text-lottery" }
+    if (callbackUrl.startsWith("/travel")) return { label: "RK Travel", subtitle: "Fleet Management Portal", color: "text-travel" }
+    if (callbackUrl.startsWith("/software-sale")) return { label: "Software Sale", subtitle: "Sales & Reporting Portal", color: "text-slate-800" }
+    if (callbackUrl.startsWith("/admin")) return { label: "Admin Panel", subtitle: "System Administration", color: "text-primary" }
+    return { label: "RK Group", subtitle: "Secure Operations Portal", color: "text-text-primary" }
+  })()
+
   useEffect(() => {
     const err = searchParams.get("error")
     if (err === "Unauthorized") {
@@ -91,9 +101,9 @@ function LoginForm() {
             <div className="w-16 h-16 rounded-2xl overflow-hidden border border-slate-200 shadow-lg mb-6 mx-auto">
               <img src="/logo.png?v=2" alt="RK Group" className="w-full h-full object-cover" />
             </div>
-            <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] mb-1">Secure Operations Portal</p>
-            <h2 className="text-3xl font-black text-text-primary uppercase tracking-tight">
-              RK Group
+            <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] mb-1">{moduleInfo.subtitle}</p>
+            <h2 className={`text-3xl font-black uppercase tracking-tight ${moduleInfo.color}`}>
+              {moduleInfo.label}
             </h2>
           </div>
 
