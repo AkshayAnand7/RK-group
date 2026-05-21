@@ -1,13 +1,13 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getAgents() {
   const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('agents')
     .select('*')

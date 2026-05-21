@@ -1,12 +1,12 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getAdminBookings(search?: string) {
   const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   let query = supabase
     .from('bookings')
@@ -27,7 +27,7 @@ export async function getAdminBookings(search?: string) {
 
 export async function updateBookingStatus(id: number, status: string) {
   const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   // Update Booking Status
   const { data: booking, error: fetchError } = await supabase
@@ -71,7 +71,7 @@ export async function updateBookingStatus(id: number, status: string) {
 
 export async function deleteBooking(id: number) {
   const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { error } = await supabase.from('bookings').delete().eq('id', id)
   

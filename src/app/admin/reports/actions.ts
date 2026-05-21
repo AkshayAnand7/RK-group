@@ -1,11 +1,11 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 
 export async function generateReportData(reportType: string, dateRange: string, customStartDate?: string, customEndDate?: string) {
   const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const now = new Date()
   let startDate = new Date()
