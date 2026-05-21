@@ -10,22 +10,34 @@ export default auth((req) => {
   const user = req.auth?.user as any
   const role = user?.role
 
-  const isOnAdmin = nextUrl.pathname.startsWith('/admin')
-  const isOnTravel = nextUrl.pathname.startsWith('/travel')
-  const isOnLottery = nextUrl.pathname.startsWith('/lottery')
-  const isOnLogin = nextUrl.pathname === '/login'
+  const path = nextUrl.pathname
 
-  if (nextUrl.pathname === '/admin') {
+  const isOnAdmin = path.startsWith('/admin')
+  const isOnTravel = path.startsWith('/travel')
+  const isOnLottery = path.startsWith('/lottery')
+  const isOnLogin = path === '/login'
+
+  // Redirect /admin to /admin/dashboard
+  if (path === '/admin') {
     return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
   }
 
   // 1. Redirect unauthenticated users to login
   if ((isOnAdmin || isOnTravel || isOnLottery) && !isLoggedIn) {
-    return NextResponse.redirect(new URL('/login', nextUrl))
+    // Save where they were trying to go
+    const loginUrl = new URL('/login', nextUrl)
+    loginUrl.searchParams.set('callbackUrl', path)
+    return NextResponse.redirect(loginUrl)
   }
 
-  // 2. Redirect authenticated users trying to access login
+  // 2. If on login page and already logged in, redirect ONLY if no callbackUrl
   if (isOnLogin && isLoggedIn) {
+    const callbackUrl = nextUrl.searchParams.get('callbackUrl')
+    if (callbackUrl) {
+      // User has a specific destination — let them see login or redirect there
+      return NextResponse.redirect(new URL(callbackUrl, nextUrl))
+    }
+    // No callback — send to their default dashboard
     if (role === 'admin') {
       return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
     } else if (role === 'travel_staff') {
@@ -36,7 +48,13 @@ export default auth((req) => {
   }
 
   // 3. Role-Based Route Protection
-  if (isOnAdmin && role !== 'admin') {
+  //    Admin can access EVERYTHING (superuser)
+  if (role === 'admin') {
+    return NextResponse.next()
+  }
+
+  // Non-admin role restrictions
+  if (isOnAdmin) {
     return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
   }
   if (isOnTravel && role !== 'travel_staff') {

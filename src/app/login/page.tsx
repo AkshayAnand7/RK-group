@@ -49,17 +49,24 @@ function LoginForm() {
         }
         setLoading(false)
       } else {
-        const session = await getSession()
-        const role = (session?.user as any)?.role
-
-        if (role === "admin") {
-          router.push("/admin/dashboard")
-        } else if (role === "travel_staff") {
-          router.push("/travel")
-        } else if (role === "lottery_staff") {
-          router.push("/lottery")
+        // Check if there's a callbackUrl (where user was trying to go)
+        const callbackUrl = searchParams.get("callbackUrl")
+        if (callbackUrl) {
+          router.push(callbackUrl)
         } else {
-          router.push("/")
+          // Default: redirect based on role
+          const session = await getSession()
+          const role = (session?.user as any)?.role
+
+          if (role === "admin") {
+            router.push("/admin/dashboard")
+          } else if (role === "travel_staff") {
+            router.push("/travel")
+          } else if (role === "lottery_staff") {
+            router.push("/lottery")
+          } else {
+            router.push("/")
+          }
         }
       }
     } catch (err) {

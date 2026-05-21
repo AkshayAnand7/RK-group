@@ -54,7 +54,7 @@ export default function LandingPage() {
 
           {/* RK Travel Link */}
           <Link 
-            href="/login" 
+            href="/travel" 
             className="group relative glass p-6 md:p-8 rounded-4xl card-hover overflow-hidden block text-left"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-travel/10 blur-3xl -mr-16 -mt-16 group-hover:bg-travel/20 transition-all" />
@@ -70,7 +70,7 @@ export default function LandingPage() {
 
           {/* Software Sale Link */}
           <Link 
-            href="/login" 
+            href="/software-sale" 
             className="group relative glass p-6 md:p-8 rounded-4xl card-hover overflow-hidden block text-left"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/10 blur-3xl -mr-16 -mt-16 group-hover:bg-slate-500/20 transition-all" />
