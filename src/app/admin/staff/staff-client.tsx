@@ -89,7 +89,6 @@ export default function StaffClient({ initialStaff }: { initialStaff: any[] }) {
             <div className="mb-6">
               <h3 className="text-xl font-black text-text-primary tracking-tight mb-2">{s.full_name}</h3>
               <div className="flex items-center gap-2 text-xs font-bold text-text-secondary"><Hash className="w-3.5 h-3.5 text-text-muted" /> {s.staff_id}</div>
-              {s.phone && <div className="flex items-center gap-2 text-xs font-bold text-text-secondary mt-1"><Phone className="w-3.5 h-3.5 text-text-muted" /> {s.phone}</div>}
             </div>
             <div className="flex items-center gap-2 pt-6 border-t border-border/50">
               <button onClick={() => { setEditing(s); setShowForm(true); }} className="flex-1 h-11 bg-page hover:bg-primary-subtle text-text-muted hover:text-primary rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer"><Edit3 className="w-3.5 h-3.5" /> Edit</button>
@@ -109,7 +108,7 @@ export default function StaffClient({ initialStaff }: { initialStaff: any[] }) {
 
       {showForm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowForm(false)} />
+          <div className="absolute inset-0 bg-transparent backdrop-blur-sm" onClick={() => setShowForm(false)} />
           <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">{editing ? 'Edit Staff' : 'Add New Staff'}</h2>
@@ -126,20 +125,14 @@ export default function StaffClient({ initialStaff }: { initialStaff: any[] }) {
                 <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Full Name</label>
                 <input name="full_name" defaultValue={editing?.full_name} required placeholder="e.g. Rahul Kumar" className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Phone</label>
-                  <input name="phone" defaultValue={editing?.phone} placeholder="9876543210" className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Department</label>
-                  <select name="department" defaultValue={editing?.department || 'general'} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all cursor-pointer">
-                    <option value="general">General</option>
-                    <option value="travel">Travel</option>
-                    <option value="lottery">Lottery</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Department</label>
+                <select name="department" defaultValue={editing?.department || 'general'} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary transition-all cursor-pointer">
+                  <option value="general">General</option>
+                  <option value="travel">Travel</option>
+                  <option value="lottery">Lottery</option>
+                  <option value="admin">Admin</option>
+                </select>
               </div>
               {editing && (
                 <div className="space-y-1.5">

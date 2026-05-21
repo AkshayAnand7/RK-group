@@ -193,7 +193,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
       {/* Edit Modal */}
       {editingTrip && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setEditingTrip(null)} />
+          <div className="absolute inset-0 bg-transparent backdrop-blur-sm" onClick={() => setEditingTrip(null)} />
           <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <div>

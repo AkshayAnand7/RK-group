@@ -128,7 +128,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
+          <div className="absolute inset-0 bg-transparent" onClick={() => setSidebarOpen(false)} />
           <aside className="relative w-[280px] bg-sidebar flex flex-col h-full animate-slide-right">
             <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white cursor-pointer">
               <X className="w-5 h-5" />

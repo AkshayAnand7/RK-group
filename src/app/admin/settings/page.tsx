@@ -72,7 +72,7 @@ export default function SettingsPage() {
                     <div className="relative group">
                       <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center border-4 border-surface shadow-sm overflow-hidden">
                         <span className="text-primary text-2xl font-bold">SA</span>
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all cursor-pointer">
+                        <div className="absolute inset-0 bg-transparent opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all cursor-pointer">
                           <Camera className="w-6 h-6 text-white" />
                         </div>
                       </div>

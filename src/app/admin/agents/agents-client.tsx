@@ -104,7 +104,7 @@ export default function AgentsClient({ initialAgents }: { initialAgents: any[] }
 
       {showForm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowForm(false)} />
+          <div className="absolute inset-0 bg-transparent backdrop-blur-sm" onClick={() => setShowForm(false)} />
           <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">{editing ? 'Edit Agent' : 'Add New Agent'}</h2>
