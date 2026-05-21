@@ -1,12 +1,10 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 export async function addTodo(formData: FormData) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const name = formData.get('name') as string
 
@@ -23,8 +21,7 @@ export async function addTodo(formData: FormData) {
 }
 
 export async function toggleTodo(id: number, is_completed: boolean) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { error } = await supabase.from('todos').update({ is_completed }).eq('id', id)
 

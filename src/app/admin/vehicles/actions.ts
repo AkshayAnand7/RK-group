@@ -2,11 +2,9 @@
 
 import { createAdminClient } from '@/utils/supabase/admin'
 
-import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getVehicles() {
-  const cookieStore = await cookies()
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('vehicles')

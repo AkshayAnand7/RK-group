@@ -1,13 +1,11 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { sendWhatsAppMessage } from '@/lib/twilio'
 
 export async function submitBooking(formData: any) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   // 1. Insert into Supabase
   const { error } = await supabase.from('bookings').insert({
@@ -40,15 +38,18 @@ export async function submitBooking(formData: any) {
     `💵 *Received:* ₹${formData.receivedAmount || 0}\n\n` +
     `✅ _Booking saved as PENDING_`
 
-  await sendWhatsAppMessage(adminPhone, whatsappMessage)
+  try {
+    await sendWhatsAppMessage(adminPhone, whatsappMessage)
+  } catch (e) {
+    console.error("WhatsApp failed but booking was saved:", e)
+  }
 
   revalidatePath('/travel/booking')
   return { success: true }
 }
 
 export async function getBookings() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { data, error } = await supabase
     .from('bookings')
@@ -56,12 +57,11 @@ export async function getBookings() {
     .order('created_at', { ascending: false })
 
   if (error) return []
-  return data
+  return data || []
 }
 
 export async function updateBookingStatus(id: number, status: string) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   // 1. Update Booking Status
   const { data: booking, error: fetchError } = await supabase

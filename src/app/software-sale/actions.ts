@@ -1,14 +1,13 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 import { sendWhatsAppMessage } from '@/lib/twilio'
 
 const RECIPIENT_NUMBER = '919847113888'
 
 export async function submitSoftwareSale(formData: any) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const {
     date_from,
@@ -72,12 +71,14 @@ export async function submitSoftwareSale(formData: any) {
       `✅ *Submitted by Admin*`
     ].join('\n')
 
-    const waResult = await sendWhatsAppMessage(RECIPIENT_NUMBER, message)
-    
-    if (!waResult.success) {
-      console.error('WhatsApp send failed:', waResult.error)
-      // Still return success since data was saved
-      return { success: true, whatsappError: waResult.error }
+    try {
+      const waResult = await sendWhatsAppMessage(RECIPIENT_NUMBER, message)
+      if (!waResult.success) {
+        console.error('WhatsApp send failed:', waResult.error)
+        return { success: true, whatsappError: waResult.error }
+      }
+    } catch (e) {
+      console.error('WhatsApp failed but data was saved:', e)
     }
 
     return { success: true }
@@ -89,7 +90,7 @@ export async function submitSoftwareSale(formData: any) {
 
 export async function getSoftwareSalesHistory() {
   const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   const activeShopName = cookieStore.get('active_shop_name')?.value
   
   try {
@@ -116,8 +117,7 @@ export async function getSoftwareSalesHistory() {
 }
 
 export async function getLastOldAmount() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   
   try {
     const { data, error } = await supabase

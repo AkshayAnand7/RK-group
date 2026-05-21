@@ -1,11 +1,9 @@
 'use server'
 
 import { createAdminClient } from '@/utils/supabase/admin'
-import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getLotteryEntries(search?: string, period: string = 'today') {
-  const cookieStore = await cookies()
   const supabase = createAdminClient()
 
   let query = supabase
@@ -40,7 +38,6 @@ export async function getLotteryEntries(search?: string, period: string = 'today
 }
 
 export async function toggleCollectionLock(id: number, locked: boolean) {
-  const cookieStore = await cookies()
   const supabase = createAdminClient()
   
   const { error } = await supabase
@@ -54,7 +51,6 @@ export async function toggleCollectionLock(id: number, locked: boolean) {
 }
 
 export async function updateCollection(id: number, formData: FormData) {
-  const cookieStore = await cookies()
   const supabase = createAdminClient()
 
   const amount = Number(formData.get('amount'))
@@ -73,7 +69,6 @@ export async function updateCollection(id: number, formData: FormData) {
 }
 
 export async function deleteCollection(id: number) {
-  const cookieStore = await cookies()
   const supabase = createAdminClient()
   
   const { error } = await supabase

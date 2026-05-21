@@ -2,17 +2,12 @@
 
 import { createAdminClient } from '@/utils/supabase/admin'
 
-import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function getTrips() {
   try {
     const supabase = createAdminClient()
-    const { data, error } = await supabase.from('trips').select(`
-      *,
-      driver:profiles(full_name),
-      vehicle:vehicles(vehicle_number)
-    `).order('date', { ascending: false })
+    const { data, error } = await supabase.from('trips').select('*').order('date', { ascending: false })
     
     if (error) {
       console.error("Supabase error in getTrips:", error)

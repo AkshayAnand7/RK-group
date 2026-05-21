@@ -1,8 +1,6 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
-import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { sendWhatsAppMessage } from '@/lib/twilio'
 
@@ -60,8 +58,7 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
 }
 
 export async function getLastPending(shopId: string) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { data, error } = await supabase
     .from('collections')
@@ -74,4 +71,3 @@ export async function getLastPending(shopId: string) {
   if (error || !data) return 0
   return data.pending || 0
 }
-

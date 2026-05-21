@@ -1,10 +1,8 @@
 'use server'
 
 import { createAdminClient } from '@/utils/supabase/admin'
-import { cookies } from 'next/headers'
 
 export async function getDashboardStats(period: string = 'week') {
-  const cookieStore = await cookies()
   const supabase = createAdminClient()
 
   const now = new Date()
@@ -24,29 +22,18 @@ export async function getDashboardStats(period: string = 'week') {
 
   const startDateIso = startDate.toISOString()
 
-  // 1. Fetch Lottery Data
-  const { data: collections } = await supabase
-    .from('collections')
-    .select('amount, expense, advance, prize, created_at, date')
-    .gte('created_at', startDateIso)
-
-  const { data: lotteryExpenses } = await supabase
-    .from('expenses')
-    .select('amount')
-    .eq('module', 'lottery')
-    .gte('created_at', startDateIso)
-  
-  // 2. Fetch Travel Data
-  const { data: trips } = await supabase
-    .from('trips')
-    .select('total_amount, received_amount, date')
-    .gte('date', startDateIso.split('T')[0])
-
-  const { data: travelExpenses } = await supabase
-    .from('expenses')
-    .select('amount')
-    .eq('module', 'travel')
-    .gte('created_at', startDateIso)
+  // Run all queries concurrently for better performance
+  const [
+    { data: collections },
+    { data: lotteryExpenses },
+    { data: trips },
+    { data: travelExpenses }
+  ] = await Promise.all([
+    supabase.from('collections').select('amount, expense, advance, prize, created_at, date').gte('created_at', startDateIso),
+    supabase.from('expenses').select('amount').eq('module', 'lottery').gte('created_at', startDateIso),
+    supabase.from('trips').select('total_amount, received_amount, date').gte('date', startDateIso.split('T')[0]),
+    supabase.from('expenses').select('amount').eq('module', 'travel').gte('created_at', startDateIso)
+  ]);
 
   // Aggregations
   const totalLotteryCollection = collections?.reduce((sum, c) => sum + Number(c.amount || 0), 0) || 0

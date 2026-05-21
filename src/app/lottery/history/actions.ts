@@ -1,11 +1,11 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
 
 export async function getHistory() {
   const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   const shopId = cookieStore.get('active_shop_id')?.value
   
   if (!shopId) return []
@@ -21,5 +21,5 @@ export async function getHistory() {
     console.error("Error fetching history:", error)
     return []
   }
-  return data
+  return data || []
 }

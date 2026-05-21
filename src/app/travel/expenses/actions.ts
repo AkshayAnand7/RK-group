@@ -1,20 +1,17 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 export async function getExpenses() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   const { data, error } = await supabase.from('expenses').select('*').order('date', { ascending: false }).limit(10)
   if (error) return []
-  return data
+  return data || []
 }
 
 export async function submitExpense(formData: any) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { error } = await supabase.from('expenses').insert({
     date: formData.date,
@@ -23,6 +20,7 @@ export async function submitExpense(formData: any) {
     amount: Number(formData.amount),
     description: formData.description,
     staff_name: formData.staffName,
+    module: 'travel',
     created_at: new Date().toISOString()
   })
 

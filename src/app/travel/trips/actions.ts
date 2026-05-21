@@ -1,12 +1,10 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 export async function getTrips() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { data, error } = await supabase
     .from('trips')
@@ -18,24 +16,22 @@ export async function getTrips() {
     console.error("Error fetching trips:", error)
     return []
   }
-  return data
+  return data || []
 }
 
 export async function getVehicles() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
   const { data, error } = await supabase.from('vehicles').select('*').order('vehicle_number', { ascending: true })
   if (error) return []
-  return data
+  return data || []
 }
 
 export async function submitTrip(formData: any) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createAdminClient()
 
   const { error } = await supabase.from('trips').insert({
     date: formData.date,
-    driver_id: null, // We'll store name for now as the table might expect IDs
+    driver_id: null,
     vehicle_id: null,
     from_location: formData.from,
     to_location: formData.to,
