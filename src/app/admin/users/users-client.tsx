@@ -14,7 +14,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
   const [search, setSearch] = useState("");
   const [showRoleModal, setShowRoleModal] = useState<any>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newUser, setNewUser] = useState({ full_name: "", email: "", password: "", role: "staff" });
+  const [newUser, setNewUser] = useState({ full_name: "", user_id: "", password: "", role: "staff" });
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
       const result = await createUser(formData);
       if (result.success) {
         setShowAddModal(false);
-        setNewUser({ full_name: "", email: "", password: "", role: "staff" });
+        setNewUser({ full_name: "", user_id: "", password: "", role: "staff" });
         window.location.reload();
       } else {
         alert(result.error);
@@ -59,7 +59,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
 
   const filtered = initialUsers.filter(u => 
     (u.full_name || '').toLowerCase().includes(search.toLowerCase()) || 
-    (u.email || '').toLowerCase().includes(search.toLowerCase())
+    (u.user_id || u.email || '').toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -97,8 +97,8 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
               </div>
               <div>
                 <h3 className="text-lg font-black text-text-primary leading-tight">{user.full_name || 'Unnamed User'}</h3>
-                <p className="text-xs text-text-muted font-bold flex items-center gap-1">
-                  <Mail className="w-3 h-3" /> {user.email || 'No Email'}
+                <p className="text-xs text-text-muted font-bold flex items-center gap-1 uppercase tracking-widest">
+                  <User className="w-3 h-3" /> {user.user_id || user.email || 'No User ID'}
                 </p>
               </div>
             </div>
@@ -191,14 +191,14 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Email Address</label>
+                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">User ID</label>
                 <input 
                   required
-                  type="email"
-                  placeholder="john@example.com"
-                  value={newUser.email}
-                  onChange={e => setNewUser({...newUser, email: e.target.value})}
-                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"
+                  type="text"
+                  placeholder="e.g. AGENT01"
+                  value={newUser.user_id}
+                  onChange={e => setNewUser({...newUser, user_id: e.target.value.toUpperCase()})}
+                  className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all uppercase"
                 />
               </div>
               <div className="space-y-1.5">

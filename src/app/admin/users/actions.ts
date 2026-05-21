@@ -42,17 +42,20 @@ export async function updateUserRole(id: string, role: string) {
 export async function createUser(formData: FormData) {
   const supabase = createAdminClient()
 
-  const email = formData.get('email') as string
+  const user_id = formData.get('user_id') as string
   const password = formData.get('password') as string
   const full_name = formData.get('full_name') as string
   const role = formData.get('role') as string
+
+  // Auto-generate a valid email for Supabase Auth
+  const email = `${user_id.toLowerCase().replace(/[^a-z0-9]/g, '')}@rkgroup.local`
 
   // 1. Create User in Auth
   const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
-    user_metadata: { full_name }
+    user_metadata: { full_name, user_id }
   })
 
   if (authError) return { error: authError.message }
