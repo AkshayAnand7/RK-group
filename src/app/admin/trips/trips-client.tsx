@@ -205,7 +205,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
               </button>
             </div>
             <form onSubmit={handleUpdate} className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">From</label>
                   <input name="from" required defaultValue={editingTrip.from_location} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
@@ -215,7 +215,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
                   <input name="to" required defaultValue={editingTrip.to_location} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Total Amount (₹)</label>
                   <input name="total" type="number" required defaultValue={editingTrip.total_amount} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />

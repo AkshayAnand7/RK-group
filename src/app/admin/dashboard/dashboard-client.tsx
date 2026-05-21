@@ -73,7 +73,7 @@ export default function DashboardClient({ stats }: { stats: any }) {
           </div>
           <h2 className="text-base sm:text-lg font-black uppercase tracking-widest text-text-primary">RK Travel Summary</h2>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 scroll-stagger">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 scroll-stagger">
           {[
             { label: "Total Trip Income", value: stats.travel.totalIncome, color: "text-travel", icon: IndianRupee },
             { label: "Vehicle Expenses", value: stats.travel.totalExpense, color: "text-danger", icon: Fuel },

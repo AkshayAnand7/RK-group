@@ -340,7 +340,7 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
                 <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Total Collection (₹)</label>
                 <input name="amount" type="number" required defaultValue={editingEntry.amount} className="w-full h-12 px-4 bg-white border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1 text-[8px]">Expense</label>
                   <input name="expense" type="number" defaultValue={editingEntry.expense} className="w-full h-12 px-3 bg-white border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />

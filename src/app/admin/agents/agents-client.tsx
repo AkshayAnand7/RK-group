@@ -54,7 +54,7 @@ export default function AgentsClient({ initialAgents }: { initialAgents: any[] }
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, ID or company..." className="flex-1 bg-transparent border-none outline-none font-bold text-text-primary placeholder:text-text-muted" />
       </div>
 
-      <div className="grid grid-cols-3 gap-3 scroll-reveal">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 scroll-reveal">
         {[
           { label: "Total", value: list.length, c: "text-primary" },
           { label: "Active", value: list.filter(a => a.status === 'active').length, c: "text-emerald-600" },

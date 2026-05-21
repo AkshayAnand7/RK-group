@@ -139,7 +139,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       )}
 
       {/* Main Content */}
-      <div className="flex-1 lg:ml-[260px] flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-[260px] flex flex-col min-h-screen min-w-0 w-full overflow-x-hidden">
         {/* Top Bar */}
         <header className="sticky top-0 z-30 h-16 bg-surface border-b border-border flex items-center px-4 lg:px-6 gap-4">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 -ml-2 rounded-lg hover:bg-page transition-colors cursor-pointer">

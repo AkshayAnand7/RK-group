@@ -141,7 +141,7 @@ export default function ShopsClient({ initialShops }: { initialShops: any[] }) {
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Shop ID</label>
                   <input name="shop_id" disabled={!!editingShop} defaultValue={editingShop?.shop_id} required placeholder="e.g. 007" className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-lottery transition-all disabled:opacity-50" />

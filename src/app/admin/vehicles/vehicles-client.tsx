@@ -83,7 +83,7 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4 scroll-reveal">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 scroll-reveal">
         {[
           { label: "Total", value: vehicles.length, color: "text-primary" },
           { label: "Active", value: vehicles.filter(v => v.status === 'active').length, color: "text-emerald-600" },
