@@ -81,9 +81,6 @@ export default function AgentsClient({ initialAgents }: { initialAgents: any[] }
               <h3 className="text-xl font-black text-text-primary tracking-tight mb-2">{a.full_name}</h3>
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-2 text-xs font-bold text-text-secondary"><Hash className="w-3.5 h-3.5 text-text-muted" /> {a.agent_id}</div>
-                {a.company && <div className="flex items-center gap-2 text-xs font-bold text-text-secondary"><Building2 className="w-3.5 h-3.5 text-text-muted" /> {a.company}</div>}
-                {a.phone && <div className="flex items-center gap-2 text-xs font-bold text-text-secondary"><Phone className="w-3.5 h-3.5 text-text-muted" /> {a.phone}</div>}
-                <div className="flex items-center gap-2 text-xs font-bold text-text-secondary"><Percent className="w-3.5 h-3.5 text-text-muted" /> {a.commission_rate || 0}% Commission</div>
               </div>
             </div>
             <div className="flex items-center gap-2 pt-6 border-t border-border/50">
@@ -121,20 +118,7 @@ export default function AgentsClient({ initialAgents }: { initialAgents: any[] }
                 <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Full Name</label>
                 <input name="full_name" defaultValue={editing?.full_name} required placeholder="e.g. Suresh Travels" className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-amber-500 transition-all" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Phone</label>
-                  <input name="phone" defaultValue={editing?.phone} placeholder="9876543210" className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-amber-500 transition-all" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Commission %</label>
-                  <input name="commission_rate" type="number" step="0.5" min="0" max="100" defaultValue={editing?.commission_rate || 0} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-amber-500 transition-all" />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Company</label>
-                <input name="company" defaultValue={editing?.company} placeholder="e.g. RK Travels" className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-amber-500 transition-all" />
-              </div>
+
               {editing && (
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Status</label>
