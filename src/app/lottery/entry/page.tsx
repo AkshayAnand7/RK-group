@@ -8,12 +8,14 @@ import {
 } from "lucide-react";
 
 import { submitCollection, getLastPending } from "./actions";
+import { getStaffMembers } from "@/app/admin/staff/actions";
 
 export default function LotteryEntryPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [shopInfo, setShopInfo] = useState({ id: "", name: "Lottery Terminal" });
   const [lastPending, setLastPending] = useState(0);
+  const [staffList, setStaffList] = useState<any[]>([]);
   
   const [formData, setFormData] = useState({
     staffName: "",
@@ -34,11 +36,15 @@ export default function LotteryEntryPage() {
     const userName = userNameRaw ? decodeURIComponent(userNameRaw) : "";
     
     setShopInfo({ id: shopId, name: shopName });
-    if (userName) setFormData(prev => ({ ...prev, staffName: userName }));
 
     if (shopId) {
       getLastPending(shopId).then(setLastPending);
     }
+
+    getStaffMembers().then(data => {
+      setStaffList(data || []);
+      // If the user name is in the staff list, we could auto-select, but per request, we let them select.
+    });
   }, []);
 
   useEffect(() => {
@@ -134,14 +140,17 @@ export default function LotteryEntryPage() {
           <div className="bg-surface p-6 rounded-2xl border border-border space-y-5">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Staff Name</label>
-              <input 
-                type="text"
+              <select 
                 required 
-                placeholder="Enter your name"
                 value={formData.staffName}
                 onChange={e => setFormData({ ...formData, staffName: e.target.value })}
-                className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all"
-              />
+                className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all appearance-none"
+              >
+                <option value="" disabled>Select a staff member</option>
+                {staffList.map(staff => (
+                  <option key={staff.id} value={staff.full_name}>{staff.full_name}</option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-1.5">
