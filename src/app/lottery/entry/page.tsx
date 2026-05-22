@@ -30,7 +30,8 @@ export default function LotteryEntryPage() {
     const cookies = document.cookie.split('; ');
     const shopId = cookies.find(row => row.startsWith('active_shop_id='))?.split('=')[1] || "";
     const shopName = decodeURIComponent(cookies.find(row => row.startsWith('active_shop_name='))?.split('=')[1] || "Lottery Terminal");
-    const userName = cookies.find(row => row.startsWith('user_name='))?.split('=')[1] || "";
+    const userNameRaw = cookies.find(row => row.startsWith('user_name='))?.split('=')[1] || "";
+    const userName = userNameRaw ? decodeURIComponent(userNameRaw) : "";
     
     setShopInfo({ id: shopId, name: shopName });
     if (userName) setFormData(prev => ({ ...prev, staffName: userName }));
