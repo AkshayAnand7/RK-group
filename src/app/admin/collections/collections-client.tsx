@@ -27,9 +27,9 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
   });
   
   const shopList = Object.entries(shopTotals).sort((a, b) => {
-    // Sort by collection descending, then alphabetically
-    if (b[1].collection !== a[1].collection) {
-      return b[1].collection - a[1].collection;
+    // Sort by shop_id ascending, then alphabetically by shop name
+    if (a[1].shop_id !== b[1].shop_id) {
+      return a[1].shop_id.localeCompare(b[1].shop_id);
     }
     return a[0].localeCompare(b[0]);
   });
