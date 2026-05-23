@@ -59,11 +59,8 @@ function LoginForm() {
         }
         setLoading(false)
       } else {
-        // Reload the page to force a hard navigation. The Next.js middleware 
-        // will instantly intercept this request, see the new session cookie, 
-        // and correctly redirect the user to their role-based dashboard 
-        // or the callbackUrl if one exists.
-        window.location.reload()
+        // Replace the current history state to avoid back button traps
+        window.location.replace(callbackUrl || "/");
       }
     } catch (err) {
       console.error("Login error:", err)

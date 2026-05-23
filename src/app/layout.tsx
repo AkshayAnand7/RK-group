@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
+import DisableNumberScroll from "@/components/DisableNumberScroll";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${outfit.variable} ${jetbrainsMono.variable} min-h-screen bg-page text-text-primary`}>
         <AuthProvider>
+          <DisableNumberScroll />
           {children}
         </AuthProvider>
       </body>

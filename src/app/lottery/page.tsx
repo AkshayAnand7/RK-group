@@ -39,7 +39,8 @@ export default function LotteryShopList() {
     if (session?.user?.name) {
       document.cookie = `user_name=${encodeURIComponent(session.user.name)}; path=/; max-age=86400`;
     }
-    router.push("/lottery/entry");
+    // Replace history so that going back from the entry page takes the user directly to home
+    router.replace("/lottery/entry");
   };
 
   if (loading) return (
