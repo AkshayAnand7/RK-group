@@ -4,18 +4,31 @@ import { NextResponse } from 'next/server'
 
 const { auth } = NextAuth(authConfig)
 
+// Role-based access matrix
+const ROLE_ACCESS: Record<string, string[]> = {
+  admin: ['/admin', '/lottery', '/travel', '/software-sale'],
+  agent: ['/lottery', '/travel', '/software-sale'],
+  lottery_staff: ['/lottery'],
+  travel_staff: ['/travel'],
+  staff: ['/travel'], // legacy role, same as travel_staff
+}
+
+// Default landing page per role after login
+const ROLE_DEFAULT_PAGE: Record<string, string> = {
+  admin: '/admin/dashboard',
+  agent: '/software-sale',
+  lottery_staff: '/lottery',
+  travel_staff: '/travel',
+  staff: '/travel',
+}
+
 export default auth((req) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
   const user = req.auth?.user as any
-  const role = user?.role
-
+  const role: string = user?.role || ''
   const path = nextUrl.pathname
 
-  const isOnAdmin = path.startsWith('/admin')
-  const isOnTravel = path.startsWith('/travel')
-  const isOnLottery = path.startsWith('/lottery')
-  const isOnSoftwareSale = path.startsWith('/software-sale')
   const isOnLogin = path === '/login'
 
   // Redirect /admin to /admin/dashboard
@@ -23,54 +36,36 @@ export default auth((req) => {
     return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
   }
 
-  // 1. Redirect unauthenticated users to login
-  if ((isOnAdmin || isOnTravel || isOnLottery || isOnSoftwareSale) && !isLoggedIn) {
-    // Save where they were trying to go
-    const loginUrl = new URL('/login', nextUrl)
-    loginUrl.searchParams.set('callbackUrl', path)
-    return NextResponse.redirect(loginUrl)
-  }
-
-  // 2. If on login page and already logged in, redirect ONLY if no callbackUrl
+  // If on login page and already logged in, redirect to appropriate dashboard
   if (isOnLogin && isLoggedIn) {
     const callbackUrl = nextUrl.searchParams.get('callbackUrl')
     if (callbackUrl) {
-      // User has a specific destination — let them see login or redirect there
-      return NextResponse.redirect(new URL(callbackUrl, nextUrl))
+      // Validate that the user can actually access the callbackUrl
+      const allowedPrefixes = ROLE_ACCESS[role] || []
+      const canAccess = allowedPrefixes.some(prefix => callbackUrl.startsWith(prefix))
+      if (canAccess) {
+        return NextResponse.redirect(new URL(callbackUrl, nextUrl))
+      }
     }
-    // No callback — send to their default dashboard
-    if (role === 'admin') {
-      return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
-    } else if (role === 'agent') {
-      return NextResponse.redirect(new URL('/software-sale', nextUrl))
-    } else if (role === 'travel_staff' || role === 'staff') {
-      // Temporary fallback for legacy roles
-      return NextResponse.redirect(new URL('/travel', nextUrl)) 
-    } else if (role === 'lottery_staff') {
-      return NextResponse.redirect(new URL('/lottery', nextUrl))
+    // No callback or not allowed — send to their default dashboard
+    const defaultPage = ROLE_DEFAULT_PAGE[role] || '/'
+    return NextResponse.redirect(new URL(defaultPage, nextUrl))
+  }
+
+  // For all protected routes, check role-based access
+  if (isLoggedIn && !isOnLogin) {
+    const allowedPrefixes = ROLE_ACCESS[role] || []
+    const isProtectedModule = ['/admin', '/lottery', '/travel', '/software-sale'].some(
+      prefix => path.startsWith(prefix)
+    )
+
+    if (isProtectedModule) {
+      const canAccess = allowedPrefixes.some(prefix => path.startsWith(prefix))
+      if (!canAccess) {
+        // Redirect to login with unauthorized error
+        return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
+      }
     }
-  }
-
-  // 3. Role-Based Route Protection
-  //    Admin can access EVERYTHING (superuser)
-  if (role === 'admin') {
-    return NextResponse.next()
-  }
-
-  // Non-admin role restrictions
-  if (isOnAdmin) {
-    return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
-  }
-  
-  if (isOnSoftwareSale && role !== 'agent') {
-    return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
-  }
-
-  if (isOnTravel && role !== 'travel_staff' && role !== 'staff') {
-    return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
-  }
-  if (isOnLottery && role !== 'lottery_staff' && role !== 'staff') {
-    return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
   }
 
   return NextResponse.next()
@@ -82,6 +77,6 @@ export const config = {
     '/travel/:path*',
     '/lottery/:path*',
     '/software-sale/:path*',
-    '/login'
+    '/login',
   ]
 }

@@ -59,8 +59,22 @@ function LoginForm() {
         }
         setLoading(false)
       } else {
-        // Replace the current history state to avoid back button traps
-        window.location.replace(callbackUrl || "/");
+        // If there's a callbackUrl, go there. Otherwise, redirect based on role.
+        if (callbackUrl) {
+          window.location.replace(callbackUrl);
+        } else {
+          // Fetch the fresh session to get the user's role
+          const session = await getSession();
+          const role = (session?.user as any)?.role || '';
+          const roleDefaultPages: Record<string, string> = {
+            admin: '/admin/dashboard',
+            agent: '/software-sale',
+            lottery_staff: '/lottery',
+            travel_staff: '/travel',
+            staff: '/travel',
+          };
+          window.location.replace(roleDefaultPages[role] || '/');
+        }
       }
     } catch (err) {
       console.error("Login error:", err)

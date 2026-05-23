@@ -8,6 +8,25 @@ export const authConfig = {
     strategy: 'jwt',
   },
   callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user
+      const path = nextUrl.pathname
+
+      // Public routes that don't require authentication
+      const publicRoutes = ['/login', '/']
+      const isPublicRoute = publicRoutes.includes(path)
+
+      if (isPublicRoute) {
+        return true
+      }
+
+      // All other routes require authentication
+      if (!isLoggedIn) {
+        return false // NextAuth will redirect to signIn page
+      }
+
+      return true
+    },
     jwt({ token, user }) {
       if (user) {
         token.id = user.id
