@@ -2,17 +2,18 @@
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { 
-  Search, FileText, Table as TableIcon, Trash2, 
+  Search, FileText, Table as TableIcon, Trash2, Edit3,
   MapPin, Bus, User, Phone, Calendar, ArrowRight, Loader2, CheckCircle, XCircle
 } from "lucide-react";
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
-import { updateBookingStatus, deleteBooking } from "./actions";
+import { updateBookingStatus, deleteBooking, updateBooking } from "./actions";
 
 export default function BookingsClient({ initialBookings }: { initialBookings: any[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [editingBooking, setEditingBooking] = useState<any>(null);
 
   const currentSearch = searchParams.get('search') || "";
 
@@ -62,6 +63,19 @@ export default function BookingsClient({ initialBookings }: { initialBookings: a
       if (!result.success) alert(result.error);
     });
   }
+
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    startTransition(async () => {
+      const formData = new FormData(e.currentTarget);
+      const result = await updateBooking(editingBooking.id, formData);
+      if (result.success) {
+        setEditingBooking(null);
+      } else {
+        alert(result.error);
+      }
+    });
+  };
 
   async function handleDelete(id: number) {
     if (confirm("Are you sure you want to delete this booking?")) {
@@ -202,6 +216,12 @@ export default function BookingsClient({ initialBookings }: { initialBookings: a
                 </div>
               )}
               <button 
+                onClick={() => setEditingBooking(booking)}
+                className="w-11 h-11 bg-white border border-border hover:bg-slate-50 text-text-muted hover:text-primary rounded-xl flex items-center justify-center transition-all cursor-pointer shadow-sm shrink-0"
+              >
+                <Edit3 className="w-4 h-4" />
+              </button>
+              <button 
                 onClick={() => handleDelete(booking.id)}
                 disabled={deletingId === booking.id}
                 className="w-11 h-11 bg-white border border-border hover:bg-red-50 text-text-muted hover:text-red-500 rounded-xl flex items-center justify-center transition-all cursor-pointer shadow-sm shrink-0"
@@ -222,6 +242,72 @@ export default function BookingsClient({ initialBookings }: { initialBookings: a
           </div>
         )}
       </div>
+
+      {/* Edit Modal */}
+      {editingBooking && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setEditingBooking(null)} />
+          <div className="relative w-full max-w-lg glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Edit Booking</h2>
+                <p className="text-[10px] font-black text-travel uppercase tracking-widest">{editingBooking.customer_name} • {editingBooking.vehicle}</p>
+              </div>
+              <button onClick={() => setEditingBooking(null)} className="p-2 hover:bg-page bg-white border border-border rounded-xl transition-colors cursor-pointer">
+                <XCircle className="w-5 h-5 text-text-muted" />
+              </button>
+            </div>
+            <form onSubmit={handleUpdate} className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Customer Name</label>
+                  <input name="customerName" required defaultValue={editingBooking.customer_name} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Phone Number</label>
+                  <input name="customerNumber" required defaultValue={editingBooking.customer_number} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">From</label>
+                  <input name="from" required defaultValue={editingBooking.from_location} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">To</label>
+                  <input name="to" required defaultValue={editingBooking.to_location} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Vehicle</label>
+                  <input name="vehicle" required defaultValue={editingBooking.vehicle} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Date</label>
+                  <input name="date" type="date" required defaultValue={editingBooking.date} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Total Amount (₹)</label>
+                  <input name="total" type="number" required defaultValue={editingBooking.total_amount} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Received (₹)</label>
+                  <input name="received" type="number" required defaultValue={editingBooking.received_amount} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+              </div>
+              <div className="flex gap-4 pt-4">
+                <button type="button" onClick={() => setEditingBooking(null)} className="flex-1 h-12 bg-white text-text-secondary rounded-2xl font-black text-xs uppercase tracking-widest border border-border hover:bg-slate-50 transition-all cursor-pointer">Cancel</button>
+                <button type="submit" disabled={isPending} className="flex-1 h-12 bg-travel text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-travel/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center">
+                  {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Update Booking"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

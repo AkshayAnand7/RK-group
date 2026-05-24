@@ -115,7 +115,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
           <table className="w-full text-sm text-left min-w-[700px]">
             <thead>
               <tr className="bg-page/50 border-b border-border">
-                {["Date", "Driver & Vehicle", "Route Details", "Amount Status", "Status", "Actions"].map(h => (
+                {["Date", "Driver & Staff", "Customer & Route", "Vehicle", "Amount Status", "Status", "Actions"].map(h => (
                   <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -128,15 +128,19 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
                     <p className="text-[10px] font-black text-text-muted">TRIP-ID: {trip.id.toString().padStart(4, '0')}</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <p className="font-bold text-text-primary">{trip.driver?.full_name || 'N/A'}</p>
-                    <p className="text-[10px] font-black text-travel uppercase tracking-widest">{trip.vehicle?.vehicle_number || 'N/A'}</p>
+                    <p className="font-bold text-text-primary">{trip.driver_name || trip.driver?.full_name || 'N/A'} <span className="text-[9px] font-normal text-text-muted lowercase">driver</span></p>
+                    <p className="text-[10px] font-black text-travel uppercase tracking-widest mt-0.5">{trip.staff_name || 'N/A'} <span className="text-[8px] font-normal text-text-muted lowercase">staff</span></p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
+                    <p className="text-xs font-black text-text-primary mb-1 truncate max-w-[150px]">{trip.customer_name || 'N/A'} <span className="text-[8px] font-normal text-text-muted lowercase">customer</span></p>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-text-secondary">{trip.from_location}</span>
                       <ArrowRight className="w-3 h-3 text-text-muted" />
                       <span className="text-xs font-bold text-text-secondary">{trip.to_location}</span>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <p className="text-[11px] font-black text-text-primary uppercase tracking-widest">{trip.vehicle?.vehicle_number || trip.vehicle || 'N/A'}</p>
                     <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">{trip.trip_type}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

@@ -49,6 +49,8 @@ export async function updateBookingStatus(id: number, status: string) {
       .insert({
         date: booking.date,
         staff_name: booking.staff_name,
+        customer_name: booking.customer_name,
+        customer_number: booking.customer_number,
         vehicle: booking.vehicle,
         from_location: booking.from_location,
         to_location: booking.to_location,
@@ -63,6 +65,37 @@ export async function updateBookingStatus(id: number, status: string) {
   
   revalidatePath('/admin/bookings')
   revalidatePath('/admin/trips')
+  return { success: true }
+}
+
+export async function updateBooking(id: number, formData: FormData) {
+  const supabase = createAdminClient()
+
+  const customer_name = formData.get('customerName') as string
+  const customer_number = formData.get('customerNumber') as string
+  const from_location = formData.get('from') as string
+  const to_location = formData.get('to') as string
+  const total_amount = Number(formData.get('total'))
+  const received_amount = Number(formData.get('received'))
+  const vehicle = formData.get('vehicle') as string
+  const date = formData.get('date') as string
+
+  const { error } = await supabase.from('bookings')
+    .update({ 
+      customer_name, 
+      customer_number, 
+      from_location, 
+      to_location, 
+      total_amount, 
+      received_amount,
+      vehicle,
+      date
+    })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+  
+  revalidatePath('/admin/bookings')
   return { success: true }
 }
 

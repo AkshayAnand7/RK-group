@@ -20,7 +20,9 @@ export default function TravelTripPage() {
   const [staff, setStaff] = useState<any[]>([]);
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
-    driver: "",
+    staffName: "",
+    driverName: "",
+    customerName: "",
     vehicle: "",
     from: "",
     to: "",
@@ -48,14 +50,7 @@ export default function TravelTripPage() {
     e.preventDefault();
     setLoading(true);
     
-    // Extract staffName from the form element as it was missing in the state
-    const target = e.target as any;
-    const staffName = target[0].value;
-
-    const result = await submitTrip({
-      ...form,
-      staffName
-    });
+    const result = await submitTrip(form);
 
     setLoading(false);
     if (result.success) {
@@ -141,19 +136,31 @@ export default function TravelTripPage() {
 
             <div className="bg-surface p-6 rounded-3xl border border-border shadow-xl">
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Staff Name</label>
-                  <select 
-                    required 
-                    value={form.driver}
-                    onChange={e => setForm({ ...form, driver: e.target.value })}
-                    className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel cursor-pointer transition-all"
-                  >
-                    <option value="">Select Staff...</option>
-                    {staff.map(s => (
-                      <option key={s.id} value={s.full_name}>{s.full_name}</option>
-                    ))}
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Staff Name</label>
+                    <select 
+                      required 
+                      value={form.staffName}
+                      onChange={e => setForm({ ...form, staffName: e.target.value })}
+                      className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel cursor-pointer transition-all"
+                    >
+                      <option value="">Select Staff...</option>
+                      {staff.map(s => (
+                        <option key={s.id} value={s.full_name}>{s.full_name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Customer Name</label>
+                    <input 
+                      required 
+                      placeholder="Enter customer name" 
+                      value={form.customerName}
+                      onChange={e => setForm({ ...form, customerName: e.target.value })}
+                      className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel" 
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
@@ -184,8 +191,8 @@ export default function TravelTripPage() {
                   <input 
                     required 
                     placeholder="Enter driver name" 
-                    value={form.driver}
-                    onChange={e => setForm({ ...form, driver: e.target.value })}
+                    value={form.driverName}
+                    onChange={e => setForm({ ...form, driverName: e.target.value })}
                     className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-travel" 
                   />
                 </div>

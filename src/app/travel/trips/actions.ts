@@ -33,6 +33,8 @@ export async function submitTrip(formData: any) {
     date: formData.date,
     driver_id: null,
     vehicle_id: null,
+    driver_name: formData.driverName,
+    customer_name: formData.customerName,
     from_location: formData.from,
     to_location: formData.to,
     total_amount: Number(formData.amount),
