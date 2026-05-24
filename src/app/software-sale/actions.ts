@@ -2,7 +2,6 @@
 
 import { createAdminClient } from '@/utils/supabase/admin'
 import { cookies } from 'next/headers'
-import { sendWhatsAppMessage } from '@/lib/twilio'
 
 const RECIPIENT_NUMBER = '919847113888'
 
@@ -50,7 +49,7 @@ export async function submitSoftwareSale(formData: any) {
       return { success: false, error: error.message }
     }
 
-    // 2. Send WhatsApp message via Twilio (background)
+    // 2. Return the formatted message to be copied to clipboard
     const message = [
       `*SOFTWARE SALE REPORT*`,
       `----------------------------`,
@@ -71,17 +70,7 @@ export async function submitSoftwareSale(formData: any) {
       `✅ *Submitted by Admin*`
     ].join('\n')
 
-    try {
-      const waResult = await sendWhatsAppMessage(RECIPIENT_NUMBER, message)
-      if (!waResult.success) {
-        console.error('WhatsApp send failed:', waResult.error)
-        return { success: true, whatsappError: waResult.error }
-      }
-    } catch (e) {
-      console.error('WhatsApp failed but data was saved:', e)
-    }
-
-    return { success: true }
+    return { success: true, message: message }
   } catch (err) {
     console.error('Unexpected error submitting software sale:', err)
     return { success: false, error: 'Failed to submit sale' }

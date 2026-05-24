@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
-  Monitor, ArrowLeft, Send, History, 
-  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User, AlertTriangle, X, MessageSquare
+  Monitor, ArrowLeft, Copy, History, 
+  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User, AlertTriangle, X
 } from "lucide-react";
 import { submitSoftwareSale, getLastOldAmount } from "./actions";
 
@@ -12,7 +12,6 @@ export default function SoftwareSalePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [whatsappStatus, setWhatsappStatus] = useState<string | null>(null);
   const [lastOldAmount, setLastOldAmount] = useState<any>(null);
   const [showReminder, setShowReminder] = useState(true);
 
@@ -82,8 +81,10 @@ export default function SoftwareSalePage() {
       
       if (result.success) {
         setSuccess(true);
-        setWhatsappStatus(result.whatsappError ? 'Data saved but WhatsApp failed' : 'Sent via WhatsApp ✓');
-        setTimeout(() => { setSuccess(false); setWhatsappStatus(null); }, 4000);
+        if (result.message) {
+          navigator.clipboard.writeText(result.message);
+        }
+        setTimeout(() => { setSuccess(false); }, 4000);
         
         // Reset form fields but keep dates
         setFormData(prev => ({
@@ -355,7 +356,7 @@ export default function SoftwareSalePage() {
                 disabled={loading}
                 className="w-full md:flex-1 h-14 sm:h-16 bg-slate-800 text-white rounded-2xl font-black text-sm sm:text-lg shadow-xl shadow-slate-800/20 flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
               >
-                {loading ? <><Loader2 className="w-6 h-6 animate-spin" /> Submitting...</> : <><Send className="w-5 h-5" /> Submit & Send Report</>}
+                {loading ? <><Loader2 className="w-6 h-6 animate-spin" /> Submitting...</> : <><Copy className="w-5 h-5" /> Save & Copy Report</>}
               </button>
               
               <button 
@@ -381,8 +382,8 @@ export default function SoftwareSalePage() {
               </div>
               <h3 className="text-2xl font-black text-text-primary uppercase tracking-tight mb-2">Sale Recorded!</h3>
               <div className="flex items-center gap-2 text-text-secondary font-medium">
-                <MessageSquare className="w-4 h-4 text-green-600" />
-                <p>{whatsappStatus || 'WhatsApp report sent'}</p>
+                <Copy className="w-4 h-4 text-green-600" />
+                <p>Report copied to clipboard</p>
               </div>
             </div>
           )}
