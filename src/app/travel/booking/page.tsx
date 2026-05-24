@@ -27,7 +27,9 @@ export default function TravelBookingPage() {
     toLocation: "",
     tripType: "one-side",
     totalAmount: "",
-    receivedAmount: ""
+    receivedAmount: "",
+    remark: "",
+    amount: ""
   });
 
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function TravelBookingPage() {
           <h2 className="text-2xl font-bold text-text-primary">Booking Saved!</h2>
           <p className="text-text-secondary mt-2">The trip has been saved as PENDING and admin has been notified via WhatsApp.</p>
           <div className="mt-10 space-y-3">
-            <button onClick={() => { setSuccess(false); setFormData({...formData, customerName: "", customerNumber: "", fromLocation: "", toLocation: "", totalAmount: "", receivedAmount: ""}) }} className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 cursor-pointer">
+            <button onClick={() => { setSuccess(false); setFormData({...formData, customerName: "", customerNumber: "", fromLocation: "", toLocation: "", totalAmount: "", receivedAmount: "", remark: "", amount: ""}) }} className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 cursor-pointer">
               New Booking
             </button>
             <Link href="/travel/trips" className="block w-full py-4 bg-page text-text-secondary border border-border rounded-2xl font-bold text-center">
@@ -147,6 +149,23 @@ export default function TravelBookingPage() {
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Recvd (₹)</label>
                   <input type="number" placeholder="0" value={formData.receivedAmount} onChange={e => setFormData({...formData, receivedAmount: e.target.value})} className="w-full h-12 px-3 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-2 col-span-1 sm:col-span-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Remarks & Amount</label>
+                <div className="flex gap-2">
+                  <input type="text" placeholder="Remarks..." value={formData.remark} onChange={e => setFormData({...formData, remark: e.target.value})} className="w-2/3 h-12 px-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+                  <input type="number" placeholder="Amount" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} className="w-1/3 shrink-0 h-12 px-4 bg-surface border border-border rounded-2xl text-sm font-bold focus:border-primary outline-none transition-all" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Grand Total</label>
+                <div className="relative">
+                  <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                  <input type="number" readOnly value={(Number(formData.totalAmount) || 0) - (Number(formData.amount) || 0)} className="w-full h-12 pl-11 pr-4 bg-page border border-border rounded-2xl text-lg font-black text-primary outline-none" />
                 </div>
               </div>
             </div>

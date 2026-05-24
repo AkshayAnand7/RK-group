@@ -77,6 +77,8 @@ export async function updateBooking(id: number, formData: FormData) {
   const to_location = formData.get('to') as string
   const total_amount = Number(formData.get('total'))
   const received_amount = Number(formData.get('received'))
+  const remark = formData.get('remark') as string
+  const amount = Number(formData.get('amount'))
   const vehicle = formData.get('vehicle') as string
   const date = formData.get('date') as string
 
@@ -88,6 +90,8 @@ export async function updateBooking(id: number, formData: FormData) {
       to_location, 
       total_amount, 
       received_amount,
+      remark,
+      amount,
       vehicle,
       date
     })

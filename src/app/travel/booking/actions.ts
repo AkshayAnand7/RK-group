@@ -18,6 +18,8 @@ export async function submitBooking(formData: any) {
     trip_type: formData.tripType,
     total_amount: Number(formData.totalAmount) || 0,
     received_amount: Number(formData.receivedAmount) || 0,
+    remark: formData.remark || "",
+    amount: Number(formData.amount) || 0,
     status: 'pending',
     date: formData.date || new Date().toISOString().split('T')[0]
   })
@@ -35,6 +37,8 @@ export async function submitBooking(formData: any) {
     `🏁 *To:* ${formData.toLocation}\n` +
     `🔄 *Type:* ${formData.tripType === 'round' ? 'Round Trip' : 'One Side'}\n` +
     `💰 *Total:* ₹${formData.totalAmount || 0}\n` +
+    `➖ *Discount/Amount:* ₹${formData.amount || 0} ${formData.remark ? `(${formData.remark})` : ''}\n` +
+    `✅ *Grand Total:* ₹${(Number(formData.totalAmount) || 0) - (Number(formData.amount) || 0)}\n` +
     `💵 *Received:* ₹${formData.receivedAmount || 0}\n\n` +
     `✅ _Booking saved as PENDING_`
 

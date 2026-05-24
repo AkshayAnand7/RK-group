@@ -298,6 +298,16 @@ export default function BookingsClient({ initialBookings }: { initialBookings: a
                   <input name="received" type="number" required defaultValue={editingBooking.received_amount} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
                 </div>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Remarks</label>
+                  <input name="remark" type="text" defaultValue={editingBooking.remark} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Amount / Discount (₹)</label>
+                  <input name="amount" type="number" defaultValue={editingBooking.amount} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-travel transition-all" />
+                </div>
+              </div>
               <div className="flex gap-4 pt-4">
                 <button type="button" onClick={() => setEditingBooking(null)} className="flex-1 h-12 bg-white text-text-secondary rounded-2xl font-black text-xs uppercase tracking-widest border border-border hover:bg-slate-50 transition-all cursor-pointer">Cancel</button>
                 <button type="submit" disabled={isPending} className="flex-1 h-12 bg-travel text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-travel/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center">
