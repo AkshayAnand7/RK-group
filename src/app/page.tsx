@@ -1,8 +1,19 @@
 "use client";
 import Link from "next/link";
+import { useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
 import { Ticket, Bus, ChevronRight, Settings, Monitor } from "lucide-react";
 
 export default function LandingPage() {
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    // Kiosk Mode: If the user navigates back to the homepage while logged in,
+    // automatically destroy their session so the next person must log in.
+    if (session) {
+      signOut({ redirect: false });
+    }
+  }, [session]);
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-mesh overflow-hidden py-10">
       {/* Admin Access (Discrete) */}
