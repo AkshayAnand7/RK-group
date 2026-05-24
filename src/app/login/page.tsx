@@ -7,7 +7,7 @@ import {
   ShieldCheck, Lock, Eye, EyeOff,
   ChevronRight, Loader2, User, AlertCircle, ArrowLeft
 } from "lucide-react"
-import { signIn, getSession } from "next-auth/react"
+import { signIn, getSession, signOut } from "next-auth/react"
 
 function LoginForm() {
   const router = useRouter()
