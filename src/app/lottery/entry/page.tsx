@@ -19,6 +19,8 @@ export default function LotteryEntryPage() {
     staffName: "",
     collection: "",
     expense: "",
+    expenseRemark: "",
+    wages: "",
     advance: "",
     prize: "",
     pending: ""
@@ -46,7 +48,8 @@ export default function LotteryEntryPage() {
     const adv = Number(formData.advance) || 0;
     const prz = Number(formData.prize) || 0;
     const pend = Number(formData.pending) || 0;
-    setBalance(col - exp - adv - prz - pend);
+    const wgs = Number(formData.wages) || 0;
+    setBalance(col - exp - adv - prz - pend - wgs);
   }, [formData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -160,8 +163,19 @@ export default function LotteryEntryPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Expenses</label>
+                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Expense Amount</label>
                 <input type="number" placeholder="0" value={formData.expense} onChange={e => setFormData({ ...formData, expense: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Expense Remark</label>
+                <input type="text" placeholder="Remark..." value={formData.expenseRemark} onChange={e => setFormData({ ...formData, expenseRemark: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Wages</label>
+                <input type="number" placeholder="0" value={formData.wages} onChange={e => setFormData({ ...formData, wages: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Advances</label>

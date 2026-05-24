@@ -14,6 +14,8 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
     staff_name: formData.staffName,
     amount: Number(formData.collection),
     expense: Number(formData.expense || 0),
+    expense_remark: formData.expenseRemark || '',
+    wages: Number(formData.wages || 0),
     advance: Number(formData.advance || 0),
     prize: Number(formData.prize || 0),
     pending: Number(formData.pending || 0),
@@ -38,11 +40,12 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
     `📊 *RK Lottery Daily Report*\n\n` +
     `🏪 *Shop:* ${shopName}\n` +
     `💻 *Software Sale:* ₹${formData.collection}\n` +
-    `📉 *Expense:* ₹${formData.expense || 0}\n` +
+    `📉 *Expense:* ₹${formData.expense || 0} ${formData.expenseRemark ? `(${formData.expenseRemark})` : ''}\n` +
+    `👷 *Wages:* ₹${formData.wages || 0}\n` +
     `💰 *Advance:* ₹${formData.advance || 0}\n` +
     `🏆 *Prize:* ₹${formData.prize || 0}\n` +
     `🔴 *Pending:* ₹${formData.pending || 0}\n` +
-    `💎 *Net Balance:* ₹${Number(formData.collection) - Number(formData.expense || 0) - Number(formData.advance || 0) - Number(formData.prize || 0) - Number(formData.pending || 0)}\n\n` +
+    `💎 *Net Balance:* ₹${Number(formData.collection) - Number(formData.expense || 0) - Number(formData.wages || 0) - Number(formData.advance || 0) - Number(formData.prize || 0) - Number(formData.pending || 0)}\n\n` +
     `✅ _Submitted by: ${formData.staffName}_`
 
   try {
