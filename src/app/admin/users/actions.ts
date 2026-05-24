@@ -67,6 +67,19 @@ export async function createUser(formData: FormData) {
 
   if (error) return { error: error.message }
   
+  // If the new user is an agent, automatically add them to the agents list
+  if (role === 'agent') {
+    await supabase.from('agents').insert({
+      agent_id: user_id.toUpperCase(),
+      full_name: full_name,
+      phone: null,
+      company: null,
+      commission_rate: 0,
+      status: 'active'
+    })
+    // We intentionally don't return if this fails, as the user was still created successfully
+  }
+  
   revalidatePath('/admin/users')
   return { success: true }
 }
