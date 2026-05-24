@@ -10,6 +10,7 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
   // 1. Insert the collection record
   const { error: collectionError } = await supabase.from('collections').insert({
     shop_id: shopId,
+    shop_name: shopName,
     staff_name: formData.staffName,
     amount: Number(formData.collection),
     expense: Number(formData.expense || 0),

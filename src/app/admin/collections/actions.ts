@@ -34,8 +34,9 @@ export async function getLotteryEntries(search?: string, period: string = 'today
     console.error("Error fetching collections:", error)
     return []
   }
-  return data
+  return data || []
 }
+
 
 export async function toggleCollectionLock(id: number, locked: boolean) {
   const supabase = createAdminClient()

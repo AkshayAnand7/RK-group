@@ -20,7 +20,7 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
   // Compute shop-wise totals from entries
   initialEntries.forEach((entry) => {
     const shop = entry.shop_name || 'Unknown';
-    if (!shopTotals[shop]) shopTotals[shop] = { collection: 0, expense: 0, entries: 0, shop_id: 'N/A' };
+    if (!shopTotals[shop]) shopTotals[shop] = { collection: 0, expense: 0, entries: 0, shop_id: entry.shop_id || 'N/A' };
     shopTotals[shop].collection += Number(entry.amount) || 0;
     shopTotals[shop].expense += Number(entry.expense) || 0;
     shopTotals[shop].entries += 1;
