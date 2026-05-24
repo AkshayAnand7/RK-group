@@ -17,17 +17,28 @@ export async function getLotteryEntries(search?: string, period: string = 'today
   }
 
   // Period Filter
-  const now = new Date()
+  // Use IST offset (+05:30) for accurate day boundaries
   if (period === 'today') {
-    const startOfDay = new Date(now.setHours(0,0,0,0)).toISOString()
-    query = query.gte('created_at', startOfDay)
+    const now = new Date()
+    // Get IST date components
+    const istOffset = 5.5 * 60 * 60 * 1000
+    const istNow = new Date(now.getTime() + istOffset)
+    const istDateStr = istNow.toISOString().split('T')[0] // YYYY-MM-DD in IST
+    // Start of day in IST = midnight IST = 18:30 UTC previous day
+    const startOfDayIST = new Date(`${istDateStr}T00:00:00+05:30`).toISOString()
+    query = query.gte('created_at', startOfDayIST)
   } else if (period === 'weekly') {
-    const startOfWeek = new Date(now.setDate(now.getDate() - 7)).toISOString()
-    query = query.gte('created_at', startOfWeek)
+    const weekAgo = new Date()
+    weekAgo.setDate(weekAgo.getDate() - 7)
+    weekAgo.setHours(0, 0, 0, 0)
+    query = query.gte('created_at', weekAgo.toISOString())
   } else if (period === 'monthly') {
-    const startOfMonth = new Date(now.setMonth(now.getMonth() - 1)).toISOString()
-    query = query.gte('created_at', startOfMonth)
+    const monthAgo = new Date()
+    monthAgo.setMonth(monthAgo.getMonth() - 1)
+    monthAgo.setHours(0, 0, 0, 0)
+    query = query.gte('created_at', monthAgo.toISOString())
   }
+  // period === 'all' → no date filter
 
   const { data, error } = await query
   if (error) {

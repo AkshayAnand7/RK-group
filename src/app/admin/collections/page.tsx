@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import { getLotteryEntries } from "./actions";
 import { getShops } from "../shops/actions";
 import CollectionsClient from "./collections-client";
+import { Loader2 } from "lucide-react";
 export const dynamic = 'force-dynamic';
 
 export default async function LotteryEntriesPage({
@@ -15,5 +17,13 @@ export default async function LotteryEntriesPage({
   const entries = await getLotteryEntries(search, period);
   const shops = await getShops();
 
-  return <CollectionsClient initialEntries={entries} initialShops={shops} />;
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+      </div>
+    }>
+      <CollectionsClient initialEntries={entries} initialShops={shops} />
+    </Suspense>
+  );
 }
