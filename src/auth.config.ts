@@ -9,22 +9,10 @@ export const authConfig = {
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
-      const path = nextUrl.pathname
-
-      // Public routes that don't require authentication
-      const publicRoutes = ['/login', '/']
-      const isPublicRoute = publicRoutes.includes(path)
-
-      if (isPublicRoute) {
-        return true
-      }
-
-      // All other routes require authentication
-      if (!isLoggedIn) {
-        return false // NextAuth will redirect to signIn page
-      }
-
+      // Let ALL requests through to the middleware handler.
+      // The middleware's auth() wrapper handles route protection
+      // with proper role-based checks and redirects.
+      // Returning true here means "allow the request to proceed to middleware".
       return true
     },
     jwt({ token, user }) {

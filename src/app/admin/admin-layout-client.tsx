@@ -59,7 +59,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
   const isActive = (href: string) => pathname === href;
 
   const handleLogout = () => {
-    signOut({ callbackUrl: "/login" });
+    signOut({ callbackUrl: "/" });
   };
 
   const SidebarContent = () => (

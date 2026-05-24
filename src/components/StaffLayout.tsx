@@ -46,7 +46,7 @@ export default function StaffLayout({ children, module, shopName }: StaffLayoutP
         <div className="flex items-center gap-3">
 
           <button 
-            onClick={() => signOut({ callbackUrl: "/login" })} 
+            onClick={() => signOut({ callbackUrl: "/" })} 
             className="p-2 text-text-muted hover:text-danger cursor-pointer transition-colors"
           >
             <LogOut className="w-5 h-5" />

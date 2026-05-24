@@ -22,6 +22,9 @@ const ROLE_DEFAULT_PAGE: Record<string, string> = {
   staff: '/travel',
 }
 
+// All protected route prefixes
+const PROTECTED_PREFIXES = ['/admin', '/lottery', '/travel', '/software-sale']
+
 export default auth((req) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
@@ -36,35 +39,44 @@ export default auth((req) => {
     return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
   }
 
-  // If on login page and already logged in, redirect to appropriate dashboard
-  if (isOnLogin && isLoggedIn) {
-    const callbackUrl = nextUrl.searchParams.get('callbackUrl')
-    if (callbackUrl) {
-      // Validate that the user can actually access the callbackUrl
-      const allowedPrefixes = ROLE_ACCESS[role] || []
-      const canAccess = allowedPrefixes.some(prefix => callbackUrl.startsWith(prefix))
-      if (canAccess) {
-        return NextResponse.redirect(new URL(callbackUrl, nextUrl))
+  // --- LOGIN PAGE LOGIC ---
+  if (isOnLogin) {
+    // If already logged in, redirect to dashboard (don't show login page again)
+    if (isLoggedIn) {
+      const callbackUrl = nextUrl.searchParams.get('callbackUrl')
+      if (callbackUrl) {
+        // Validate that the user can actually access the callbackUrl
+        const allowedPrefixes = ROLE_ACCESS[role] || []
+        const canAccess = allowedPrefixes.some(prefix => callbackUrl.startsWith(prefix))
+        if (canAccess) {
+          return NextResponse.redirect(new URL(callbackUrl, nextUrl))
+        }
       }
+      // No callback or not allowed — send to their default dashboard
+      const defaultPage = ROLE_DEFAULT_PAGE[role] || '/'
+      return NextResponse.redirect(new URL(defaultPage, nextUrl))
     }
-    // No callback or not allowed — send to their default dashboard
-    const defaultPage = ROLE_DEFAULT_PAGE[role] || '/'
-    return NextResponse.redirect(new URL(defaultPage, nextUrl))
+    // Not logged in on login page — allow through
+    return NextResponse.next()
   }
 
-  // For all protected routes, check role-based access
-  if (isLoggedIn && !isOnLogin) {
-    const allowedPrefixes = ROLE_ACCESS[role] || []
-    const isProtectedModule = ['/admin', '/lottery', '/travel', '/software-sale'].some(
-      prefix => path.startsWith(prefix)
-    )
+  // --- PROTECTED ROUTES LOGIC ---
+  const isProtectedRoute = PROTECTED_PREFIXES.some(prefix => path.startsWith(prefix))
 
-    if (isProtectedModule) {
-      const canAccess = allowedPrefixes.some(prefix => path.startsWith(prefix))
-      if (!canAccess) {
-        // Redirect to login with unauthorized error
-        return NextResponse.redirect(new URL('/login?error=Unauthorized', nextUrl))
-      }
+  if (isProtectedRoute) {
+    // Not logged in — redirect to login with callbackUrl
+    if (!isLoggedIn) {
+      const loginUrl = new URL('/login', nextUrl)
+      loginUrl.searchParams.set('callbackUrl', path)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    // Logged in — check role-based access
+    const allowedPrefixes = ROLE_ACCESS[role] || []
+    const canAccess = allowedPrefixes.some(prefix => path.startsWith(prefix))
+    if (!canAccess) {
+      // Redirect to home page, not login — prevents back-button loop to login
+      return NextResponse.redirect(new URL('/', nextUrl))
     }
   }
 
@@ -78,5 +90,5 @@ export const config = {
     '/lottery/:path*',
     '/software-sale/:path*',
     '/login',
-  ]
+  ],
 }
