@@ -1,4 +1,0 @@
-ALTER TABLE bookings ADD COLUMN IF NOT EXISTS remark TEXT;
-ALTER TABLE bookings ADD COLUMN IF NOT EXISTS amount NUMERIC DEFAULT 0;
-
-NOTIFY pgrst, 'reload schema';
