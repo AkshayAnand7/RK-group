@@ -11,7 +11,6 @@ export async function submitSoftwareSale(formData: any) {
   const {
     date_from,
     date_to,
-    shop_name,
     agent_name,
     software_sale_1,
     whatsapp_count,
@@ -30,7 +29,7 @@ export async function submitSoftwareSale(formData: any) {
     const { data, error } = await supabase.from('software_sales').insert({
       date_from,
       date_to,
-      shop_name,
+      shop_name: '-',
       agent_name,
       software_sale_1: parseFloat(software_sale_1) || 0,
       whatsapp_count: parseFloat(whatsapp_count) || 0,
@@ -54,7 +53,6 @@ export async function submitSoftwareSale(formData: any) {
       `*SOFTWARE SALE REPORT*`,
       `----------------------------`,
       `📅 *Date:* ${date_from} to ${date_to}`,
-      `🏪 *Shop:* ${shop_name}`,
       `👤 *Agent:* ${agent_name}`,
       `----------------------------`,
       `🔹 *Software Sale 1:* ₹${parseFloat(software_sale_1) || 0}`,

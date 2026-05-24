@@ -20,7 +20,6 @@ export default function SoftwareSalePage() {
   const [formData, setFormData] = useState({
     date_from: "",
     date_to: "",
-    shop_name: "",
     agent_name: "",
     software_sale_1: "",
     whatsapp_count: "",
@@ -89,7 +88,6 @@ export default function SoftwareSalePage() {
         // Reset form fields but keep dates
         setFormData(prev => ({
           ...prev,
-          shop_name: "",
           agent_name: "",
           software_sale_1: "",
           whatsapp_count: "",
@@ -189,20 +187,8 @@ export default function SoftwareSalePage() {
 
             {/* Shop & Agent Details */}
             <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-widest flex items-center gap-2">
-                    <Store className="w-3.5 h-3.5" /> Shop Name
-                  </label>
-                  <input 
-                    type="text" 
-                    required
-                    placeholder="Enter shop name"
-                    value={formData.shop_name}
-                    onChange={e => setFormData({...formData, shop_name: e.target.value})}
-                    className="w-full h-14 px-5 bg-page border border-border rounded-2xl text-sm font-bold focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition-all outline-none" 
-                  />
-                </div>
+              <div className="grid grid-cols-1 gap-4">
+
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-widest flex items-center gap-2">
                     <User className="w-3.5 h-3.5" /> Agent Name
