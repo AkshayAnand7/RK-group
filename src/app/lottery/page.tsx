@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Ticket, Store, ChevronRight, ArrowLeft } from "lucide-react";
+import { Ticket, Store, ChevronRight, ArrowLeft, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getShops } from "@/app/admin/shops/actions";
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 
 export default function LotteryShopList() {
   const router = useRouter();
@@ -72,9 +72,17 @@ export default function LotteryShopList() {
 
       {/* Header */}
       <div className="w-full max-w-2xl mb-12 flex flex-col items-center">
-        <Link href="/" className="self-start flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-8 font-bold text-xs uppercase tracking-widest">
-          <ArrowLeft className="w-4 h-4" /> Back to Home
-        </Link>
+        <div className="w-full flex justify-between items-center mb-8 px-2">
+          <Link href="/" className="flex items-center gap-2 text-text-muted hover:text-primary transition-colors font-bold text-xs uppercase tracking-widest">
+            <ArrowLeft className="w-4 h-4" /> Back to Home
+          </Link>
+          <button 
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="flex items-center gap-2 text-red-500 hover:text-red-600 transition-colors font-bold text-xs uppercase tracking-widest cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" /> Logout
+          </button>
+        </div>
         
         <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl overflow-hidden shadow-2xl shadow-lottery/20 border-2 border-white mb-6 animate-float">
           <img src="/logo.png?v=2" alt="RK Group" className="w-full h-full object-cover" />

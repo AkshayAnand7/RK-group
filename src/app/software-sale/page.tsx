@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   Monitor, ArrowLeft, Copy, History, 
-  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User, AlertTriangle, X
+  Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User, AlertTriangle, X, LogOut
 } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { submitSoftwareSale, getPendingAmounts, markPendingReceived } from "./actions";
 
 export default function SoftwareSalePage() {
@@ -145,6 +146,12 @@ export default function SoftwareSalePage() {
             <Link href="/software-sale/history" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-border rounded-xl font-bold text-xs uppercase tracking-widest text-text-secondary hover:bg-slate-50 transition-colors">
               <History className="w-4 h-4" /> View History
             </Link>
+            <button 
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="flex items-center gap-2 px-5 py-2.5 bg-red-50 border border-red-200 rounded-xl font-bold text-xs uppercase tracking-widest text-red-600 hover:bg-red-100 transition-colors"
+            >
+              <LogOut className="w-4 h-4" /> Logout
+            </button>
           </div>
         </div>
 
