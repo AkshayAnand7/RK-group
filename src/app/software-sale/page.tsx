@@ -388,10 +388,9 @@ export default function SoftwareSalePage() {
                     <div key={pending.id} className="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl flex flex-col gap-4 relative hover:bg-amber-50 transition-colors">
                       <div className="flex items-start gap-4">
                         <div className="flex-1">
-                          <p className="text-sm font-bold text-amber-700">
-                            <span className="font-black uppercase">{pending.shop_name}</span> 
-                            <span className="opacity-60 text-[10px] uppercase ml-2 tracking-widest">ending {pending.date_to}</span>
-                          </p>
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-text-muted font-bold uppercase tracking-widest">{new Date(pending.date_to).toLocaleDateString()}</span>
+                          </div>
                           <p className="text-2xl font-black text-amber-900 mt-1">₹{pending.pending.toLocaleString("en-IN")}</p>
                           <p className="text-[9px] text-amber-700/70 uppercase tracking-widest font-bold mt-1">
                             Balance ₹{pending.balance.toLocaleString("en-IN")} • Collected ₹{pending.collected_amount.toLocaleString("en-IN")}

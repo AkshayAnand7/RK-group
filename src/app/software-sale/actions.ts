@@ -29,7 +29,6 @@ export async function submitSoftwareSale(formData: any) {
     const { data, error } = await supabase.from('software_sales').insert({
       date_from,
       date_to,
-      shop_name: '-',
       agent_name,
       software_sale_1: parseFloat(software_sale_1) || 0,
       whatsapp_count: parseFloat(whatsapp_count) || 0,
@@ -86,9 +85,6 @@ export async function getSoftwareSalesHistory() {
       .select('*')
       .order('created_at', { ascending: false })
 
-    if (activeShopName && activeShopName !== 'All') {
-      query = query.eq('shop_name', activeShopName)
-    }
 
     const { data, error } = await query
     
@@ -109,7 +105,7 @@ export async function getPendingAmounts() {
   try {
     const { data, error } = await supabase
       .from('software_sales')
-      .select('id, old_amount, balance, collected_amount, shop_name, date_to')
+      .select('id, old_amount, balance, collected_amount, date_to')
       .order('created_at', { ascending: false })
     
     if (error || !data) return []
@@ -125,7 +121,6 @@ export async function getPendingAmounts() {
           balance: bal,
           collected_amount: coll,
           pending: bal - coll,
-          shop_name: row.shop_name || '',
           date_to: row.date_to || ''
         }
       })

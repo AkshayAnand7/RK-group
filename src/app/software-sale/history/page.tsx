@@ -69,7 +69,6 @@ export default function SoftwareSaleHistoryPage() {
               <thead>
                 <tr className="bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest">
                   <th className="px-6 py-5 whitespace-nowrap">Period</th>
-                  <th className="px-6 py-5 whitespace-nowrap">Shop</th>
                   <th className="px-6 py-5 whitespace-nowrap">Agent</th>
                   <th className="px-6 py-5 whitespace-nowrap text-right">SW Sale 1</th>
                   <th className="px-6 py-5 whitespace-nowrap text-right">WhatsApp</th>
@@ -81,7 +80,7 @@ export default function SoftwareSaleHistoryPage() {
               <tbody className="divide-y divide-border">
                 {loading ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-20 text-center">
+                    <td colSpan={7} className="px-6 py-20 text-center">
                       <div className="flex flex-col items-center gap-4">
                         <div className="w-10 h-10 border-4 border-slate-800 border-t-transparent rounded-full animate-spin" />
                         <p className="text-xs font-bold text-text-muted uppercase tracking-widest">Loading history...</p>
@@ -90,7 +89,7 @@ export default function SoftwareSaleHistoryPage() {
                   </tr>
                 ) : history.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-20 text-center">
+                    <td colSpan={7} className="px-6 py-20 text-center">
                       <p className="text-sm font-bold text-text-muted uppercase tracking-widest">No sales records found</p>
                     </td>
                   </tr>
@@ -102,9 +101,6 @@ export default function SoftwareSaleHistoryPage() {
                           <span className="text-xs font-bold text-text-primary whitespace-nowrap">{new Date(sale.date_from).toLocaleDateString()}</span>
                           <span className="text-[10px] font-medium text-text-muted whitespace-nowrap">to {new Date(sale.date_to).toLocaleDateString()}</span>
                         </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <span className="text-sm font-black text-slate-800 uppercase tracking-tight whitespace-nowrap">{sale.shop_name}</span>
                       </td>
                       <td className="px-6 py-5 text-sm text-text-secondary whitespace-nowrap">{sale.agent_name || '-'}</td>
                       <td className="px-6 py-5 font-mono-nums text-sm text-right">₹{sale.software_sale_1 || sale.rapido_sale || 0}</td>
