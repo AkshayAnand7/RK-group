@@ -42,6 +42,7 @@ export async function submitTrip(formData: any) {
     trip_type: formData.type,
     is_locked: false,
     staff_name: formData.staffName,
+    vehicle: formData.vehicle,
     created_at: new Date().toISOString()
   })
 

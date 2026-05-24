@@ -24,13 +24,13 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
 
   const handleExportPDF = () => {
     const headers = [["ID", "Date", "Driver", "Vehicle", "Route", "Amount", "Status"]];
-    const data = filteredTrips.map(t => [t.id, t.date, t.driver?.full_name || 'N/A', t.vehicle?.vehicle_number || 'N/A', `${t.from_location} - ${t.to_location}`, t.received_amount, t.is_locked ? "Locked" : "Open"]);
+    const data = filteredTrips.map(t => [t.id, t.date, t.driver_name || t.driver?.full_name || 'N/A', t.vehicle?.vehicle_number || t.vehicle || 'N/A', `${t.from_location} - ${t.to_location}`, t.total_amount, t.is_locked ? "Locked" : "Open"]);
     exportToPDF("RK Travel Trips Report", headers, data, "travel_trips");
   };
 
   const handleExportExcel = () => {
     const data = filteredTrips.map(t => ({
-      ID: t.id, Date: t.date, Driver: t.driver?.full_name || 'N/A', Vehicle: t.vehicle?.vehicle_number || 'N/A', From: t.from_location, To: t.to_location, Type: t.trip_type, Total: t.total_amount, Received: t.received_amount, Status: t.is_locked ? "Locked" : "Open"
+      ID: t.id, Date: t.date, Driver: t.driver_name || t.driver?.full_name || 'N/A', Vehicle: t.vehicle?.vehicle_number || t.vehicle || 'N/A', From: t.from_location, To: t.to_location, Type: t.trip_type, Total: t.total_amount, Received: t.received_amount, Status: t.is_locked ? "Locked" : "Open"
     }));
     exportToExcel(data, "travel_trips");
   };
