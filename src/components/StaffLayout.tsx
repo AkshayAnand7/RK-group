@@ -34,7 +34,7 @@ export default function StaffLayout({ children, module, shopName }: StaffLayoutP
       <header className="sticky top-0 z-30 h-14 bg-surface border-b border-border flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg overflow-hidden border border-border shadow-sm">
-            <img src="/logo.jpg" alt="RK Group" className="w-full h-full object-cover" />
+            <img src="/logo.png?v=2" alt="RK Group" className="w-full h-full object-cover" />
           </div>
           <div>
             <h1 className="text-sm font-bold text-text-primary leading-none">

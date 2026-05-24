@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Search, FileText, Table as TableIcon, 
   ArrowRight, Lock, Unlock, Edit3, Trash2, Clock, Loader2, XCircle
@@ -9,6 +10,7 @@ import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
 import { toggleTripLock, updateTrip, deleteTrip } from "./actions";
 
 export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
+  const router = useRouter();
   const [trips, setTrips] = useState(initialTrips);
   const [search, setSearch] = useState("");
   const [period, setPeriod] = useState("today");
@@ -39,7 +41,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
     startTransition(async () => {
       const result = await toggleTripLock(id, !currentLock);
       if (result.success) {
-        window.location.reload();
+        router.refresh();
       } else {
         alert(result.error);
       }
@@ -53,7 +55,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
       const result = await updateTrip(editingTrip.id, formData);
       if (result.success) {
         setEditingTrip(null);
-        window.location.reload();
+        router.refresh();
       } else {
         alert(result.error);
       }
@@ -64,7 +66,7 @@ export default function TripsClient({ initialTrips }: { initialTrips: any[] }) {
     if (confirm("Delete this trip record?")) {
       const result = await deleteTrip(id);
       if (result.success) {
-        window.location.reload();
+        router.refresh();
       } else {
         alert(result.error);
       }

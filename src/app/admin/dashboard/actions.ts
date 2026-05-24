@@ -9,9 +9,11 @@ export async function getDashboardStats(period: string = 'week') {
   let startDate = new Date()
 
   if (period === 'today') {
-    startDate.setHours(0, 0, 0, 0)
-    // Adjust for common timezone offsets to be safe (e.g. IST is +5:30)
-    startDate.setMinutes(startDate.getMinutes() - 330)
+    // Calculate IST midnight properly regardless of server timezone
+    const istOffset = 5.5 * 60 * 60 * 1000
+    const istNow = new Date(now.getTime() + istOffset)
+    const istDateStr = istNow.toISOString().split('T')[0]
+    startDate = new Date(`${istDateStr}T00:00:00+05:30`)
   } else if (period === 'week') {
     startDate.setDate(now.getDate() - 7)
   } else if (period === 'month') {

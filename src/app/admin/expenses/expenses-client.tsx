@@ -1,5 +1,6 @@
 "use client";
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Plus, Search, X, Loader2, CheckCircle, Fuel, Wrench, 
   Users, AlertTriangle, Trash2, Calendar, IndianRupee 
@@ -29,6 +30,7 @@ export default function ExpensesClient({
   const [search, setSearch] = useState("");
   const [isPending, startTransition] = useTransition();
   const [catFilter, setCatFilter] = useState("all");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,7 +39,7 @@ export default function ExpensesClient({
       const result = await addExpense(formData);
       if (result.success) {
         setShowForm(false);
-        window.location.reload();
+        router.refresh();
       } else {
         alert(result.error);
       }
@@ -49,7 +51,7 @@ export default function ExpensesClient({
       startTransition(async () => {
         const result = await deleteExpense(id);
         if (result.success) {
-          window.location.reload();
+          router.refresh();
         } else {
           alert(result.error);
         }

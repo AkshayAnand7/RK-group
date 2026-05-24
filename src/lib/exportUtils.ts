@@ -1,8 +1,12 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
+/**
+ * Export utilities — uses dynamic imports to avoid bundling
+ * jsPDF (~280KB) and xlsx (~500KB) into every page.
+ */
 
-export const exportToPDF = (title: string, headers: string[][], data: any[][], fileName: string) => {
+export const exportToPDF = async (title: string, headers: string[][], data: any[][], fileName: string) => {
+  const { default: jsPDF } = await import("jspdf");
+  const { default: autoTable } = await import("jspdf-autotable");
+
   const doc = new jsPDF();
   
   // Add Title
@@ -29,7 +33,9 @@ export const exportToPDF = (title: string, headers: string[][], data: any[][], f
   doc.save(`${fileName}.pdf`);
 };
 
-export const exportToExcel = (data: any[], fileName: string) => {
+export const exportToExcel = async (data: any[], fileName: string) => {
+  const XLSX = await import("xlsx");
+
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
