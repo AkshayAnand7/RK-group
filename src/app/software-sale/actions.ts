@@ -105,32 +105,51 @@ export async function getSoftwareSalesHistory() {
   }
 }
 
-export async function getLastOldAmount() {
+export async function getPendingAmounts() {
   const supabase = createAdminClient()
   
   try {
     const { data, error } = await supabase
       .from('software_sales')
-      .select('old_amount, balance, collected_amount, shop_name, date_to')
+      .select('id, old_amount, balance, collected_amount, shop_name, date_to')
       .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
     
-    if (error || !data) return null
+    if (error || !data) return []
     
-    const balance = data.balance || 0
-    const collected = data.collected_amount || 0
-    const pending = balance - collected
-
-    return {
-      old_amount: data.old_amount || 0,
-      balance: balance,
-      collected_amount: collected,
-      pending: pending,
-      shop_name: data.shop_name || '',
-      date_to: data.date_to || ''
-    }
+    // Filter rows where balance > collected_amount
+    const pending = data
+      .map(row => {
+        const bal = row.balance || 0
+        const coll = row.collected_amount || 0
+        return {
+          id: row.id,
+          old_amount: row.old_amount || 0,
+          balance: bal,
+          collected_amount: coll,
+          pending: bal - coll,
+          shop_name: row.shop_name || '',
+          date_to: row.date_to || ''
+        }
+      })
+      .filter(row => row.pending > 0)
+      
+    return pending
   } catch {
-    return null
+    return []
+  }
+}
+
+export async function markPendingReceived(id: number, balance: number) {
+  const supabase = createAdminClient()
+  try {
+    const { error } = await supabase
+      .from('software_sales')
+      .update({ collected_amount: balance })
+      .eq('id', id)
+      
+    if (error) return { success: false, error: error.message }
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: 'Failed to update status' }
   }
 }

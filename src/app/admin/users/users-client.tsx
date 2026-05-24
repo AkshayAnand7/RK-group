@@ -7,14 +7,14 @@ import {
 } from "lucide-react";
 import { updateUserRole, deleteUser, createUser } from "./actions";
 
-const roles = ["admin", "agent", "staff"];
+const roles = ["admin", "agent", "lottery_staff", "travel_staff"];
 
 export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [showRoleModal, setShowRoleModal] = useState<any>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newUser, setNewUser] = useState({ full_name: "", user_id: "", password: "", role: "staff" });
+  const [newUser, setNewUser] = useState({ full_name: "", user_id: "", password: "", role: "travel_staff" });
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
       const result = await createUser(formData);
       if (result.success) {
         setShowAddModal(false);
-        setNewUser({ full_name: "", user_id: "", password: "", role: "staff" });
+        setNewUser({ full_name: "", user_id: "", password: "", role: "travel_staff" });
         window.location.reload();
       } else {
         alert(result.error);
@@ -45,7 +45,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Delete this user profile? This won't remove their login credentials but will block access to these modules.")) {
+    if (confirm("Delete this user? This will completely remove their login credentials and block their access.")) {
       startTransition(async () => {
         const result = await deleteUser(id);
         if (result.success) {
@@ -158,7 +158,9 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
                     <p className="text-xs font-black uppercase tracking-widest text-text-primary">{role.replace('_', ' ')}</p>
                     <p className="text-[10px] font-bold text-text-muted mt-0.5">
                       {role === 'admin' ? "Full access to all management modules" : 
-                       role === 'agent' ? "Access to sales monitoring & analytics" : "General staff access for daily entries"}
+                       role === 'agent' ? "Access to sales monitoring & analytics" :
+                       role === 'lottery_staff' ? "Access only to RK Lottery module" :
+                       "Access only to RK Travel module"}
                     </p>
                   </div>
                   {showRoleModal.role === role && <CheckCircle className="w-5 h-5 text-primary" />}

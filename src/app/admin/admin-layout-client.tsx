@@ -45,7 +45,6 @@ const navSections = [
     items: [
       { name: "Reports", href: "/admin/reports", icon: FileBarChart },
       { name: "Users", href: "/admin/users", icon: Users },
-      { name: "Settings", href: "/admin/settings", icon: Settings },
     ],
   },
 ];
@@ -173,8 +172,8 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
 
               {profileOpen && (
                 <div className="absolute right-0 top-12 w-48 bg-surface border border-border rounded-xl shadow-lg p-1.5 z-50 animate-fade-in">
-                  <Link href="/admin/settings" className="flex items-center gap-2 px-3 py-2 text-sm text-text-secondary hover:bg-page rounded-lg transition-colors">
-                    <Settings className="w-4 h-4" /> Settings
+                  <Link href="/" className="flex items-center gap-2 px-3 py-2 text-sm text-text-secondary hover:bg-page rounded-lg transition-colors">
+                    <Monitor className="w-4 h-4" /> Portals
                   </Link>
                   <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-danger-subtle rounded-lg transition-colors cursor-pointer">
                     <LogOut className="w-4 h-4" /> Logout

@@ -1,20 +1,20 @@
 'use server'
 
 import { createAdminClient } from '@/utils/supabase/admin'
-
 import { revalidatePath } from 'next/cache'
+import bcrypt from 'bcryptjs'
 
 export async function getUsers() {
   try {
     const supabase = createAdminClient()
 
     const { data, error } = await supabase
-      .from('profiles')
+      .from('auth_users')
       .select('*')
       .order('full_name', { ascending: true })
 
     if (error) {
-      console.error("Supabase Profiles Error:", error)
+      console.error("Supabase Auth Users Error:", error)
       return []
     }
     
@@ -29,7 +29,7 @@ export async function updateUserRole(id: string, role: string) {
   const supabase = createAdminClient()
 
   const { error } = await supabase
-    .from('profiles')
+    .from('auth_users')
     .update({ role })
     .eq('id', id)
 
@@ -47,27 +47,25 @@ export async function createUser(formData: FormData) {
   const full_name = formData.get('full_name') as string
   const role = formData.get('role') as string
 
-  // Auto-generate a valid email for Supabase Auth
-  const email = `${user_id.toLowerCase().replace(/[^a-z0-9]/g, '')}@rkgroup.local`
+  // Hash password
+  const hashedPassword = await bcrypt.hash(password, 10)
 
-  // 1. Create User in Auth
-  const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true,
-    user_metadata: { full_name, user_id }
-  })
+  // Generate a unique ID (e.g. cuid_...)
+  const newId = `cuid_${user_id.toLowerCase()}_${Date.now()}`
 
-  if (authError) return { error: authError.message }
+  // Insert into auth_users
+  const { error } = await supabase
+    .from('auth_users')
+    .insert({
+      id: newId,
+      user_id: user_id,
+      password: hashedPassword,
+      full_name: full_name,
+      role: role,
+      is_active: true
+    })
 
-  // 2. Profile is handled by the SQL trigger we added earlier
-  // But let's manually update the role since the trigger defaults to 'staff'
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .update({ role, full_name, email })
-    .eq('id', authUser.user.id)
-
-  if (profileError) return { error: profileError.message }
+  if (error) return { error: error.message }
   
   revalidatePath('/admin/users')
   return { success: true }
@@ -76,7 +74,7 @@ export async function createUser(formData: FormData) {
 export async function deleteUser(id: string) {
   const supabase = createAdminClient()
 
-  const { error } = await supabase.from('profiles').delete().eq('id', id)
+  const { error } = await supabase.from('auth_users').delete().eq('id', id)
   
   if (error) return { error: error.message }
 

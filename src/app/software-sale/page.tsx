@@ -6,14 +6,15 @@ import {
   Monitor, ArrowLeft, Copy, History, 
   Plus, Calendar, Store, Calculator, CheckCircle2, Loader2, User, AlertTriangle, X
 } from "lucide-react";
-import { submitSoftwareSale, getLastOldAmount } from "./actions";
+import { submitSoftwareSale, getPendingAmounts, markPendingReceived } from "./actions";
 
 export default function SoftwareSalePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [lastOldAmount, setLastOldAmount] = useState<any>(null);
-  const [showReminder, setShowReminder] = useState(true);
+  const [pendingAmounts, setPendingAmounts] = useState<any[]>([]);
+  const [hiddenPending, setHiddenPending] = useState<Set<number>>(new Set());
+  const [showPendingModal, setShowPendingModal] = useState(false);
 
   const [formData, setFormData] = useState({
     date_from: "",
@@ -32,19 +33,17 @@ export default function SoftwareSalePage() {
     balance: 0
   });
 
-  // Fetch last old amount on page load
-  useEffect(() => {
-    async function fetchLastOld() {
-      try {
-        const data = await getLastOldAmount();
-        if (data && data.pending !== 0) {
-          setLastOldAmount(data);
-        }
-      } catch (err) {
-        console.error("Error fetching last old amount:", err);
-      }
+  const fetchPending = async () => {
+    try {
+      const data = await getPendingAmounts();
+      setPendingAmounts(data);
+    } catch (err) {
+      console.error("Error fetching pending amounts:", err);
     }
-    fetchLastOld();
+  };
+
+  useEffect(() => {
+    fetchPending();
   }, []);
 
   // Auto-calculate WhatsApp Total = count * commission
@@ -101,8 +100,7 @@ export default function SoftwareSalePage() {
           collected_amount: ""
         }));
 
-        // Hide reminder after successful submission
-        setShowReminder(false);
+        fetchPending();
       } else {
         alert(result.error || "Error submitting sale. Please try again.");
       }
@@ -135,39 +133,20 @@ export default function SoftwareSalePage() {
           </div>
 
           <div className="flex items-center gap-3">
+            {pendingAmounts.filter(p => !hiddenPending.has(p.id)).length > 0 && (
+              <button 
+                type="button"
+                onClick={() => setShowPendingModal(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-amber-50 border border-amber-200 rounded-xl font-bold text-xs uppercase tracking-widest text-amber-700 hover:bg-amber-100 transition-colors"
+              >
+                <AlertTriangle className="w-4 h-4" /> Pending Dues ({pendingAmounts.filter(p => !hiddenPending.has(p.id)).length})
+              </button>
+            )}
             <Link href="/software-sale/history" className="flex items-center gap-2 px-5 py-2.5 bg-white border border-border rounded-xl font-bold text-xs uppercase tracking-widest text-text-secondary hover:bg-slate-50 transition-colors">
               <History className="w-4 h-4" /> View History
             </Link>
           </div>
         </div>
-
-        {/* Old Amount Reminder Banner */}
-        {lastOldAmount && showReminder && (
-          <div className="mb-6 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-4 animate-fade-in relative">
-            <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-5 h-5 text-amber-600" />
-            </div>
-            <div className="flex-1">
-              <p className="text-xs font-black text-amber-800 uppercase tracking-widest mb-1">Previous Balance Reminder</p>
-              <p className="text-sm font-bold text-amber-700">
-                Last submission for <span className="font-black">{lastOldAmount.shop_name}</span> (ending {lastOldAmount.date_to}) had a pending amount of <span className="text-lg font-black text-amber-900">₹{lastOldAmount.pending.toLocaleString("en-IN")}</span>
-                <span className="text-xs opacity-70 ml-1">(Balance ₹{lastOldAmount.balance.toLocaleString("en-IN")} - Collected ₹{lastOldAmount.collected_amount.toLocaleString("en-IN")})</span>
-              </p>
-              <button 
-                onClick={() => {
-                  setFormData(prev => ({ ...prev, old_amount: lastOldAmount.pending.toString() }));
-                  setShowReminder(false);
-                }}
-                className="mt-2 px-4 py-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors cursor-pointer"
-              >
-                Use ₹{lastOldAmount.pending.toLocaleString("en-IN")} as Old Amount
-              </button>
-            </div>
-            <button onClick={() => setShowReminder(false)} className="p-1 hover:bg-amber-100 rounded-lg transition-colors cursor-pointer">
-              <X className="w-4 h-4 text-amber-500" />
-            </button>
-          </div>
-        )}
 
         {/* Form Card */}
         <div className="glass p-4 sm:p-8 md:p-12 rounded-3xl sm:rounded-4xl border border-white shadow-2xl relative overflow-hidden animate-fade-in">
@@ -388,6 +367,95 @@ export default function SoftwareSalePage() {
             </div>
           )}
         </div>
+
+        {/* Pending Amounts Modal */}
+        {showPendingModal && pendingAmounts.filter(p => !hiddenPending.has(p.id)).length > 0 && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+            <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up">
+              <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-black text-slate-800 uppercase tracking-widest">Pending Dues</h2>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Select an action for each pending amount</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowPendingModal(false)}
+                  className="p-2 hover:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+                >
+                  <X className="w-6 h-6 text-slate-400" />
+                </button>
+              </div>
+              <div className="p-6 overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {pendingAmounts.filter(p => !hiddenPending.has(p.id)).map(pending => (
+                    <div key={pending.id} className="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl flex flex-col gap-4 relative hover:bg-amber-50 transition-colors">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          <p className="text-sm font-bold text-amber-700">
+                            <span className="font-black uppercase">{pending.shop_name}</span> 
+                            <span className="opacity-60 text-[10px] uppercase ml-2 tracking-widest">ending {pending.date_to}</span>
+                          </p>
+                          <p className="text-2xl font-black text-amber-900 mt-1">₹{pending.pending.toLocaleString("en-IN")}</p>
+                          <p className="text-[9px] text-amber-700/70 uppercase tracking-widest font-bold mt-1">
+                            Balance ₹{pending.balance.toLocaleString("en-IN")} • Collected ₹{pending.collected_amount.toLocaleString("en-IN")}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-2 pt-4 border-t border-amber-200/50">
+                        <button 
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, old_amount: pending.pending.toString() }));
+                            setShowPendingModal(false);
+                          }}
+                          className="flex-1 px-3 py-2 bg-amber-200 hover:bg-amber-300 text-amber-900 text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors cursor-pointer text-center"
+                        >
+                          Use as Old
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={async () => {
+                            const res = await markPendingReceived(pending.id, pending.balance);
+                            if (res.success) {
+                              const newList = pendingAmounts.filter(p => p.id !== pending.id);
+                              setPendingAmounts(newList);
+                              if (newList.filter(p => !hiddenPending.has(p.id)).length === 0) {
+                                setShowPendingModal(false);
+                              }
+                            } else {
+                              alert(res.error);
+                            }
+                          }}
+                          className="flex-1 px-3 py-2 bg-green-100 hover:bg-green-200 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1"
+                        >
+                          <CheckCircle2 className="w-3 h-3" /> Received
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => {
+                            const newHidden = new Set(hiddenPending);
+                            newHidden.add(pending.id);
+                            setHiddenPending(newHidden);
+                            if (pendingAmounts.filter(p => !newHidden.has(p.id)).length === 0) {
+                              setShowPendingModal(false);
+                            }
+                          }}
+                          className="w-full sm:w-auto px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1"
+                        >
+                          <X className="w-3 h-3" /> Hide
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="mt-12 text-center">
           <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em]">RK Group Software Portal</p>
