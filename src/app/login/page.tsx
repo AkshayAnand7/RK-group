@@ -59,13 +59,34 @@ function LoginForm() {
         }
         setLoading(false)
       } else {
+        // Fetch the fresh session to get the user's role
+        const session = await getSession();
+        const role = (session?.user as any)?.role || '';
+
         // If there's a callbackUrl, go there. Otherwise, redirect based on role.
         if (callbackUrl) {
+          // Check if they actually have permission for the callbackUrl
+          const ROLE_ACCESS: Record<string, string[]> = {
+            admin: ['/admin', '/lottery', '/travel', '/software-sale'],
+            agent: ['/lottery', '/travel', '/software-sale'],
+            lottery_staff: ['/lottery'],
+            travel_staff: ['/travel'],
+            staff: ['/travel'],
+          };
+          
+          const allowedPrefixes = ROLE_ACCESS[role] || [];
+          const canAccess = allowedPrefixes.some(prefix => callbackUrl.startsWith(prefix));
+          
+          if (!canAccess) {
+            // Revert login since they can't access what they requested
+            await signOut({ redirect: false });
+            setError(`Access Denied: Your role (${role.toUpperCase()}) does not have permission for this portal.`);
+            setLoading(false);
+            return;
+          }
+
           window.location.replace(callbackUrl);
         } else {
-          // Fetch the fresh session to get the user's role
-          const session = await getSession();
-          const role = (session?.user as any)?.role || '';
           const roleDefaultPages: Record<string, string> = {
             admin: '/admin/dashboard',
             agent: '/software-sale',
