@@ -6,7 +6,7 @@ import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard, Store, ClipboardList, Bus, Fuel, FileBarChart,
   Bell, Users, Settings, LogOut, Menu, X, ChevronDown,
-  Car, UserCheck, Briefcase,
+  Car, UserCheck, Briefcase, Monitor
 } from "lucide-react";
 
 const navSections = [
