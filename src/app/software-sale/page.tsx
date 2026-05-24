@@ -334,7 +334,7 @@ export default function SoftwareSalePage() {
               <button 
                 type="button"
                 onClick={() => setFormData({
-                  date_from: "", date_to: "", shop_name: "", agent_name: "",
+                  date_from: "", date_to: "", agent_name: "",
                   software_sale_1: "", whatsapp_count: "", whatsapp_cm: "",
                   whatsapp_total: 0, old_amount: "", total: 0, win_amount: "", 
                   paid_amount: "", collected_amount: "", balance: 0
