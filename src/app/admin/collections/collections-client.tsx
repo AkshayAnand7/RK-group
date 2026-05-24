@@ -159,7 +159,7 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
         </div>
       </div>
 
-      {/* Grid of Shops (Replicating the Shop Management UI) */}
+      {/* Grid of Shops */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 scroll-stagger">
         {shopList.map(([shop, totals]: [string, any]) => (
           <div key={shop} className="glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border border-border group hover:bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden flex flex-col h-full">
@@ -213,123 +213,228 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
         </div>
       )}
 
-      {/* History Modal */}
+      {/* ===== History Modal ===== */}
       {selectedShop && (
-        <div className="fixed inset-0 z-[50] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[50] flex items-end sm:items-center justify-center">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={() => setSelectedShop(null)} />
-          <div className="relative w-full max-w-6xl max-h-[90vh] glass rounded-3xl sm:rounded-4xl border border-white shadow-2xl flex flex-col animate-fade-in overflow-hidden">
+          <div className="relative w-full sm:max-w-2xl lg:max-w-5xl max-h-[95vh] sm:max-h-[90vh] bg-white sm:rounded-3xl lg:rounded-4xl rounded-t-3xl border border-white shadow-2xl flex flex-col animate-fade-in overflow-hidden sm:mx-4">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 sm:p-6 md:p-8 border-b border-border/50 bg-page/50">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                  <Store className="w-6 h-6 text-white" />
+            <div className="flex items-center justify-between p-4 sm:p-5 lg:p-6 border-b border-border/50 bg-page/50 shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+                  <Store className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h2 className="text-lg sm:text-2xl font-black text-text-primary uppercase tracking-tight">{selectedShop}</h2>
-                  <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Collection History</p>
+                <div className="min-w-0">
+                  <h2 className="text-base sm:text-lg lg:text-2xl font-black text-text-primary uppercase tracking-tight truncate">{selectedShop}</h2>
+                  <p className="text-[9px] sm:text-[10px] font-black text-text-muted uppercase tracking-widest">Collection History &bull; {selectedShopEntries.length} entries</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedShop(null)} className="p-2 bg-white hover:bg-slate-100 text-slate-500 rounded-xl shadow-sm transition-all cursor-pointer border border-border">
+              <button onClick={() => setSelectedShop(null)} className="p-2 bg-white hover:bg-slate-100 text-slate-500 rounded-xl shadow-sm transition-all cursor-pointer border border-border shrink-0 ml-3">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            {/* Modal Table Content */}
-            <div className="overflow-y-auto p-4 sm:p-6 md:p-8 custom-scrollbar flex-1 bg-page/30">
-              <div className="glass rounded-3xl border border-border overflow-hidden">
-                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-                  <table className="w-full text-sm text-left min-w-[600px]">
-                    <thead>
-                      <tr className="bg-page/50 border-b border-border">
-                        {["Date", "Collection", "Exp/Adv/Prize", "Net Balance", "Staff", "Status", "Actions"].map(h => (
-                          <th key={h} className="px-6 py-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] whitespace-nowrap">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {selectedShopEntries.map((entry) => (
-                        <tr key={entry.id} className="hover:bg-white/50 transition-colors group">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <p className="font-bold text-text-primary">{new Date(entry.created_at).toLocaleDateString()}</p>
-                            <p className="text-[10px] font-black text-text-muted">ID: {entry.id.toString().padStart(3, '0')}</p>
-                          </td>
-                          <td className="px-6 py-4 font-mono-nums font-black text-text-primary whitespace-nowrap text-lg">
-                            ₹{Number(entry.amount).toLocaleString("en-IN")}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="space-y-0.5 font-mono-nums text-[10px] font-bold">
-                              <p className="text-danger">E: ₹{entry.expense || 0}</p>
-                              <p className="text-warning">A: ₹{entry.advance || 0}</p>
-                              <p className="text-info">P: ₹{entry.prize || 0}</p>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="inline-flex items-center gap-1.5 font-mono-nums font-black text-sm text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
-                              <ArrowUp className="w-3 h-3" />
-                              ₹{Number(entry.amount - (entry.expense || 0)).toLocaleString("en-IN")}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 font-bold text-text-secondary whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] text-primary font-black">
-                                {(entry.staff_name || 'U')[0]}
-                              </div>
-                              {entry.staff_name}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {entry.is_locked ? (
-                              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase shadow-sm">
-                                <Lock className="w-3 h-3" /> Locked
-                              </div>
-                            ) : (
-                              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-warning-subtle text-warning rounded-full text-[10px] font-black uppercase shadow-sm">
-                                <Unlock className="w-3 h-3" /> Open
-                              </div>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-1">
-                              <button 
-                                onClick={() => handleToggleLock(entry.id, entry.is_locked)}
-                                className={`p-2 rounded-xl transition-all cursor-pointer shadow-sm ${entry.is_locked ? "bg-white border border-border text-text-muted hover:text-primary" : "bg-primary text-white shadow-primary/20"}`}
-                              >
-                                {entry.is_locked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                              </button>
-                              <button 
-                                onClick={() => setEditingEntry(entry)}
-                                className="p-2 bg-white border border-border text-text-muted hover:text-primary hover:bg-primary-subtle rounded-xl transition-all cursor-pointer shadow-sm"
-                              >
-                                <Edit3 className="w-4 h-4" />
-                              </button>
-                              <button 
-                                onClick={() => handleDelete(entry.id)}
-                                className="p-2 bg-white border border-border text-text-muted hover:text-danger hover:bg-danger-subtle rounded-xl transition-all cursor-pointer shadow-sm"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+            {/* Modal Body */}
+            <div className="overflow-y-auto flex-1 custom-scrollbar overscroll-contain">
+              {selectedShopEntries.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+                  <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+                    <FileText className="w-8 h-8 text-slate-300" />
+                  </div>
+                  <p className="text-sm font-bold text-text-muted">No entries found for this period</p>
                 </div>
-              </div>
+              ) : (
+                <>
+                  {/* ── Mobile / Tablet: Card Layout ── */}
+                  <div className="lg:hidden p-3 sm:p-4 space-y-3">
+                    {selectedShopEntries.map((entry) => {
+                      const netBalance = Number(entry.amount) - Number(entry.expense || 0);
+                      return (
+                        <div key={entry.id} className="bg-page border border-border rounded-2xl overflow-hidden">
+                          {/* Card Top Row */}
+                          <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-white">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                <span className="text-[10px] text-primary font-black">{(entry.staff_name || 'U')[0]}</span>
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm font-bold text-text-primary leading-tight truncate">{entry.staff_name || 'Unknown'}</p>
+                                <p className="text-[10px] font-bold text-text-muted">
+                                  {new Date(entry.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                  <span className="opacity-50 ml-1.5">#{entry.id.toString().padStart(3, '0')}</span>
+                                </p>
+                              </div>
+                            </div>
+                            {entry.is_locked ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full text-[9px] font-black uppercase shrink-0">
+                                <Lock className="w-2.5 h-2.5" /> Locked
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-warning-subtle text-warning rounded-full text-[9px] font-black uppercase shrink-0">
+                                <Unlock className="w-2.5 h-2.5" /> Open
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Card Body */}
+                          <div className="px-4 py-3 space-y-3">
+                            {/* Amounts */}
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-[9px] font-black text-text-muted uppercase tracking-widest mb-0.5">Collection</p>
+                                <p className="text-xl font-black text-text-primary font-mono-nums">₹{Number(entry.amount).toLocaleString("en-IN")}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-[9px] font-black text-text-muted uppercase tracking-widest mb-0.5">Net Balance</p>
+                                <div className={`inline-flex items-center gap-1 font-mono-nums font-black text-lg ${netBalance >= 0 ? 'text-emerald-600' : 'text-danger'}`}>
+                                  {netBalance >= 0 ? <ArrowUp className="w-3.5 h-3.5" /> : <ArrowDown className="w-3.5 h-3.5" />}
+                                  ₹{Math.abs(netBalance).toLocaleString("en-IN")}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Deductions */}
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-50 rounded-lg text-[10px] font-bold text-danger font-mono-nums border border-red-100">
+                                Exp ₹{entry.expense || 0}
+                              </span>
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-amber-50 rounded-lg text-[10px] font-bold text-warning font-mono-nums border border-amber-100">
+                                Adv ₹{entry.advance || 0}
+                              </span>
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 rounded-lg text-[10px] font-bold text-info font-mono-nums border border-blue-100">
+                                Prize ₹{entry.prize || 0}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Card Actions */}
+                          <div className="flex items-center border-t border-border/50 divide-x divide-border/50 bg-white">
+                            <button 
+                              onClick={() => handleToggleLock(entry.id, entry.is_locked)}
+                              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                                entry.is_locked 
+                                  ? 'text-text-muted hover:text-primary hover:bg-primary/5' 
+                                  : 'text-primary hover:bg-primary/5'
+                              }`}
+                            >
+                              {entry.is_locked ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                              {entry.is_locked ? 'Unlock' : 'Lock'}
+                            </button>
+                            <button 
+                              onClick={() => setEditingEntry(entry)}
+                              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[10px] font-black uppercase tracking-wider text-text-muted hover:text-primary hover:bg-primary/5 transition-all cursor-pointer"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button 
+                              onClick={() => handleDelete(entry.id)}
+                              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[10px] font-black uppercase tracking-wider text-text-muted hover:text-danger hover:bg-danger/5 transition-all cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* ── Desktop: Table Layout ── */}
+                  <div className="hidden lg:block p-6">
+                    <div className="rounded-2xl border border-border overflow-hidden bg-white">
+                      <table className="w-full text-sm text-left">
+                        <thead>
+                          <tr className="bg-page/50 border-b border-border">
+                            {["Date", "Collection", "Exp / Adv / Prize", "Net Balance", "Staff", "Status", "Actions"].map(h => (
+                              <th key={h} className="px-5 py-3.5 text-[10px] font-black text-text-muted uppercase tracking-[0.15em] whitespace-nowrap">{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/50">
+                          {selectedShopEntries.map((entry) => (
+                            <tr key={entry.id} className="hover:bg-page/30 transition-colors">
+                              <td className="px-5 py-3.5 whitespace-nowrap">
+                                <p className="font-bold text-text-primary text-sm">{new Date(entry.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+                                <p className="text-[10px] font-black text-text-muted">#{entry.id.toString().padStart(3, '0')}</p>
+                              </td>
+                              <td className="px-5 py-3.5 font-mono-nums font-black text-text-primary whitespace-nowrap text-base">
+                                ₹{Number(entry.amount).toLocaleString("en-IN")}
+                              </td>
+                              <td className="px-5 py-3.5 whitespace-nowrap">
+                                <div className="space-y-0.5 font-mono-nums text-[10px] font-bold">
+                                  <p className="text-danger">E: ₹{entry.expense || 0}</p>
+                                  <p className="text-warning">A: ₹{entry.advance || 0}</p>
+                                  <p className="text-info">P: ₹{entry.prize || 0}</p>
+                                </div>
+                              </td>
+                              <td className="px-5 py-3.5 whitespace-nowrap">
+                                <div className="inline-flex items-center gap-1.5 font-mono-nums font-black text-sm text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
+                                  <ArrowUp className="w-3 h-3" />
+                                  ₹{Number(entry.amount - (entry.expense || 0)).toLocaleString("en-IN")}
+                                </div>
+                              </td>
+                              <td className="px-5 py-3.5 font-bold text-text-secondary whitespace-nowrap">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] text-primary font-black">
+                                    {(entry.staff_name || 'U')[0]}
+                                  </div>
+                                  {entry.staff_name}
+                                </div>
+                              </td>
+                              <td className="px-5 py-3.5 whitespace-nowrap">
+                                {entry.is_locked ? (
+                                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase shadow-sm">
+                                    <Lock className="w-3 h-3" /> Locked
+                                  </div>
+                                ) : (
+                                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-warning-subtle text-warning rounded-full text-[10px] font-black uppercase shadow-sm">
+                                    <Unlock className="w-3 h-3" /> Open
+                                  </div>
+                                )}
+                              </td>
+                              <td className="px-5 py-3.5">
+                                <div className="flex items-center gap-1">
+                                  <button 
+                                    onClick={() => handleToggleLock(entry.id, entry.is_locked)}
+                                    className={`p-2 rounded-xl transition-all cursor-pointer shadow-sm ${entry.is_locked ? "bg-white border border-border text-text-muted hover:text-primary" : "bg-primary text-white shadow-primary/20"}`}
+                                  >
+                                    {entry.is_locked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                                  </button>
+                                  <button 
+                                    onClick={() => setEditingEntry(entry)}
+                                    className="p-2 bg-white border border-border text-text-muted hover:text-primary hover:bg-primary-subtle rounded-xl transition-all cursor-pointer shadow-sm"
+                                  >
+                                    <Edit3 className="w-4 h-4" />
+                                  </button>
+                                  <button 
+                                    onClick={() => handleDelete(entry.id)}
+                                    className="p-2 bg-white border border-border text-text-muted hover:text-danger hover:bg-danger-subtle rounded-xl transition-all cursor-pointer shadow-sm"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Edit Modal (Overlays everything if editing) */}
+      {/* ===== Edit Modal ===== */}
       {editingEntry && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={() => setEditingEntry(null)} />
-          <div className="relative w-full max-w-md glass p-5 sm:p-8 rounded-3xl sm:rounded-4xl border-white shadow-2xl animate-fade-in">
+          <div className="relative w-full sm:max-w-md bg-white sm:glass p-5 sm:p-8 rounded-t-3xl sm:rounded-3xl lg:rounded-4xl border-white shadow-2xl animate-fade-in sm:mx-4">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight">Edit Collection</h2>
-                <p className="text-[10px] font-black text-primary uppercase tracking-widest">{editingEntry.shop_name} • {new Date(editingEntry.created_at).toLocaleDateString()}</p>
+                <h2 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-tight">Edit Collection</h2>
+                <p className="text-[10px] font-black text-primary uppercase tracking-widest">{editingEntry.shop_name} &bull; {new Date(editingEntry.created_at).toLocaleDateString()}</p>
               </div>
               <button onClick={() => setEditingEntry(null)} className="p-2 bg-white border border-border hover:bg-slate-50 rounded-xl transition-colors cursor-pointer">
                 <XCircle className="w-5 h-5 text-text-muted" />
@@ -338,24 +443,24 @@ export default function CollectionsClient({ initialEntries, initialShops = [] }:
             <form onSubmit={handleUpdate} className="space-y-5">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Total Collection (₹)</label>
-                <input name="amount" type="number" required defaultValue={editingEntry.amount} className="w-full h-12 px-4 bg-white border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />
+                <input name="amount" type="number" required defaultValue={editingEntry.amount} className="w-full h-12 px-4 bg-page border border-border rounded-2xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1 text-[8px]">Expense</label>
-                  <input name="expense" type="number" defaultValue={editingEntry.expense} className="w-full h-12 px-3 bg-white border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />
+                  <label className="text-[9px] sm:text-[10px] font-black text-text-muted uppercase tracking-[0.15em] ml-1">Expense</label>
+                  <input name="expense" type="number" defaultValue={editingEntry.expense} className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1 text-[8px]">Advance</label>
-                  <input name="advance" type="number" defaultValue={editingEntry.advance} className="w-full h-12 px-3 bg-white border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />
+                  <label className="text-[9px] sm:text-[10px] font-black text-text-muted uppercase tracking-[0.15em] ml-1">Advance</label>
+                  <input name="advance" type="number" defaultValue={editingEntry.advance} className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1 text-[8px]">Prize</label>
-                  <input name="prize" type="number" defaultValue={editingEntry.prize} className="w-full h-12 px-3 bg-white border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />
+                  <label className="text-[9px] sm:text-[10px] font-black text-text-muted uppercase tracking-[0.15em] ml-1">Prize</label>
+                  <input name="prize" type="number" defaultValue={editingEntry.prize} className="w-full h-12 px-3 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm" />
                 </div>
               </div>
-              <div className="flex gap-4 pt-4">
-                <button type="button" onClick={() => setEditingEntry(null)} className="flex-1 h-12 bg-white text-text-secondary rounded-2xl font-black text-xs uppercase tracking-widest border border-border hover:bg-slate-50 shadow-sm transition-all cursor-pointer">Cancel</button>
+              <div className="flex gap-3 pt-4">
+                <button type="button" onClick={() => setEditingEntry(null)} className="flex-1 h-12 bg-page text-text-secondary rounded-2xl font-black text-xs uppercase tracking-widest border border-border hover:bg-slate-50 shadow-sm transition-all cursor-pointer">Cancel</button>
                 <button type="submit" disabled={isPending} className="flex-1 h-12 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center">
                   {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Save Changes"}
                 </button>
