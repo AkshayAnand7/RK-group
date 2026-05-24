@@ -161,21 +161,13 @@ export default function LotteryEntryPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Expense Amount</label>
-                <input type="number" placeholder="0" value={formData.expense} onChange={e => setFormData({ ...formData, expense: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Expense Remark</label>
-                <input type="text" placeholder="Remark..." value={formData.expenseRemark} onChange={e => setFormData({ ...formData, expenseRemark: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Wages</label>
-                <input type="number" placeholder="0" value={formData.wages} onChange={e => setFormData({ ...formData, wages: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
+                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Expenses</label>
+                <div className="flex gap-2">
+                  <input type="text" placeholder="Remark..." value={formData.expenseRemark} onChange={e => setFormData({ ...formData, expenseRemark: e.target.value })} className="w-[60%] h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold focus:outline-none focus:border-primary" />
+                  <input type="number" placeholder="Amount" value={formData.expense} onChange={e => setFormData({ ...formData, expense: e.target.value })} className="w-[40%] h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
+                </div>
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Advances</label>
@@ -185,13 +177,18 @@ export default function LotteryEntryPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Wages</label>
+                <input type="number" placeholder="0" value={formData.wages} onChange={e => setFormData({ ...formData, wages: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
+              </div>
+              <div className="space-y-1.5">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Physical Sale</label>
                 <input type="number" placeholder="0" value={formData.prize} onChange={e => setFormData({ ...formData, prize: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
               </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Pending Amount</label>
-                <input type="number" placeholder="0" value={formData.pending} onChange={e => setFormData({ ...formData, pending: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
-              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-text-muted uppercase tracking-widest">Pending Amount</label>
+              <input type="number" placeholder="0" value={formData.pending} onChange={e => setFormData({ ...formData, pending: e.target.value })} className="w-full h-12 px-4 bg-page border border-border rounded-xl text-sm font-bold font-mono-nums focus:outline-none focus:border-primary" />
             </div>
           </div>
 
