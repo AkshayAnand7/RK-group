@@ -74,9 +74,6 @@ export default function LotteryEntryPage() {
             <button onClick={() => window.location.reload()} className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer">
               Enter Another Record
             </button>
-            <Link href="/admin/dashboard" className="block w-full py-4 bg-page text-text-secondary border border-border rounded-2xl font-bold hover:bg-slate-100 transition-all text-center">
-              View Dashboard
-            </Link>
           </div>
         </div>
       </StaffLayout>
