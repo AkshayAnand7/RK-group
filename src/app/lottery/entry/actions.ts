@@ -2,7 +2,6 @@
 
 import { createAdminClient } from '@/utils/supabase/admin'
 import { revalidatePath } from 'next/cache'
-import { sendWhatsAppMessage } from '@/lib/twilio'
 
 export async function submitCollection(formData: any, shopName: string, shopId: string) {
   const supabase = createAdminClient()
@@ -34,31 +33,12 @@ export async function submitCollection(formData: any, shopName: string, shopId: 
     created_at: new Date().toISOString()
   })
 
-  // 3. Automated WhatsApp via Twilio
-  const adminPhone = "+919809207080"
-  const whatsappMessage = 
-    `📊 *RK Lottery Daily Report*\n\n` +
-    `🏪 *Shop:* ${shopName}\n` +
-    `💻 *Software Sale:* ₹${formData.collection}\n` +
-    `📉 *Expense:* ₹${formData.expense || 0} ${formData.expenseRemark ? `(${formData.expenseRemark})` : ''}\n` +
-    `👷 *Wages:* ₹${formData.wages || 0}\n` +
-    `💰 *Advance:* ₹${formData.advance || 0}\n` +
-    `🏆 *Prize:* ₹${formData.prize || 0}\n` +
-    `🔴 *Pending:* ₹${formData.pending || 0}\n` +
-    `💎 *Net Balance:* ₹${Number(formData.collection) - Number(formData.expense || 0) - Number(formData.wages || 0) - Number(formData.advance || 0) - Number(formData.prize || 0) - Number(formData.pending || 0)}\n\n` +
-    `✅ _Submitted by: ${formData.staffName}_`
-
-  try {
-    await sendWhatsAppMessage(adminPhone, whatsappMessage)
-  } catch (e) {
-    console.error("WhatsApp failed but data was saved:", e)
-  }
-
   revalidatePath('/admin/notifications')
   revalidatePath('/admin/collections')
   revalidatePath('/admin/dashboard')
   return { success: true }
 }
+
 
 export async function getLastPending(shopId: string) {
   const supabase = createAdminClient()
